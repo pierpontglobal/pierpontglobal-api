@@ -7,16 +7,16 @@
   "paths": {
     "/api/v1/version": {
       "get": {
-        "summary": "Get API Version",
+        "summary": "Gives the api version",
         "tags": [
           "Version"
         ],
-        "consumes": [
+        "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "Version returned"
+            "description": "Returned version"
           }
         }
       }
