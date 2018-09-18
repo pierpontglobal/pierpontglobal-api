@@ -13,6 +13,10 @@ gem 'redis'
 gem 'rswag'
 gem 'rubocop-airbnb'
 
+# Authentication | Authorization | Roles manager
+gem 'cancancan'
+gem 'devise'
+gem 'rolify'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
