@@ -29,10 +29,15 @@ class Ability
     # See the wiki for details:
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
 
-    if user.has_role? :admin
-      can :manage, :all
+    if user.has_role? :user_b
+      can :create, User
     else
       can :read, :all
     end
+
+    if user.has_role? :administrator
+      can :manage, :all
+    end
+
   end
 end

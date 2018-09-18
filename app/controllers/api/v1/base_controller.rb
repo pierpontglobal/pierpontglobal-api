@@ -4,6 +4,7 @@
 class Api::V1::BaseController < ApplicationController
 
   def version
+
     render json: { version: 1 }, status: :ok
   end
 

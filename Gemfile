@@ -12,6 +12,7 @@ gem 'rails'
 gem 'redis'
 gem 'rswag'
 gem 'rubocop-airbnb'
+gem 'sendgrid-ruby'
 
 # Authentication | Authorization | Roles manager
 gem 'cancancan'
