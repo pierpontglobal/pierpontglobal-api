@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_22_145737) do
+ActiveRecord::Schema.define(version: 2018_09_22_193402) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,13 @@ ActiveRecord::Schema.define(version: 2018_09_22_145737) do
     t.index ["verified_by_id"], name: "index_payments_on_verified_by_id"
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.string "question"
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "name"
     t.string "resource_type"
@@ -149,6 +156,11 @@ ActiveRecord::Schema.define(version: 2018_09_22_145737) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "username"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "city"
+    t.string "street_address"
+    t.string "phone_number"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -160,6 +172,14 @@ ActiveRecord::Schema.define(version: 2018_09_22_145737) do
     t.bigint "car_id", null: false
     t.index ["car_id"], name: "index_users_cars_on_car_id"
     t.index ["user_id"], name: "index_users_cars_on_user_id"
+  end
+
+  create_table "users_questions", primary_key: ["user_id", "question_id"], force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "question_id", null: false
+    t.string "answer"
+    t.index ["question_id"], name: "index_users_questions_on_question_id"
+    t.index ["user_id"], name: "index_users_questions_on_user_id"
   end
 
   create_table "users_roles", id: false, force: :cascade do |t|
@@ -191,4 +211,8 @@ ActiveRecord::Schema.define(version: 2018_09_22_145737) do
   add_foreign_key "models", "makers"
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "verified_by_id"
+  add_foreign_key "users_cars", "cars", name: "cars___fk"
+  add_foreign_key "users_cars", "users", name: "users_fk"
+  add_foreign_key "users_questions", "questions"
+  add_foreign_key "users_questions", "users"
 end
