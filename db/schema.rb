@@ -10,10 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_22_014058) do
+ActiveRecord::Schema.define(version: 2018_09_22_145737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "bid_collectors", force: :cascade do |t|
+    t.integer "count"
+    t.bigint "car_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "highest_id"
+    t.index ["car_id"], name: "index_bid_collectors_on_car_id"
+    t.index ["highest_id"], name: "index_bid_collectors_on_highest_id"
+  end
+
+  create_table "bids", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2
+    t.bigint "user_id"
+    t.bigint "bid_collector_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bid_collector_id"], name: "index_bids_on_bid_collector_id"
+    t.index ["user_id"], name: "index_bids_on_user_id"
+  end
 
   create_table "body_styles", force: :cascade do |t|
     t.string "name"
@@ -35,8 +55,14 @@ ActiveRecord::Schema.define(version: 2018_09_22_014058) do
     t.bigint "vehicle_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "interior_color_id"
+    t.bigint "exterior_color_id"
+    t.datetime "sale_date"
+    t.decimal "condition", precision: 5, scale: 2
     t.index ["body_style_id"], name: "index_cars_on_body_style_id"
+    t.index ["exterior_color_id"], name: "index_cars_on_exterior_color_id"
     t.index ["fuel_type_id"], name: "index_cars_on_fuel_type_id"
+    t.index ["interior_color_id"], name: "index_cars_on_interior_color_id"
     t.index ["model_id"], name: "index_cars_on_model_id"
     t.index ["vehicle_type_id"], name: "index_cars_on_vehicle_type_id"
     t.index ["vin"], name: "index_cars_on_vin", unique: true
@@ -55,6 +81,17 @@ ActiveRecord::Schema.define(version: 2018_09_22_014058) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "funds", force: :cascade do |t|
+    t.decimal "past_balance", precision: 14, scale: 4
+    t.decimal "current_amount", precision: 14, scale: 4
+    t.bigint "user_id"
+    t.bigint "payment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_id"], name: "index_funds_on_payment_id"
+    t.index ["user_id"], name: "index_funds_on_user_id"
+  end
+
   create_table "makers", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -67,6 +104,18 @@ ActiveRecord::Schema.define(version: 2018_09_22_014058) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["maker_id"], name: "index_models_on_maker_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.bigint "user_id"
+    t.decimal "amount", precision: 14, scale: 4
+    t.boolean "verified"
+    t.text "payment_note"
+    t.bigint "verified_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_payments_on_user_id"
+    t.index ["verified_by_id"], name: "index_payments_on_verified_by_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -106,6 +155,13 @@ ActiveRecord::Schema.define(version: 2018_09_22_014058) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "users_cars", primary_key: ["user_id", "car_id"], force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "car_id", null: false
+    t.index ["car_id"], name: "index_users_cars_on_car_id"
+    t.index ["user_id"], name: "index_users_cars_on_user_id"
+  end
+
   create_table "users_roles", id: false, force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "role_id"
@@ -120,9 +176,19 @@ ActiveRecord::Schema.define(version: 2018_09_22_014058) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "bid_collectors", "bids", column: "highest_id"
+  add_foreign_key "bid_collectors", "cars"
+  add_foreign_key "bids", "bid_collectors"
+  add_foreign_key "bids", "users"
   add_foreign_key "cars", "body_styles"
+  add_foreign_key "cars", "colors", column: "exterior_color_id"
+  add_foreign_key "cars", "colors", column: "interior_color_id"
   add_foreign_key "cars", "fuel_types"
   add_foreign_key "cars", "models"
   add_foreign_key "cars", "vehicle_types"
+  add_foreign_key "funds", "payments"
+  add_foreign_key "funds", "users"
   add_foreign_key "models", "makers"
+  add_foreign_key "payments", "users"
+  add_foreign_key "payments", "users", column: "verified_by_id"
 end
