@@ -1,0 +1,2 @@
+class BodyStyle < ApplicationRecord
+end
