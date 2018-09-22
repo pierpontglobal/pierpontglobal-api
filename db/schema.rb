@@ -10,10 +10,64 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_21_212322) do
+ActiveRecord::Schema.define(version: 2018_09_22_014058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "body_styles", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "cars", force: :cascade do |t|
+    t.integer "year"
+    t.bigint "model_id"
+    t.string "tim"
+    t.integer "odometer"
+    t.bigint "fuel_type_id"
+    t.string "displacement"
+    t.boolean "transmission"
+    t.string "vin"
+    t.bigint "body_style_id"
+    t.integer "doors"
+    t.bigint "vehicle_type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["body_style_id"], name: "index_cars_on_body_style_id"
+    t.index ["fuel_type_id"], name: "index_cars_on_fuel_type_id"
+    t.index ["model_id"], name: "index_cars_on_model_id"
+    t.index ["vehicle_type_id"], name: "index_cars_on_vehicle_type_id"
+    t.index ["vin"], name: "index_cars_on_vin", unique: true
+  end
+
+  create_table "colors", force: :cascade do |t|
+    t.string "name"
+    t.string "hex"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "fuel_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "makers", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "models", force: :cascade do |t|
+    t.bigint "maker_id"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["maker_id"], name: "index_models_on_maker_id"
+  end
 
   create_table "roles", force: :cascade do |t|
     t.string "name"
@@ -60,4 +114,15 @@ ActiveRecord::Schema.define(version: 2018_09_21_212322) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  create_table "vehicle_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "cars", "body_styles"
+  add_foreign_key "cars", "fuel_types"
+  add_foreign_key "cars", "models"
+  add_foreign_key "cars", "vehicle_types"
+  add_foreign_key "models", "makers"
 end

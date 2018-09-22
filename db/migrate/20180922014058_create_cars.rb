@@ -7,9 +7,8 @@ class CreateCars < ActiveRecord::Migration[5.2]
       t.integer :odometer
       t.references :fuel_type, foreign_key: true
       t.string :displacement
-      t.booleaninterior_color :transmission
-      t.references :exterior_color, foreign_key: true
-      t.string :vin
+      t.boolean :transmission
+      t.string :vin, uniq: true
       t.references :body_style, foreign_key: true
       t.integer :doors
       t.references :vehicle_type, foreign_key: true
