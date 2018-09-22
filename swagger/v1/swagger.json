@@ -5,18 +5,47 @@
     "version": "v1"
   },
   "paths": {
-    "/api/v1/version": {
-      "get": {
-        "summary": "Gives the api version",
+    "/api/v1/users": {
+      "post": {
+        "summary": "Registers a new user to the application",
         "tags": [
-          "Version"
+          "Register"
         ],
         "produces": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "phone_number": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email",
+                "password",
+                "username",
+                "phone_number"
+              ]
+            }
+          }
+        ],
         "responses": {
-          "200": {
-            "description": "Returned version"
+          "201": {
+            "description": "User created"
           }
         }
       }
