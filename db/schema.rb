@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_22_223132) do
+ActiveRecord::Schema.define(version: 2018_09_23_013918) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -202,10 +202,13 @@ ActiveRecord::Schema.define(version: 2018_09_22_223132) do
     t.string "city"
     t.string "street_address"
     t.string "phone_number"
+    t.bigint "verified_by_id"
+    t.boolean "verified", default: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
+    t.index ["verified_by_id"], name: "index_users_on_verified_by_id"
   end
 
   create_table "users_cars", primary_key: ["user_id", "car_id"], force: :cascade do |t|
@@ -256,6 +259,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_223132) do
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "verified_by_id"
+  add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars", name: "cars___fk"
   add_foreign_key "users_cars", "users", name: "users_fk"
   add_foreign_key "users_questions", "questions"

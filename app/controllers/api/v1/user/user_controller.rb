@@ -6,10 +6,6 @@ module Api
       # Handles the users related calls
       class UserController < Api::V1::BaseController
 
-        def me
-          render json: { name: @user.first_name }, status: :ok
-        end
-
       end
     end
   end

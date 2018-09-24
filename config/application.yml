@@ -1,3 +1,6 @@
 DB_USER: postgres
 DB_PASSWORD: qusUt1i9obru4ISTUG2f
 SENDGRID_API_KEY: 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
+SENDGRID_API_KEY_SMTP: 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
+CLIENT_TARGET: https://pierpontglobal.com
+SOURCE_EMAIL: support@pierpontglobal.com

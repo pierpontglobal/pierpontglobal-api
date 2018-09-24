@@ -13,6 +13,7 @@ gem 'redis'
 gem 'rswag'
 gem 'rubocop-airbnb'
 gem 'sendgrid-ruby'
+gem 'smtpapi'
 
 # Authentication | Authorization | Roles manager
 gem 'cancancan'

@@ -46,6 +46,9 @@
         "responses": {
           "201": {
             "description": "User created"
+          },
+          "400": {
+            "description": "There was something wrong with your request"
           }
         }
       }
