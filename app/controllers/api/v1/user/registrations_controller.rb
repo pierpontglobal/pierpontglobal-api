@@ -27,6 +27,12 @@ module Api
             :street_address,
             :phone_number
           )
+          if local_blacklisted
+            # NOTIFY INCIDENT
+            render json: { error: 'User has been blacklisted, contact support' },
+                   status: :bad_request
+            return
+          end
           if user_present
             render json: { error: 'Username already exist' },
                    status: :bad_request
@@ -97,6 +103,17 @@ module Api
         def user_present
           user = ::User.find_by(username: params[:username])
           user.present?
+        end
+
+        def local_blacklisted
+          # Check if email is permitted
+          return true unless Filter.all.where(type: 1, value: params[:email]).empty?
+          # Check if username is permitted
+          return true unless Filter.all.where(type: 2, value: params[:username]).empty?
+          # Check if phone number ins permitted
+          return true unless Filter.all.where(type: 3, value: params[:phone_number]).empty?
+
+          false
         end
       end
     end
