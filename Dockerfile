@@ -11,3 +11,5 @@ COPY Gemfile.lock /pierpontglobal-api/Gemfile.lock
 RUN bundle install
 
 COPY . /pierpontglobal-api
+RUN ["chmod", "+x", "/pierpontglobal-api/bin/docker-start-nginx.sh"]
+RUN ["chmod", "+x", "/pierpontglobal-api/bin/docker-start-rails.sh"]

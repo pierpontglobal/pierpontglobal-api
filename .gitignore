@@ -64,3 +64,4 @@ yarn-debug.log*
 # Ignore IDE files
 .idea/*
 spec/*
+*.docker_pattern

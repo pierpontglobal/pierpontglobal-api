@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -x
+
+if [ -f '/etc/nginx/conf.d/default.conf' ]; then
+  rm /etc/nginx/conf.d/default.conf
+fi
+
+envsubst '$WORKER_PROCESSES' < /docker/nginx.conf.template > /etc/nginx/nginx.conf
+
+nginx -g 'daemon off;'

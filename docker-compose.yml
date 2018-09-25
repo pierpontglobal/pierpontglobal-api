@@ -33,12 +33,36 @@ services:
     - "5601:5601"
     depends_on:
       - elasticsearch
-  web:
+  logstash:
+    command: logstash -f /etc/logstash/conf.d/logstash.conf
+    image: logstash:latest
+    ports:
+    - '5000:5000'
+    depends_on:
+    - elasticsearch
+    volumes:
+    - ./config/docker-logstash.conf:/etc/logstash/conf.d/logstash.conf
+  nginx:
+    command: /docker/docker-start-nginx.sh
+    depends_on:
+    - rails
+    environment:
+    - WORKER_PROCESSES=2
+    image: nginx:latest
+    ports:
+    - '80:80'
+    - '443:443'
+    volumes:
+    - ./bin/docker-start-nginx.sh:/docker/docker-start-nginx.sh
+    - ./config/docker-nginx.conf.template:/docker/nginx.conf.template
+    - ./config/docker-nginx.rails.conf:/etc/nginx/conf.d/rails.conf
+  rails:
     build: .
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    command: bin/docker-start-rails.sh
     volumes:
     - .:/pierpontglobal-api
     environment:
       - DB_HOST='172.18.0.1'
+      - LOGSTASH_HOST='172.18.0.1'
     ports:
     - "3000:3000"

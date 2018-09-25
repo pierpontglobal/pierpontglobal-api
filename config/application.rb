@@ -31,5 +31,8 @@ module PierpontglobalApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.lograge.enabled = true
+    config.lograge.formatter = Lograge::Formatters::Logstash.new
+    config.lograge.logger = LogStashLogger.new(type: :udp, host: ENV['LOGSTASH_HOST'], port: 5228)
   end
 end
