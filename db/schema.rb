@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2018_09_25_035500) do
   end
 
   create_table "bids", force: :cascade do |t|
-    t.decimal "amount", precision: 10, scale: 2
+    t.decimal "amount", precision: 14, scale: 4
     t.bigint "user_id"
     t.bigint "bid_collector_id"
     t.datetime "created_at", null: false
@@ -267,8 +267,8 @@ ActiveRecord::Schema.define(version: 2018_09_25_035500) do
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "verified_by_id"
   add_foreign_key "users", "users", column: "verified_by_id"
-  add_foreign_key "users_cars", "cars", name: "cars___fk"
-  add_foreign_key "users_cars", "users", name: "users_fk"
+  add_foreign_key "users_cars", "cars"
+  add_foreign_key "users_cars", "users"
   add_foreign_key "users_questions", "questions"
   add_foreign_key "users_questions", "users"
 end
