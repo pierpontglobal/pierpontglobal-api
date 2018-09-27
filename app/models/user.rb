@@ -17,4 +17,24 @@ class User < ApplicationRecord
            foreign_key: :resource_owner_id,
            dependent: :delete_all # or :destroy if you need callbacks
 
+  def sanitized
+    {
+      id: id,
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+      username: username,
+      phone_number: phone_number,
+      last_ip: last_sign_in_ip,
+      current_ip: current_sign_in_ip,
+      address: {
+        city: city,
+        zip_code: zip_code,
+        primary_address: primary_address,
+        secondary_address: secondary_address
+      },
+      verified: verified,
+      roles: roles
+    }
+  end
 end

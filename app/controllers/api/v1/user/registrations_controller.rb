@@ -42,7 +42,7 @@ module Api
             if resource.persisted?
               unless resource.active_for_authentication?
                 expire_data_after_sign_in!
-                render json: resource
+                render json: resource.sanitized
               end
             else
               clean_up_passwords resource

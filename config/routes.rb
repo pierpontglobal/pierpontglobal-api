@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   namespace :api do
     # Relative to the routes that belongs to the version 1 of the API
     namespace :v1 do
-      get '/version', to: 'base#version'
 
       devise_for :users, controllers: {
         registrations: 'api/v1/user/registrations',
@@ -21,6 +20,7 @@ Rails.application.routes.draw do
       }, skip: %i[sessions password]
 
       namespace :user do
+        get '/me', to: 'user#me'
       end
     end
   end
