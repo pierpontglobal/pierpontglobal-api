@@ -62,14 +62,4 @@ Rails.application.configure do
     authentication: :plain,
     enable_starttls_auto: true
   }
-
-  config.lograge.enabled = true
-  config.lograge.formatter = Lograge::Formatters::Logstash.new
-  config.lograge.logger = LogStashLogger.new(type: :tcp, host: ENV['LOGSTASH_HOST'], port: 8993)
-  config.lograge.custom_options = lambda do |event|
-    exceptions = %w[controller action format]
-    {
-      params: event.payload[:params].except(*exceptions)
-    }
-  end
 end
