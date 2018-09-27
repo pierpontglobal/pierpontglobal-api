@@ -3,6 +3,7 @@
 Rails.application.routes.draw do
   use_doorkeeper do
     skip_controllers :applications, :authorized_applications
+    controllers tokens: 'logger'
   end
 
   # Allow rswag to set the routes for the auto generated documentation.
@@ -13,7 +14,6 @@ Rails.application.routes.draw do
   namespace :api do
     # Relative to the routes that belongs to the version 1 of the API
     namespace :v1 do
-      get '/version', to: 'base#version'
 
       devise_for :users, controllers: {
         registrations: 'api/v1/user/registrations',
@@ -21,6 +21,17 @@ Rails.application.routes.draw do
       }, skip: %i[sessions password]
 
       namespace :user do
+        get '/me', to: 'user#me'
+        patch '/me', to: 'user#modify_user'
+        patch '/me/address', to: 'user#modify_address'
+        put '/reset_password', to: 'user#modify_password'
+        patch '/reset_password', to: 'user#change_password'
+      end
+
+      namespace :blacklist do
+        get '/filters', to: 'filter#show'
+        post '/filters', to: 'filter#create'
+        delete '/filters', to: 'filter#destroy'
       end
     end
   end

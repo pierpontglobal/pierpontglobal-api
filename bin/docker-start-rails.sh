@@ -5,7 +5,7 @@ set -x
 gem install bundler
 bundle check || bundle install
 
-rake db:create
-rake db:migrate
+CONFIGURATION=true rails db:create
+CONFIGURATION=true rails db:migrate
 
 bundle exec puma -C config/puma.rb
