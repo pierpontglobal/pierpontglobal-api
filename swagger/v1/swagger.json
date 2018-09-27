@@ -9,14 +9,14 @@
       "post": {
         "summary": "Registers a new user to the application",
         "tags": [
-          "Register"
+          "User"
         ],
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "user",
+            "name": "User",
             "in": "body",
             "schema": {
               "type": "object",
@@ -44,11 +44,59 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "User created"
           },
           "400": {
             "description": "There was something wrong with your request"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates the user information",
+        "tags": [
+          "User"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "heading",
+            "type": "string"
+          },
+          {
+            "name": "User",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "street_address": {
+                  "type": "string"
+                },
+                "phone_number": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated"
           }
         }
       }
