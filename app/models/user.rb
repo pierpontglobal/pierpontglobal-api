@@ -25,8 +25,6 @@ class User < ApplicationRecord
       email: email,
       username: username,
       phone_number: phone_number,
-      last_ip: last_sign_in_ip,
-      current_ip: current_sign_in_ip,
       address: {
         city: city,
         zip_code: zip_code,
