@@ -5,7 +5,7 @@ module Api
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
-        skip_before_action :doorkeeper_authorize!, only: :change_password
+        skip_before_action :doorkeeper_authorize!, only: [:change_password, :modify_password]
 
         # Shows the current use information
         def me
@@ -31,17 +31,33 @@ module Api
           if user
             token = generate_secure_token
             user.reset_password_token = token
+            user.reset_password_sent_at = DateTime.now
             user.save!
             ::Mailers::MailerDevise.new.password_change(
-                user.email,
-                token,
-                params[:callback]
+              user.email,
+              token,
+              params[:callback]
             )
             render json: { status: 'sent' }, status: :ok
+          else
+            render json: { status: 'failed' }, status: :ok
           end
         end
 
-        def modify_password; end
+        def modify_password
+          user = ::User.find_by(
+            email: params[:email],
+            reset_password_token: params[:token]
+          )
+          if user
+            user.reset_password_token = nil
+            user.password = params['password']
+            user.save!
+            render json: {status: 'success'}, status: :ok
+          else
+            render json: {status: 'failed', reason: 'Token doesn\'t map to user'}, status: :ok
+          end
+        end
 
         private
 
