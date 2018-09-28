@@ -6,13 +6,20 @@ module Mailers
   class MailerDevise < Devise::Mailer
     default template_path: 'mailers'
 
+    def password_change(email, token, callback)
+      set_client
+      data = load_password_change_template(token, email, callback)
+      j_data = JSON.parse(data.to_json)
+      response = @sg.client.mail._('send').post(request_body: j_data)
+      response
+    end
+
     # Sends transactional email for confirmation instructions
-    def confirmation_instructions(record, token, _opts = {})
+    def confirmation_instructions(record, token, opts = {})
+      set_client
       data = load_confirmation_template(token, record)
       j_data = JSON.parse(data.to_json)
-
-      sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
-      response = sg.client.mail._('send').post(request_body: j_data)
+      response = @sg.client.mail._('send').post(request_body: j_data)
       p response
     end
 
@@ -32,5 +39,24 @@ module Mailers
       ], from: { email: ENV['SOURCE_EMAIL'] },
         template_id: 'd-1e8f30ef9ec54e24a5ccdbd6b8cf368c' }
     end
-end
+
+    def load_password_change_template(token, email, callback)
+      { personalizations: [
+        {
+          to: [email: email],
+          dynamic_template_data: {
+            callback: callback,
+            token: token
+          }
+        }
+      ], from: { email: ENV['SOURCE_EMAIL'] },
+        template_id: 'd-16b03d18163947a7b7cb79a102024f2b' }
+    end
+
+    protected
+
+    def set_client
+      @sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
+    end
+  end
 end

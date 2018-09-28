@@ -5,6 +5,7 @@ module Api
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
+        skip_before_action :doorkeeper_authorize!, only: :change_password
 
         # Shows the current use information
         def me
@@ -25,6 +26,23 @@ module Api
           render json: @user.sanitized, status: :ok
         end
 
+        def change_password
+          user = ::User.find_by(email: params[:email])
+          if user
+            token = generate_secure_token
+            user.reset_password_token = token
+            user.save!
+            ::Mailers::MailerDevise.new.password_change(
+                user.email,
+                token,
+                params[:callback]
+            )
+            render json: { status: 'sent' }, status: :ok
+          end
+        end
+
+        def modify_password; end
+
         private
 
         def permitted_user_params
@@ -44,6 +62,11 @@ module Api
           )
         end
 
+        protected
+
+        def generate_secure_token
+          SecureRandom.base58(48)
+        end
       end
     end
   end

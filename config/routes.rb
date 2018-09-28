@@ -24,6 +24,7 @@ Rails.application.routes.draw do
         get '/me', to: 'user#me'
         patch '/me', to: 'user#modify_user'
         patch '/me/address', to: 'user#modify_address'
+        patch '/reset_password', to: 'user#change_password'
       end
     end
   end
