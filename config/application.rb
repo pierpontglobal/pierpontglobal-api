@@ -19,6 +19,8 @@ Bundler.require(*Rails.groups)
 
 module PierpontglobalApi
   class Application < Rails::Application
+
+    config.autoload_paths << "#{Rails.root}/lib"
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
@@ -32,15 +34,37 @@ module PierpontglobalApi
     # Skip views, helpers and assets when generating a new resource.
 
     config.api_only = true
+    config.log_level = :debug
+
+    Minfraud.configure do |c|
+      c.license_key = ENV['MAX_MIND_KEY']
+      c.user_id     = ENV['MAX_MIND_USER']
+    end
 
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
-    config.lograge.logger = LogStashLogger.new(type: :tcp, host: ENV['LOGSTASH_HOST'], port: 8993)
+    config.lograge.logger = LogStashLogger.new(type: :tcp, host: ENV['HOST'], port: 8993)
     config.lograge.custom_options = lambda do |event|
       exceptions = %w[controller action format registration]
       {
-          params: event.payload[:params].except(*exceptions)
+        params: event.payload[:params].except(*exceptions)
       }
+    end
+
+    unless ENV['CONFIGURATION']
+      config.after_initialize do
+        unless User.find_by_username('admin')
+          admin_user = User.new(
+            email: 'support@pierpontglobal.com',
+            username: 'admin',
+            password: ENV['ADMIN_PASSWORD'],
+            phone_number: ENV['ADMIN_CONTACT']
+          )
+          admin_user.skip_confirmation_notification!
+          admin_user.save!
+          admin_user.add_role(:admin)
+        end
+      end
     end
   end
 end
