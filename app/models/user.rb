@@ -26,6 +26,7 @@ class User < ApplicationRecord
       username: username,
       phone_number: phone_number,
       address: {
+        country: country,
         city: city,
         zip_code: zip_code,
         primary_address: primary_address,

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'minfraud'
+
 module Api
   module V1
     module User
@@ -16,23 +18,32 @@ module Api
 
         # POST /resource
         def create
-          sign_up_params = params.permit(
+          maxmind_blacklisted
+          @permitted_params = params.permit(
             :email,
             :password,
             :username,
             :phone_number,
             :first_name,
             :last_name,
-            :city,
-            :street_address,
-            :phone_number
+            address: %i[
+              country
+              city
+              zip_code
+              primary_address
+              secondary_address
+            ]
           )
+          p flatten_params(@permitted_params)
+          sign_up_params = flatten_params(@permitted_params)
+
           if local_blacklisted
             # NOTIFY INCIDENT
             render json: { error: 'User has been blacklisted, contact support' },
                    status: :bad_request
             return
           end
+
           if user_present
             render json: { error: 'Username already exist' },
                    status: :bad_request
@@ -100,6 +111,17 @@ module Api
 
         private
 
+        def flatten_params(param, extracted = {})
+          param.each do |key, value|
+            if value.is_a? ActionController::Parameters
+              flatten_params(value, extracted)
+            else
+              extracted.merge!("#{key}": value)
+            end
+          end
+          extracted
+        end
+
         def user_present
           user = ::User.find_by(username: params[:username])
           user.present?
@@ -107,13 +129,63 @@ module Api
 
         def local_blacklisted
           # Check if email is permitted
-          return true unless Filter.all.where(type: 1, value: params[:email]).empty?
+          return true unless Filter.all.where(scope: 1, value: params[:email]).empty?
           # Check if username is permitted
-          return true unless Filter.all.where(type: 2, value: params[:username]).empty?
+          return true unless Filter.all.where(scope: 2, value: params[:username]).empty?
           # Check if phone number ins permitted
-          return true unless Filter.all.where(type: 3, value: params[:phone_number]).empty?
-
+          return true unless Filter.all.where(scope: 3, value: params[:phone_number]).empty?
           false
+        end
+
+        def maxmind_blacklisted
+          device = Minfraud::Components::Device.new(ip_address: '179.52.226.35')
+          email = Minfraud::Components::Email.new(
+            address: params[:email],
+            domain: params[:email].split('@').last
+          )
+
+          account = Minfraud::Components::Account.new(
+            user_id: params[:username]
+          )
+
+          if params[:address].present?
+            billing = Minfraud::Components::Billing.new(
+              first_name: params[:first_name],
+              last_name: params[:last_name],
+              address: params[:address][:primary_address],
+              address_2: params[:address][:secondary_address],
+              country: params[:address][:country],
+              city: params[:address][:city],
+              postal: params[:address][:zip_code],
+              phone_number: params[:phone_number]
+            )
+
+            shipping = Minfraud::Components::Shipping.new(
+              first_name: params[:first_name],
+              last_name: params[:last_name],
+              address: params[:address][:primary_address],
+              address_2: params[:address][:secondary_address],
+              country: params[:address][:country],
+              city: params[:address][:city],
+              postal: params[:address][:zip_code],
+              phone_number: params[:phone_number]
+            )
+
+            assessment = Minfraud::Assessments.new(
+              device: device,
+              email: email,
+              account: account,
+              billing: billing,
+              shipping: shipping
+            )
+          else
+            assessment = Minfraud::Assessments.new(
+              device: device,
+              email: email,
+              account: account
+            )
+          end
+          p assessment.insights + "<<=====#####"
         end
       end
     end

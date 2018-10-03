@@ -53,9 +53,12 @@ module Api
             user.reset_password_token = nil
             user.password = params['password']
             user.save!
-            render json: {status: 'success'}, status: :ok
+            render json: { status: 'success' }, status: :ok
           else
-            render json: {status: 'failed', reason: 'Token doesn\'t map to user'}, status: :ok
+            render json: {
+              status: 'failed',
+              reason: 'Token doesn\'t map to user'
+            }, status: :ok
           end
         end
 
@@ -71,6 +74,7 @@ module Api
 
         def permitted_address_params
           params.require(:address).permit(
+            :country,
             :city,
             :primary_address,
             :secondary_address,

@@ -1,20 +1,15 @@
-version: '3'
+version: '2.1'
 
 volumes:
-  esdata1:
+  psql:
+    driver: local
+  esdata:
     driver: local
 
-networks:
-  esnet:
+networks: {stack: {}}
 
 services:
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: 'qusUt1i9obru4ISTUG2f'
-    ports:
-      - "5432:5432"
+  ## STACK
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
     container_name: elasticsearch
@@ -27,20 +22,24 @@ services:
         soft: -1
         hard: -1
     volumes:
-    - esdata1:/usr/share/elasticsearch/data
+    - esdata:/usr/share/elasticsearch/data
     ports:
     - "9200:9200"
     networks:
-    - esnet
+    - stack
   kibana:
+    container_name: kibana
+    hostname: kibana
     image: docker.elastic.co/kibana/kibana:6.4.1
-    environment:
-      - ELASTICSEARCH_URL="http://172.19.0.1:9200"
     ports:
-    - "5601:5601"
+      - '5601:5601'
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_URL: http://172.18.0.1:9200
     depends_on:
       - elasticsearch
   logstash:
+    container_name: logstash
     command: logstash -f /etc/logstash/conf.d/logstash.conf
     image: logstash:latest
     ports:
@@ -49,30 +48,48 @@ services:
     depends_on:
     - elasticsearch
     volumes:
-    - ./config/docker-logstash.conf:/etc/logstash/conf.d/logstash.conf
-  nginx:
-    command: /docker/docker-start-nginx.sh
-    depends_on:
-    - rails
+    - ./config/docker/docker-logstash.conf:/etc/logstash/conf.d/logstash.conf
+  # DATABASE CONFIGURATION
+  psql:
+    container_name: postgresql
+    hostname: psql
+    image: postgres
+    restart: always
     environment:
-    - WORKER_PROCESSES=2
-    image: nginx:latest
+      POSTGRES_PASSWORD: 'qusUt1i9obru4ISTUG2f'
     ports:
-    - '80:80'
-    - '443:443'
+    - "5432:5432"
     volumes:
-    - ./bin/docker-start-nginx.sh:/docker/docker-start-nginx.sh
-    - ./config/docker-nginx.conf.template:/docker/nginx.conf.template
-    - ./config/docker-nginx.rails.conf:/etc/nginx/conf.d/rails.conf
+      - psql:/var/lib/postgresql
+      - ./logs/psql:/var/log/postgresql
+    networks:
+      - stack
+  # PROXY SERVER CONFIGURATION
+#  nginx:
+#    container_name: nginx
+#    command: /docker/docker-start-nginx.sh
+#    depends_on:
+#    - rails
+#    environment:
+#    - WORKER_PROCESSES=2
+#    image: nginx:latest
+#    ports:
+#    - '80:80'
+#    - '443:443'
+#    volumes:
+#    - ./bin/docker-start-nginx.sh:/docker/docker-start-nginx.sh
+#    - ./config/docker/docker-nginx.conf.template:/docker/nginx.conf.template
+#    - ./config/docker/docker-nginx.rails.conf:/etc/nginx/conf.d/rails.conf
+  # WEB API SERVER CONFIGURATION
   rails:
+    container_name: pierpont_api
     build: .
     command: bin/docker-start-rails.sh
     volumes:
     - .:/pierpontglobal-api
     environment:
-      - DB_HOST='172.18.0.1'
-      - LOGSTASH_HOST=172.18.0.1
+      - HOST=172.18.0.1
     ports:
     - "3000:3000"
     depends_on:
-      - db
+      - psql
