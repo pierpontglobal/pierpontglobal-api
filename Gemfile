@@ -3,27 +3,45 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.5.1'
 
+# Requirement compliant gems
+gem 'minfraud'
+
 gem 'bcrypt'
 gem 'figaro'
 gem 'jbuilder'
-gem 'lograge'
-gem 'logstash-event'
-gem 'logstash-logger'
-gem 'minfraud'
-gem 'pg'
 gem 'puma'
 gem 'rails'
 gem 'redis'
-gem 'rswag'
+
+# Run task asynchronously
+gem 'rake'
+gem 'whenever'
+
+# Database gems
+gem 'pg'
+
+# Documentation a good practices
 gem 'rubocop-airbnb'
+gem 'rswag'
+
+# Logging system for production
+gem 'lograge'
+gem 'logstash-event'
+gem 'logstash-logger'
+
+# Mail senders gems
 gem 'sendgrid-ruby'
 gem 'smtpapi'
+
+# Storage manager
+gem "paperclip", "~> 6.0.0"
 
 # Authentication | Authorization | Roles manager
 gem 'cancancan'
 gem 'devise'
 gem 'doorkeeper'
 gem 'rolify'
+
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
@@ -39,6 +57,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+
   gem 'rspec-rails'
 end
 
