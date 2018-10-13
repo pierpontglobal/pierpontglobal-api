@@ -15,7 +15,8 @@ gem 'redis'
 
 # Run task asynchronously
 gem 'rake'
-gem 'whenever'
+gem 'sidekiq'
+gem 'sinatra'
 
 # Database gems
 gem 'pg'

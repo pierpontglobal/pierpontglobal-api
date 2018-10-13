@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  require 'sidekiq/web'
+  mount Sidekiq::Web => "/sidekiq"
+
   use_doorkeeper do
     skip_controllers :applications, :authorized_applications
     controllers tokens: 'logger'
@@ -33,6 +36,11 @@ Rails.application.routes.draw do
         post '/filters', to: 'filter#create'
         delete '/filters', to: 'filter#destroy'
       end
+
+      namespace :admin do
+        post '/pulling/:state', to: 'cars#change_pulling'
+      end
+
     end
   end
 end
