@@ -43,7 +43,7 @@ module PierpontglobalApi
 
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
-    config.lograge.logger = LogStashLogger.new(type: :tcp, host: ENV['HOST'], port: 8993)
+    config.lograge.logger = LogStashLogger.new(type: :tcp, host: ENV['LOGSTASH_HOST'], port: 5000)
     config.lograge.custom_options = lambda do |event|
       exceptions = %w[controller action format registration]
       {

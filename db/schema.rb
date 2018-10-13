@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_02_184839) do
+ActiveRecord::Schema.define(version: 2018_10_06_034942) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,7 +44,6 @@ ActiveRecord::Schema.define(version: 2018_10_02_184839) do
   create_table "cars", force: :cascade do |t|
     t.integer "year"
     t.bigint "model_id"
-    t.string "tim"
     t.integer "odometer"
     t.bigint "fuel_type_id"
     t.string "displacement"
@@ -59,6 +58,9 @@ ActiveRecord::Schema.define(version: 2018_10_02_184839) do
     t.bigint "exterior_color_id"
     t.datetime "sale_date"
     t.decimal "condition", precision: 5, scale: 2
+    t.string "engine"
+    t.string "trim"
+    t.string "odometer_unit"
     t.index ["body_style_id"], name: "index_cars_on_body_style_id"
     t.index ["exterior_color_id"], name: "index_cars_on_exterior_color_id"
     t.index ["fuel_type_id"], name: "index_cars_on_fuel_type_id"
@@ -66,6 +68,12 @@ ActiveRecord::Schema.define(version: 2018_10_02_184839) do
     t.index ["model_id"], name: "index_cars_on_model_id"
     t.index ["vehicle_type_id"], name: "index_cars_on_vehicle_type_id"
     t.index ["vin"], name: "index_cars_on_vin", unique: true
+  end
+
+  create_table "cars_seller_types", id: false, force: :cascade do |t|
+    t.bigint "car_id", null: false
+    t.bigint "seller_type_id", null: false
+    t.index ["car_id", "seller_type_id"], name: "index_cars_seller_types_on_car_id_and_seller_type_id"
   end
 
   create_table "colors", force: :cascade do |t|
@@ -183,6 +191,18 @@ ActiveRecord::Schema.define(version: 2018_10_02_184839) do
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
   end
 
+  create_table "seller_types", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "server_configurations", force: :cascade do |t|
+    t.decimal "maxmind_limit", precision: 5, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -248,6 +268,7 @@ ActiveRecord::Schema.define(version: 2018_10_02_184839) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "type_code"
   end
 
   add_foreign_key "bid_collectors", "bids", column: "highest_id"
