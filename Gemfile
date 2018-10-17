@@ -6,6 +6,10 @@ ruby '2.5.1'
 # Requirement compliant gems
 gem 'minfraud'
 
+# MSM Managers
+gem 'authy', '~> 2.7', '>= 2.7.2'
+gem 'twilio-ruby', '~> 5.15.0'
+
 gem 'bcrypt'
 gem 'figaro'
 gem 'jbuilder'

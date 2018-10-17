@@ -29,6 +29,15 @@ Rails.application.routes.draw do
         patch '/me/address', to: 'user#modify_address'
         put '/reset_password', to: 'user#modify_password'
         patch '/reset_password', to: 'user#change_password'
+        post '/send/phone_verification', to: 'user#send_phone_verification'
+        post '/receive/phone_verification_state', to: 'user#is_phone_verified?'
+
+        # Essential for 2FA
+        namespace :token do
+          post 'activate', to: 'tokens#activate'
+          delete 'deactivate', to: 'tokens#deactivate'
+        end
+
       end
 
       namespace :blacklist do

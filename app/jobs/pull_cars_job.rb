@@ -1,7 +1,5 @@
 class PullCarsJob
   include Sidekiq::Worker
-  sidekiq_options retry: false
-
   def perform(*args)
     populator = DataPopulator.new
     populator.update_car_data

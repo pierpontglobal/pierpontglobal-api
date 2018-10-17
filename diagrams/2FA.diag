@@ -1,0 +1,44 @@
+{
+    'Send user credentials' ->
+    'Filtering basic specs for credentials' ->
+    'Send credentials to server' ->
+    'Validate user credentials' ->
+    'Generate token' ->
+    'Generate numeric_token' ->
+    'Store to database' ->
+    'Send it to validated phone number' ->
+    'Send token to client' ->
+    'Remind user to check phone' ->
+    'User respond with numeric_token' ->
+    'Sends token alongside numeric_token' ->
+    'Server checks validity' ->
+    'If valid activate token' ->
+    'Respond with activation status' ->
+    'Forward activation status' ->
+    'Receives token if activated if not re-do process from generation' ->
+    'Generate numeric_token'
+
+    lane User {
+        'Send user credentials'
+        'User respond with numeric_token'
+        'Receives token if activated if not re-do process from generation'
+    }
+    lane Client {
+        'Filtering basic specs for credentials'
+        'Send credentials to server'
+        'Remind user to check phone'
+        'Sends token alongside numeric_token'
+        'Forward activation status'
+    }
+    lane Server {
+        'Validate user credentials'
+        'Generate token'
+        'Generate numeric_token'
+        'Store to database'
+        'Send it to validated phone number'
+        'Send token to client'
+        'Server checks validity'
+        'If valid activate token'
+        'Respond with activation status'
+    }
+}

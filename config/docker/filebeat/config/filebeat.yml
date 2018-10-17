@@ -1,0 +1,31 @@
+filebeat.modules:
+- module: postgresql
+  log:
+    fields:
+      service_esp: db
+    fields_under_root: true
+    enabled: true
+    var.paths: ["/var/log/postgresql/*.log"]
+- module: nginx
+  access:
+    fields:
+      service_esp: nginx
+    fields_under_root: true
+    enabled: true
+    var.paths: ["/var/log/nginx_pp/access.log"]
+  error:
+    fields:
+      service_esp: nginx
+    fields_under_root: true
+    enabled: true
+    var.paths: ["/var/log/nginx_pp/error.log"]
+
+output.elasticsearch:
+    hosts: ["elasticsearch:9200"]
+    index: "pierpont_%{[fileset.module]}-%{+yyyy.MM.dd}"
+
+
+setup.template:
+  name: 'pierpont_'
+  pattern: 'pierpont_*'
+  enabled: false

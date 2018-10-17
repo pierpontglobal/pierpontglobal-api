@@ -185,7 +185,7 @@ module Api
               account: account
             )
           end
-          p assessment.insights + "<<=====#####"
+          p assessment.insights
         end
       end
     end

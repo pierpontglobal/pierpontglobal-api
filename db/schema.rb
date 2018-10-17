@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_06_034942) do
+ActiveRecord::Schema.define(version: 2018_10_15_222448) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -197,12 +197,6 @@ ActiveRecord::Schema.define(version: 2018_10_06_034942) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "server_configurations", force: :cascade do |t|
-    t.decimal "maxmind_limit", precision: 5, scale: 2
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -234,6 +228,13 @@ ActiveRecord::Schema.define(version: 2018_10_06_034942) do
     t.string "secondary_address"
     t.string "zip_code"
     t.string "country"
+    t.boolean "verify_phone_status", default: false
+    t.string "numeric_activation_token"
+    t.datetime "sent_date_activation_token"
+    t.boolean "is_token_active", default: false
+    t.string "sms_code"
+    t.datetime "sms_code_sent_date"
+    t.boolean "phone_number_validated"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

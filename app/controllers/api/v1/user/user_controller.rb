@@ -5,11 +5,64 @@ module Api
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
-        skip_before_action :doorkeeper_authorize!, only: [:change_password, :modify_password]
+        skip_before_action :doorkeeper_authorize!,
+                           only: %i[change_password
+                                    modify_password
+                                    send_phone_verification
+                                    is_phone_verified?]
 
         # Shows the current use information
         def me
           render json: @user.sanitized, status: :ok
+        end
+
+        def is_phone_verified?
+          phone_number = params[:phone_number]
+          country_code = params[:country_code]
+          token = params[:token]
+
+          if !phone_number || !country_code || !token
+            render(json: { err: 'Missing fields' },
+                   status: :bad_request) && return
+          end
+
+          response = Authy::PhoneVerification.check(
+            verification_code: token,
+            country_code: country_code,
+            phone_number: phone_number
+          )
+
+          unless response.ok?
+            render(json: { err: 'Verify Token Error' },
+                   status: :bad_request) && return
+          end
+
+          session[:authy] = true
+          render json: response, status: :ok
+        end
+
+        def send_phone_verification
+          phone_number = params[:phone_number]
+          country_code = params[:country_code]
+          via = params[:via]
+
+          if !phone_number || !country_code || !via
+            render(json: { err: 'Missing fields' },
+                   status: :bad_request) && return
+          end
+
+          response = Authy::PhoneVerification.start(
+            via: via,
+            country_code: country_code,
+            phone_number: phone_number
+          )
+
+          unless response.ok?
+            render(json: { err: 'Error delivering code verification' },
+                   status: :bad_request) && return
+          end
+
+          render json: response, status: :ok
         end
 
         def modify_user
