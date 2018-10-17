@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   # Allow rswag to set the routes for the auto generated documentation.
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
+  mount ActionCable.server => '/cable'
 
   # Relative to the routes that belongs to the API
   namespace :api do
@@ -29,6 +30,7 @@ Rails.application.routes.draw do
         patch '/me/address', to: 'user#modify_address'
         put '/reset_password', to: 'user#modify_password'
         patch '/reset_password', to: 'user#change_password'
+
         post '/send/phone_verification', to: 'user#send_phone_verification'
         post '/receive/phone_verification_state', to: 'user#is_phone_verified?'
 

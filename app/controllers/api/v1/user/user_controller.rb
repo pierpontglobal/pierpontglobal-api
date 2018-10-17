@@ -7,9 +7,7 @@ module Api
       class UserController < Api::V1::BaseController
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
-                                    modify_password
-                                    send_phone_verification
-                                    is_phone_verified?]
+                                    modify_password]
 
         # Shows the current use information
         def me
@@ -17,8 +15,9 @@ module Api
         end
 
         def is_phone_verified?
-          phone_number = params[:phone_number]
-          country_code = params[:country_code]
+          phone_sections = @user.phone_number.split '-'
+          country_code = phone_sections[0]
+          phone_number = phone_sections[1]
           token = params[:token]
 
           if !phone_number || !country_code || !token
@@ -37,17 +36,20 @@ module Api
                    status: :bad_request) && return
           end
 
+          doorkeeper_token.mfa_authenticated = true
+          doorkeeper_token.save!
           session[:authy] = true
           render json: response, status: :ok
         end
 
         def send_phone_verification
-          phone_number = params[:phone_number]
-          country_code = params[:country_code]
+          phone_sections = @user.phone_number.split '-'
+          country_code = phone_sections[0]
+          phone_number = phone_sections[1]
           via = params[:via]
 
           if !phone_number || !country_code || !via
-            render(json: { err: 'Missing fields' },
+            render(json: { err: 'Missing fields', phone_sections: phone_sections },
                    status: :bad_request) && return
           end
 
