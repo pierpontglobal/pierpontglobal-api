@@ -3,13 +3,10 @@ module ApplicationCable
     identified_by :current_user
 
     def connect
-      self.current_user = User.all.first
-    end
-
-    private
-
-    def current_resource_owner
-      User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
+      user_id = request.params['user_id']
+      puts "User authenticating with id: #{user_id}"
+      logger.info "User authenticating with id: #{user_id}"
+      self.current_user = User.find(user_id)
     end
 
   end
