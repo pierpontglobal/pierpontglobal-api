@@ -33,7 +33,9 @@ class User < ApplicationRecord
         secondary_address: secondary_address
       },
       verified: verified,
-      roles: roles
+      roles: roles,
+      require_2fa: require_2fa,
+      phone_number_validated: phone_number_validated
     }
   end
 end

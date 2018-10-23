@@ -32,14 +32,18 @@ module Api
           )
 
           unless response.ok?
+            @user.phone_number_validated = false
             render(json: { err: 'Verify Token Error' },
                    status: :bad_request) && return
           end
 
-          doorkeeper_token.mfa_authenticated = true
-          doorkeeper_token.save!
-          session[:authy] = true
+          @user.phone_number_validated = true
+          @user.save!
           render json: response, status: :ok
+        end
+
+        def set_2fa
+          @user
         end
 
         def send_phone_verification
