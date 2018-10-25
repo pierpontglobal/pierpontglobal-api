@@ -156,18 +156,7 @@ module Api
         private
 
         def send_phone_verification(resource)
-          phone_sections = resource.phone_number.split '-'
-          country_code = phone_sections[0]
-          phone_number = phone_sections[1]
-          via = 'sms'
-          return false if !phone_number || !country_code || !via
-          response = Authy::PhoneVerification.start(
-            via: via,
-            country_code: country_code,
-            phone_number: phone_number
-          )
-          return false unless response.ok?
-          true
+          Confirmations.send_confirmation_to resource
         end
 
         def register_authy(phone_number)

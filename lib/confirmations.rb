@@ -13,6 +13,7 @@ module Confirmations
       user.phone_number,
       "Your Pierpont Global verification code is: #{verification_code}"
     )
+    true
   end
 
   def self.verify_code(user, code)
