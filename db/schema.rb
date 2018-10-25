@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_15_222448) do
+ActiveRecord::Schema.define(version: 2018_10_23_161115) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -144,6 +144,10 @@ ActiveRecord::Schema.define(version: 2018_10_15_222448) do
     t.datetime "created_at", null: false
     t.string "scopes"
     t.string "previous_refresh_token", default: "", null: false
+    t.boolean "mfa_authenticated", default: false
+    t.string "phone_code"
+    t.datetime "phone_code_sent_at"
+    t.integer "phone_code_valid_till"
     t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
     t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
@@ -179,6 +183,16 @@ ActiveRecord::Schema.define(version: 2018_10_15_222448) do
     t.string "type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "risk_notices", force: :cascade do |t|
+    t.bigint "user_id"
+    t.decimal "maxmind_risk", precision: 5, scale: 2
+    t.string "status"
+    t.string "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_risk_notices_on_user_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -228,13 +242,12 @@ ActiveRecord::Schema.define(version: 2018_10_15_222448) do
     t.string "secondary_address"
     t.string "zip_code"
     t.string "country"
-    t.boolean "verify_phone_status", default: false
-    t.string "numeric_activation_token"
-    t.datetime "sent_date_activation_token"
-    t.boolean "is_token_active", default: false
-    t.string "sms_code"
-    t.datetime "sms_code_sent_date"
     t.boolean "phone_number_validated"
+    t.boolean "require_2fa"
+    t.string "authy_id"
+    t.string "verification_code"
+    t.datetime "activation_code_sent_at"
+    t.integer "activation_code_valid_for"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -291,6 +304,7 @@ ActiveRecord::Schema.define(version: 2018_10_15_222448) do
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "verified_by_id"
+  add_foreign_key "risk_notices", "users"
   add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars"
   add_foreign_key "users_cars", "users"

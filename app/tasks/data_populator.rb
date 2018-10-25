@@ -7,8 +7,6 @@ require 'set'
 
 # Manages the communication with Manheim
 class DataPopulator
-  def initialize;
-  end
 
   def update_car_data
     url = URI.parse("https://integration1.api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")

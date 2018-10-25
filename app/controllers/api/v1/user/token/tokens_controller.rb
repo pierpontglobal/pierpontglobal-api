@@ -13,7 +13,7 @@ module  Api
 
           def deactivate
             user.is_token_active = false
-            user.numeric_activation_token= nil
+            user.numeric_activation_token = nil
             user.save!
           end
 
