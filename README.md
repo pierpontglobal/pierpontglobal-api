@@ -1,4 +1,4 @@
-<h1 align="center"> Pierpont Global API </h1>
+<h1 align="center"> <img width="35" src="https://raw.githubusercontent.com/pierpontglobal/pierpontglobal-api/master/documentation/Logos/Website-Logo.png?token=ATM5LBCibVWSflLC7k4AIQXYfKqYNX6Oks5b3LOvwA%3D%3D"> Pierpont Global API </h1>
 This is the pierpont api, this allows other applications to store and retrieve information given by manheim.
 
 ## Configuration
