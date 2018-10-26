@@ -154,7 +154,6 @@ networks:
   web:
     driver: bridge
 
-
 volumes:
   psql:
     driver: local

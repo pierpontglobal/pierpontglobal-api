@@ -42,7 +42,7 @@ module Api
           # review it for activation.
 
           # 2) The user has to pass the manually added filters from the
-          # administrator to use the application.
+           # administrator to use the application.
 
           if local_blacklisted
             # TODO: Send alert to administrator

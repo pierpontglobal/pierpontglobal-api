@@ -10,11 +10,10 @@ module Api
 
       def admin_oauth
         unless @user.has_role? :admin
-          render json: {status: 'failed', reason: 'You are not an admin user'}, status: :unauthorized
+          render json: { status: 'failed', reason: 'You are not an admin user' }, status: :unauthorized
           return
         end
       end
-
     end
   end
 end

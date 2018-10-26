@@ -35,8 +35,6 @@ module PierpontglobalApi
 
     config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 
-
-
     config.api_only = true
     config.log_level = :debug
 
@@ -62,7 +60,7 @@ module PierpontglobalApi
             email: 'support@pierpontglobal.com',
             username: 'admin',
             password: ENV['ADMIN_PASSWORD'],
-            phone_number: ENV['ADMIN_CONTACT']
+            phone_number:  ENV['ADMIN_CONTACT']
           )
           admin_user.skip_confirmation_notification!
           admin_user.save!

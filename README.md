@@ -1,4 +1,4 @@
-# Pierpont Global API
+<h1 align="center"> Pierpont Global API </h1>
 This is the pierpont api, this allows other applications to store and retrieve information given by manheim.
 
 ## Configuration
