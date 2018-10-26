@@ -7,7 +7,7 @@ Doorkeeper.configure do
     @user = User.find_by(id: session[:current_user_id])
 
     unless @user
-      render json: {error: 'Not authenticated'}, status: :forbidden
+      render json: { error: 'Not authenticated' }, status: :forbidden
       return
     end
 
@@ -20,6 +20,8 @@ Doorkeeper.configure do
       user
     end
   end
+
+  use_refresh_token
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
   # file then you need to declare this block in order to restrict access to the web interface for
