@@ -1,5 +1,6 @@
-version: '2'
-# TESTING 1
+version: '3.1'
+
+# ACTUAL CONFIGURATION
 services:
   # DATABASE CONFIGURATION
   psql:
@@ -7,7 +8,7 @@ services:
             -c log_min_duration_statement=0 
             -c log_directory='/var/log/postgresql' 
             -c log_min_messages='WARNING' 
-            -c log_rotation_age='1d' 
+            -c log_rotation_age='1d'
             -c log_rotation_size='1GB'
     container_name: db_postgresql
     hostname: psql
@@ -28,7 +29,7 @@ services:
     build:
       context: config/docker/elasticsearch/
       args:
-        ELK_VERSION: $ELK_VERSION
+        ELK_VERSION: 6.4.0
     volumes:
       - ./config/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
@@ -44,7 +45,7 @@ services:
     build:
       context: config/docker/logstash/
       args:
-        ELK_VERSION: $ELK_VERSION
+        ELK_VERSION: 6.4.0
     volumes:
       - ./config/docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./config/docker/logstash/pipeline:/usr/share/logstash/pipeline:ro
@@ -64,7 +65,7 @@ services:
     build:
       context: config/docker/kibana/
       args:
-        ELK_VERSION: $ELK_VERSION
+        ELK_VERSION: 6.4.0
     volumes:
       - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
     ports:
@@ -81,7 +82,7 @@ services:
     build:
       context: config/docker/filebeat/
       args:
-        ELK_VERSION: $ELK_VERSION
+        ELK_VERSION: 6.4.0
     volumes:
       - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - psql:/var/log/postgresql
@@ -150,10 +151,9 @@ networks:
     driver: bridge
   api:
     driver: bridge
-  # If you would like to see the real client ip in the logs you need to change this to host instead of bridge
-  # unless you are using MacOS Operating System since there is an active bug that prevents attaching to host.
   web:
     driver: bridge
+
 
 volumes:
   psql:
