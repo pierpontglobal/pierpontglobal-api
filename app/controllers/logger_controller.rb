@@ -15,7 +15,6 @@ class LoggerController < Doorkeeper::TokensController
       # Updates the current and last sign in dates
       user.last_sign_in_at = user.current_sign_in_at
       user.current_sign_in_at = DateTime.now
-
       user.save!
     end
   end

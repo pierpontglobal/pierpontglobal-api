@@ -22,7 +22,7 @@ class DataPopulator
     sales_cars['listings'].each do |car_sale_info|
       @car_info = car_sale_info['vehicleInformation']
       @car_sale = car_sale_info['saleInformation']
-      car = Car.where(vin: @car_info['vin']).first_or_create!
+      car = Car.where(vin: @car_info["vin"]).first_or_create!
       car.update!(
         year: @car_info['year'],
         sale_date: @car_sale['saleDate'],
