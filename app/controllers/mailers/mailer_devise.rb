@@ -10,8 +10,7 @@ module Mailers
       set_client
       data = load_password_change_template(token, email, callback)
       j_data = JSON.parse(data.to_json)
-      response = @sg.client.mail._('send').post(request_body: j_data)
-      response
+      @sg.client.mail._('send').post(request_body: j_data)
     end
 
     # Sends transactional email for confirmation instructions
@@ -19,8 +18,7 @@ module Mailers
       set_client
       data = load_confirmation_template(token, record)
       j_data = JSON.parse(data.to_json)
-      response = @sg.client.mail._('send').post(request_body: j_data)
-      p response
+      @sg.client.mail._('send').post(request_body: j_data)
     end
 
     private

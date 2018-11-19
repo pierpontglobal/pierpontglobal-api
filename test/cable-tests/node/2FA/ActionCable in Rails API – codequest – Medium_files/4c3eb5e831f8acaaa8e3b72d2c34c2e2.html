@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<!-- saved from url=(0077)https://medium.com/media/4c3eb5e831f8acaaa8e3b72d2c34c2e2?postId=f087b65c860d -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style id="stndz-style"></style><title>Blogpost-2a.rb – Medium</title><meta name="twitter:widgets:csp" content="on"><meta name="robots" content="noindex"><!--<base target="_blank">--><base href="." target="_blank"><style>body {text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: "ff-tisa-web-pro", Georgia, Cambria, "Times New Roman", Times, serif; font-weight: 400; color: #333332; font-size: 18px; line-height: 1.4; margin: 0; background-color: white; overflow: hidden;}iframe {max-width: 100%;}</style></head><body><style>.gist .gist-file { margin-bottom: 0 !important; }.gist { text-rendering: auto; }</style><script src="./abb2711f27bd22011b53118eb81abef9.js" charset="utf-8"></script><link rel="stylesheet" href="./gist-embed-2c768148c4d27cab10fe818942078e18.css"><div id="gist86579205" class="gist">
+    <div class="gist-file">
+      <div class="gist-data">
+        <div class="js-gist-file-update-container js-task-list-container file-box">
+  <div id="file-blogpost-2a-rb" class="file">
+    
+
+  <div itemprop="text" class="blob-wrapper data type-ruby ">
+      <table class="highlight tab-size js-file-line-container" data-tab-size="8">
+      <tbody><tr>
+        <td id="file-blogpost-2a-rb-L1" class="blob-num js-line-number" data-line-number="1"></td>
+        <td id="file-blogpost-2a-rb-LC1" class="blob-code blob-code-inner js-file-line"><span class="pl-k">module</span> <span class="pl-en">ApplicationCable</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L2" class="blob-num js-line-number" data-line-number="2"></td>
+        <td id="file-blogpost-2a-rb-LC2" class="blob-code blob-code-inner js-file-line">  <span class="pl-k">class</span> <span class="pl-en">Connection<span class="pl-e"> &lt; ActionCable::Connection::Base</span></span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L3" class="blob-num js-line-number" data-line-number="3"></td>
+        <td id="file-blogpost-2a-rb-LC3" class="blob-code blob-code-inner js-file-line">    identified_by <span class="pl-c1">:current_user</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L4" class="blob-num js-line-number" data-line-number="4"></td>
+        <td id="file-blogpost-2a-rb-LC4" class="blob-code blob-code-inner js-file-line">
+</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L5" class="blob-num js-line-number" data-line-number="5"></td>
+        <td id="file-blogpost-2a-rb-LC5" class="blob-code blob-code-inner js-file-line">    rescue_from <span class="pl-c1">ActiveRecord</span>::<span class="pl-c1">RecordNotFound</span>, <span class="pl-c1">JWT</span>::<span class="pl-c1">DecodeError</span>, <span class="pl-c1">CustomErrorClass</span> <span class="pl-k">do</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L6" class="blob-num js-line-number" data-line-number="6"></td>
+        <td id="file-blogpost-2a-rb-LC6" class="blob-code blob-code-inner js-file-line">      reject_unauthorized_connection</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L7" class="blob-num js-line-number" data-line-number="7"></td>
+        <td id="file-blogpost-2a-rb-LC7" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">end</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L8" class="blob-num js-line-number" data-line-number="8"></td>
+        <td id="file-blogpost-2a-rb-LC8" class="blob-code blob-code-inner js-file-line">
+</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L9" class="blob-num js-line-number" data-line-number="9"></td>
+        <td id="file-blogpost-2a-rb-LC9" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">def</span> <span class="pl-en">connect</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L10" class="blob-num js-line-number" data-line-number="10"></td>
+        <td id="file-blogpost-2a-rb-LC10" class="blob-code blob-code-inner js-file-line">      <span class="pl-smi">@jwt_token</span> <span class="pl-k">=</span> request.params[<span class="pl-c1">:token</span>] <span class="pl-k">||</span> <span class="pl-k">raise</span>(<span class="pl-c1">CustomErrorClass</span>)</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L11" class="blob-num js-line-number" data-line-number="11"></td>
+        <td id="file-blogpost-2a-rb-LC11" class="blob-code blob-code-inner js-file-line">      <span class="pl-c1">self</span>.current_user <span class="pl-k">=</span> find_verified_user</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L12" class="blob-num js-line-number" data-line-number="12"></td>
+        <td id="file-blogpost-2a-rb-LC12" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">end</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L13" class="blob-num js-line-number" data-line-number="13"></td>
+        <td id="file-blogpost-2a-rb-LC13" class="blob-code blob-code-inner js-file-line">
+</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L14" class="blob-num js-line-number" data-line-number="14"></td>
+        <td id="file-blogpost-2a-rb-LC14" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">private</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L15" class="blob-num js-line-number" data-line-number="15"></td>
+        <td id="file-blogpost-2a-rb-LC15" class="blob-code blob-code-inner js-file-line">
+</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L16" class="blob-num js-line-number" data-line-number="16"></td>
+        <td id="file-blogpost-2a-rb-LC16" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">attr_reader</span> <span class="pl-c1">:jwt_token</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L17" class="blob-num js-line-number" data-line-number="17"></td>
+        <td id="file-blogpost-2a-rb-LC17" class="blob-code blob-code-inner js-file-line">
+</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L18" class="blob-num js-line-number" data-line-number="18"></td>
+        <td id="file-blogpost-2a-rb-LC18" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">def</span> <span class="pl-en">find_verified_user</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L19" class="blob-num js-line-number" data-line-number="19"></td>
+        <td id="file-blogpost-2a-rb-LC19" class="blob-code blob-code-inner js-file-line">      payload, <span class="pl-k">=</span> decode_token</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L20" class="blob-num js-line-number" data-line-number="20"></td>
+        <td id="file-blogpost-2a-rb-LC20" class="blob-code blob-code-inner js-file-line">      <span class="pl-c1">User</span>.find(payload[<span class="pl-s"><span class="pl-pds">'</span>sub<span class="pl-pds">'</span></span>])</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L21" class="blob-num js-line-number" data-line-number="21"></td>
+        <td id="file-blogpost-2a-rb-LC21" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">end</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L22" class="blob-num js-line-number" data-line-number="22"></td>
+        <td id="file-blogpost-2a-rb-LC22" class="blob-code blob-code-inner js-file-line">
+</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L23" class="blob-num js-line-number" data-line-number="23"></td>
+        <td id="file-blogpost-2a-rb-LC23" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">def</span> <span class="pl-en">decoding_key</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L24" class="blob-num js-line-number" data-line-number="24"></td>
+        <td id="file-blogpost-2a-rb-LC24" class="blob-code blob-code-inner js-file-line">      <span class="pl-c1">Knock</span>.token_secret_signature_key.call</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L25" class="blob-num js-line-number" data-line-number="25"></td>
+        <td id="file-blogpost-2a-rb-LC25" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">end</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L26" class="blob-num js-line-number" data-line-number="26"></td>
+        <td id="file-blogpost-2a-rb-LC26" class="blob-code blob-code-inner js-file-line">
+</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L27" class="blob-num js-line-number" data-line-number="27"></td>
+        <td id="file-blogpost-2a-rb-LC27" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">def</span> <span class="pl-en">decode_token</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L28" class="blob-num js-line-number" data-line-number="28"></td>
+        <td id="file-blogpost-2a-rb-LC28" class="blob-code blob-code-inner js-file-line">      <span class="pl-c1">JWT</span>.decode(jwt_token.to_s, decoding_key)</td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L29" class="blob-num js-line-number" data-line-number="29"></td>
+        <td id="file-blogpost-2a-rb-LC29" class="blob-code blob-code-inner js-file-line">    <span class="pl-k">end</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L30" class="blob-num js-line-number" data-line-number="30"></td>
+        <td id="file-blogpost-2a-rb-LC30" class="blob-code blob-code-inner js-file-line">  <span class="pl-k">end</span></td>
+      </tr>
+      <tr>
+        <td id="file-blogpost-2a-rb-L31" class="blob-num js-line-number" data-line-number="31"></td>
+        <td id="file-blogpost-2a-rb-LC31" class="blob-code blob-code-inner js-file-line"><span class="pl-k">end</span></td>
+      </tr>
+</tbody></table>
+
+
+  </div>
+
+  </div>
+</div>
+
+      </div>
+      <div class="gist-meta">
+        <a href="https://gist.github.com/AdamMankowski/abb2711f27bd22011b53118eb81abef9/raw/924126d0c999af167c85687bb198808ad9275702/Blogpost-2a.rb" style="float:right">view raw</a>
+        <a href="https://gist.github.com/AdamMankowski/abb2711f27bd22011b53118eb81abef9#file-blogpost-2a-rb">Blogpost-2a.rb</a>
+        hosted with ❤ by <a href="https://github.com/">GitHub</a>
+      </div>
+    </div>
+</div>
+<script>var height = -1; var delayMs = 200;function notifyResize(height) {height = height ? height : document.documentElement.offsetHeight; var resized = false; if (window.donkey && donkey.resize) {donkey.resize(height); resized = true;}if (parent && parent._resizeIframe) {var obj = {iframe: window.frameElement, height: height}; parent._resizeIframe(obj); resized = true;}if (window.location && window.location.hash === "#amp=1" && window.parent && window.parent.postMessage) {window.parent.postMessage({sentinel: "amp", type: "embed-size", height: height}, "*");}if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.resize) {window.webkit.messageHandlers.resize.postMessage(height); resized = true;}return resized;}function maybeResize() {if (document.documentElement.offsetHeight != height && notifyResize()) {height = document.documentElement.offsetHeight;}delayMs = Math.min(delayMs * 2, 1000000); setTimeout(maybeResize, delayMs);}maybeResize();</script></body></html>
