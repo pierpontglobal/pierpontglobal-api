@@ -28,6 +28,10 @@ Rails.application.routes.draw do
         get '/me', to: 'user#me'
         patch '/me', to: 'user#modify_user'
         patch '/me/address', to: 'user#modify_address'
+
+        put '/me/images', to: 'user#add_image'
+        delete '/me/images', to: 'user#remove_image'
+
         put '/reset_password', to: 'user#modify_password'
         patch '/reset_password', to: 'user#change_password'
 
@@ -39,7 +43,6 @@ Rails.application.routes.draw do
           post 'activate', to: 'tokens#activate'
           delete 'deactivate', to: 'tokens#deactivate'
         end
-
       end
 
       namespace :blacklist do

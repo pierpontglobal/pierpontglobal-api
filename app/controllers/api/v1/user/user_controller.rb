@@ -70,7 +70,6 @@ module Api
 
           render json: response, status: :ok
         end
-
         def modify_user
           @user.update(permitted_user_params)
           @user.verified = false

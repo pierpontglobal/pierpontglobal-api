@@ -1,4 +1,4 @@
-module  Api
+module Api
   module V1
     module User
       module Token
