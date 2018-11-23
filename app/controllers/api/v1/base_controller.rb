@@ -7,6 +7,8 @@ module Api
   module V1
     # Base controller for the version 1 of the API
     class BaseController < ApplicationController
+      skip_before_action :doorkeeper_authorize!, only: :health
+      skip_before_action :current_resource_owner, only: :health
 
       def twilio_client
 
@@ -14,6 +16,10 @@ module Api
 
       def authy_client
 
+      end
+
+      def health
+        render json: { status: 'healthy' }, status: :ok
       end
 
       private

@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     # Relative to the routes that belongs to the version 1 of the API
     namespace :v1 do
 
+      get '/aws-health', to: 'base#health'
+
       devise_for :users, controllers: {
         registrations: 'api/v1/user/registrations',
         confirmations: 'api/v1/user/confirmations'

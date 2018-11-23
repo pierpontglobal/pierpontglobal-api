@@ -1,16 +1,42 @@
+# Base image
 FROM ruby:2.5.1
 
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
+# Setup environment variables that will be available to the instance
+ENV APP_HOME /produciton
 
-# Install paperclip dependencies
-RUN apt-get install imagemagick -y
+# Installation of dependencies
+RUN apt-get update -qq \
+  && apt-get install -y \
+      # Needed for certain gems
+    build-essential \
+         # Needed for postgres gem
+    libpq-dev \
+         # Needed for asset compilation
+    nodejs \
+    imagemagick \
+    # The following are used to trim down the size of the image by removing unneeded data
+  && apt-get clean autoclean \
+  && apt-get autoremove -y \
+  && rm -rf \
+    /var/lib/apt \
+    /var/lib/dpkg \
+    /var/lib/cache \
+    /var/lib/log
 
-RUN mkdir /pierpontglobal-api
-WORKDIR /pierpontglobal-api
+# Create a directory for our application
+# and set it as the working directory
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
 
-COPY Gemfile /pierpontglobal-api/Gemfile
-COPY Gemfile.lock /pierpontglobal-api/Gemfile.lock
+# Add our Gemfile
+# and install gems
 
+ADD Gemfile* $APP_HOME/
 RUN bundle install
 
-COPY . /pierpontglobal-api
+# Copy over our application code
+ADD . $APP_HOME
+
+# Run our app
+CMD bundle exec rails s -p ${PORT} -b '0.0.0.0'
+EXPOSE 3000

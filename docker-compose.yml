@@ -5,11 +5,11 @@ services:
   # DATABASE CONFIGURATION
   psql:
     command: postgres -c logging_collector=on
-            -c log_min_duration_statement=0 
-            -c log_directory='/var/log/postgresql' 
-            -c log_min_messages='WARNING' 
-            -c log_rotation_age='1d'
-            -c log_rotation_size='1GB'
+      -c log_min_duration_statement=0
+      -c log_directory='/var/log/postgresql'
+      -c log_min_messages='WARNING'
+      -c log_rotation_age='1d'
+      -c log_rotation_size='1GB'
     container_name: db_postgresql
     hostname: psql
     image: postgres
@@ -19,61 +19,55 @@ services:
     ports:
     - "5432:5432"
     volumes:
-      - psql:/var/log/postgresql
+    - psql:/var/log/postgresql
     networks:
-      - elk
-      - api
+    - elk
+    - api
 
   elasticsearch:
     container_name: elk_elasticsearch
     build:
       context: config/docker/elasticsearch/
-      args:
-        ELK_VERSION: 6.4.0
     volumes:
-      - ./config/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    - ./config/docker/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
-      - "9200:9200"
-      - "9300:9300"
+    - "9200:9200"
+    - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
-      - elk
+    - elk
 
   logstash:
     container_name: elk_logstash
     build:
       context: config/docker/logstash/
-      args:
-        ELK_VERSION: 6.4.0
     volumes:
-      - ./config/docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./config/docker/logstash/pipeline:/usr/share/logstash/pipeline:ro
+    - ./config/docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+    - ./config/docker/logstash/pipeline:/usr/share/logstash/pipeline:ro
     ports:
-      - "5000:5000"
-      - "9600:9600"
+    - "5000:5000"
+    - "9600:9600"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
-      - elk
-      - api
+    - elk
+    - api
     depends_on:
-      - elasticsearch
+    - elasticsearch
 
   kibana:
     container_name: elk_kibana
     build:
       context: config/docker/kibana/
-      args:
-        ELK_VERSION: 6.4.0
     volumes:
-      - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
+    - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
     ports:
-      - "5601:5601"
+    - "5601:5601"
     networks:
-      - elk
+    - elk
     depends_on:
-      - elasticsearch
+    - elasticsearch
 
   filebeat:
     restart: always
@@ -81,18 +75,16 @@ services:
     user: root
     build:
       context: config/docker/filebeat/
-      args:
-        ELK_VERSION: 6.4.0
     volumes:
-      - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - psql:/var/log/postgresql
-      - nginx:/var/log/nginx_pp
+    - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    - psql:/var/log/postgresql
+    - nginx:/var/log/nginx_pp
     ports:
-      - "5044:5044"
+    - "5044:5044"
     networks:
-      - elk
+    - elk
     depends_on:
-      - logstash
+    - logstash
 
   redis:
     user: root
@@ -104,11 +96,11 @@ services:
     logging:
       driver: "json-file"
     volumes:
-      - redis:/var/log/redis
+    - redis:/var/log/redis
     ports:
-      - '6379'
+    - '6379'
     networks:
-      - api
+    - api
 
   rails:
     user: root
@@ -119,31 +111,33 @@ services:
     volumes:
     - .:/pierpontglobal-api
     environment:
-      - DB_HOST=psql
-      - JOB_WORKER_URL=redis://redis:6379/0
-      - LOGSTASH_HOST=logstash
+    - DB_HOST=psql
+    - DB_PASSWORD=qusUt1i9obru4ISTUG2f
+    - DB_USER=postgres
+    - JOB_WORKER_URL=redis://redis:6379/0
+    - LOGSTASH_HOST=logstash
     ports:
-    - "3000"
+    - "3000:3000"
     depends_on:
-      - psql
+    - psql
     networks:
-      - api
+    - api
 
   nginx:
     image: nginx
     container_name: nginx
     volumes:
-      - ./config/docker/web-conf/pierpont.conf:/etc/nginx/conf.d/default.conf
-      - nginx:/var/log/nginx_pp
+    - ./config/docker/web-conf/pierpont.conf:/etc/nginx/conf.d/default.conf
+    - nginx:/var/log/nginx_pp
     networks:
-      - web
-      - api
+    - web
+    - api
     command: /bin/bash -c "exec nginx -g 'daemon off;'"
     ports:
-      - 80:80
-      - 443:443
+    - 80:80
+    - 443:443
     depends_on:
-      - rails
+    - rails
     restart: always
 
 networks:
