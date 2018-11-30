@@ -9,9 +9,6 @@ Rails.application.routes.draw do
     controllers tokens: 'logger'
   end
 
-  # Allow rswag to set the routes for the auto generated documentation.
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
   mount ActionCable.server => '/cable'
 
   # Relative to the routes that belongs to the API
@@ -45,6 +42,10 @@ Rails.application.routes.draw do
           post 'activate', to: 'tokens#activate'
           delete 'deactivate', to: 'tokens#deactivate'
         end
+      end
+
+      namespace :car do
+        get '/', to: 'car#show'
       end
 
       namespace :blacklist do

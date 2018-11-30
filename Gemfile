@@ -25,9 +25,8 @@ gem 'sinatra'
 # Database gems
 gem 'pg'
 
-# Documentation a good practices
+# Documentation and good practices
 gem 'rubocop-airbnb'
-gem 'rswag'
 
 # Logging system for production
 gem 'lograge'

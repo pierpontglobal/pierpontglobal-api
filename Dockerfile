@@ -38,5 +38,6 @@ RUN bundle install
 ADD . $APP_HOME
 
 # Run our app
+RUN rm -f $APP_HOME/tmp/pids/server.pid
 CMD bundle exec rails s -p ${PORT} -b '0.0.0.0'
 EXPOSE 3000

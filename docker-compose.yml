@@ -78,7 +78,6 @@ services:
     volumes:
     - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     - psql:/var/log/postgresql
-    - nginx:/var/log/nginx_pp
     ports:
     - "5044:5044"
     networks:
@@ -123,29 +122,10 @@ services:
     networks:
     - api
 
-  nginx:
-    image: nginx
-    container_name: nginx
-    volumes:
-    - ./config/docker/web-conf/pierpont.conf:/etc/nginx/conf.d/default.conf
-    - nginx:/var/log/nginx_pp
-    networks:
-    - web
-    - api
-    command: /bin/bash -c "exec nginx -g 'daemon off;'"
-    ports:
-    - 80:80
-    - 443:443
-    depends_on:
-    - rails
-    restart: always
-
 networks:
   elk:
     driver: bridge
   api:
-    driver: bridge
-  web:
     driver: bridge
 
 volumes:
