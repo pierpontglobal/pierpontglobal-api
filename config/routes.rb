@@ -44,6 +44,10 @@ Rails.application.routes.draw do
         end
       end
 
+      namespace :car do
+        get '/', to: 'car#show'
+      end
+
       namespace :blacklist do
         get '/filters', to: 'filter#show'
         post '/filters', to: 'filter#create'

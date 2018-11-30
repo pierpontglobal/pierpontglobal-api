@@ -30,7 +30,8 @@ class Car < ApplicationRecord
       .joins(:model).merge(Model.sanitized)
       .joins(:fuel_type).merge(FuelType.sanitized)
       .joins(:interior_color).merge(Color.sanitized('colors', 'interior'))
-      .joins(:exterior_color).merge(Color.sanitized('exterior_colors_cars', 'exterior'))
+      .joins(:exterior_color).merge(Color.sanitized('exterior_colors_cars',
+                                                    'exterior'))
       .joins(:body_style).merge(BodyStyle.sanitized)
       .joins(:vehicle_type).merge(VehicleType.sanitized)
       .joins(:seller_types).merge(SellerType.sanitized)
@@ -39,5 +40,4 @@ class Car < ApplicationRecord
   scope :newest, lambda {
     order('id DESC')
   }
-
 end
