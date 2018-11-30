@@ -9,7 +9,7 @@ module Api
           when 'start'
             PullCarsJob.perform_at(1.hour.from_now)
             sq = Sidekiq::ScheduledSet.new
-            render json: { "message": "Pulling started", "on_queue": sq.count }, status: :ok
+            render json: { "message": "Pulling started 💣", "on_queue": sq.count }, status: :ok
           when 'end'
             Sidekiq::RetrySet.new.💣
             Sidekiq::ScheduledSet.new.💣
