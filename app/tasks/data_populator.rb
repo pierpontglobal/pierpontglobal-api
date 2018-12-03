@@ -9,7 +9,7 @@ require 'set'
 class DataPopulator
 
   def update_car_data
-    url = URI.parse("https://integration1.api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")
+    url = URI.parse("https://api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")
     p url
     req = Net::HTTP::Post.new(url.to_s)
     res = Net::HTTP.start(url.host, url.port,
@@ -17,6 +17,7 @@ class DataPopulator
       http.request(req)
     end
     sales_cars = JSON.parse(res.body)
+    puts sales_cars['lixstings'].length, '########################################'
     sales_cars['listings'].each do |car_sale_info|
       @car_info = car_sale_info['vehicleInformation']
       @car_sale = car_sale_info['saleInformation']
