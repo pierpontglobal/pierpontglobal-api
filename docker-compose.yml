@@ -102,6 +102,7 @@ services:
     - api
 
   rails:
+    restart: always
     user: root
     container_name: pierpont_api
     build:

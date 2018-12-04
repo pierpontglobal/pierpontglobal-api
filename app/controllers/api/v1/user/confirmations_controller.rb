@@ -16,11 +16,12 @@ module Api
         #   super
         # end
 
-        # GET /resource/confirmation?confirmation_token=abcdef
+        # GET /resource/confirmation?confirmation_token=XXX
         def show
           self.resource = resource_class.confirm_by_token(params[:confirmation_token])
           yield resource if block_given?
           if resource.errors.empty?
+            p resource.va
             respond_with_navigational(resource) do
               redirect_to "#{ENV['CLIENT_TARGET']}/confirmation?result=true"
             end

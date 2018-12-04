@@ -2,7 +2,7 @@ require 'sidekiq/api'
 module Api
   module V1
     module Admin
-      class CarsController < Api::V1::BaseController
+      class CarsController < Api::V1::AdminBaseController
         def change_pulling
           state = params[:state]
           case state
