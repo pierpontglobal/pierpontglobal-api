@@ -52,10 +52,10 @@ module Api
           end
 
           risk_score = maxmind_report.body.risk_score
-          if risk_score > 20
+          if risk_score > 2
             # TODO: Send alert to administrator
             @data[:warnings] << { source: 'maxmind_validation',
-                                  message: 'Your score risk is higher than 20%, Your account will be under review till an administrator activate it' }
+                                  message: ::TEXT_RESPONSE[:high_risk] }
             @maxmind_notice = RiskNotice.create!(
               maxmind_risk: risk_score,
               status: 'pending'

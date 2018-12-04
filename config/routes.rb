@@ -56,6 +56,7 @@ Rails.application.routes.draw do
 
       namespace :admin do
         post '/pulling/:state', to: 'cars#change_pulling'
+        patch '/users/unblock', to: 'users#unblock'
       end
 
     end
