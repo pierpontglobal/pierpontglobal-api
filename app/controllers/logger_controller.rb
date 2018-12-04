@@ -7,15 +7,17 @@ class LoggerController < Doorkeeper::TokensController
     super
     user = User.find_by_username params[:username]
     rbj = JSON.parse(response.body)
-    if user.try_count >= 5
-      self.response_body = {error: 'User blocked', message: ::TEXT_RESPONSE[:try_blocked]}.to_json
+    try_count = user.try_count
+    if try_count >= 5
+      UnblockUserJob.perform_at(30.minutes.from_now, {id: user.id, username: user.username})
+      self.response_body = { error: 'User blocked', message: ::TEXT_RESPONSE[:try_blocked] }.to_json
     elsif response_code == 200
       user.reset_try_count
       active_status = user.active?
       rbj.merge!(active: active_status[:status], reason: active_status[:reason]).to_json
       self.response_body = rbj.to_json
     elsif response_code == 401
-      rbj.merge!(try_count: user.try_count).to_json
+      rbj.merge!(try_count: try_count).to_json
       self.response_body = rbj.to_json
     end
   end
