@@ -8,11 +8,11 @@ WORKDIR /pierpontglobal-api
 COPY Gemfile /pierpontglobal-api/Gemfile
 COPY Gemfile.lock /pierpontglobal-api/Gemfile.lock
 
-RUN gem install bundler
-RUN bundle check || bundle install
-
 COPY . /pierpontglobal-api
 RUN ["chmod", "+x", "/pierpontglobal-api/bin/start_rails_docker"]
+
+RUN gem install bundler
+RUN bundle check || bundle install
 
 CMD CONFIGURATION=true rails db:create
 CMD CONFIGURATION=true rails db:migrate
