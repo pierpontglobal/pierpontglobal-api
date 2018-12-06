@@ -14,8 +14,6 @@ RUN bundle check || bundle install
 COPY . /pierpontglobal-api
 RUN ["chmod", "+x", "/pierpontglobal-api/bin/start_rails_docker"]
 
-RUN set -x
-
 RUN CONFIGURATION=true rails db:create
 RUN CONFIGURATION=true rails db:migrate
 RUN CONFIGURATION=true bundle exec sidekiq -c 1 &
