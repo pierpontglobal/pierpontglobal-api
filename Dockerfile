@@ -12,3 +12,4 @@ RUN bundle install
 
 COPY . /pierpontglobal-api
 RUN ["chmod", "+x", "/pierpontglobal-api/bin/start_rails_docker"]
+CMD bin/start_rails_docker
