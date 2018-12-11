@@ -45,6 +45,7 @@ gem 'cancancan'
 gem 'devise'
 gem 'doorkeeper'
 gem 'rolify'
+gem 'aws-sdk-ecs'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'

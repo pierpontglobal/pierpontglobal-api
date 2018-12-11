@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_27_201620) do
+ActiveRecord::Schema.define(version: 2018_12_08_201328) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,13 @@ ActiveRecord::Schema.define(version: 2018_10_27_201620) do
     t.datetime "updated_at", null: false
     t.index ["payment_id"], name: "index_funds_on_payment_id"
     t.index ["user_id"], name: "index_funds_on_user_id"
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.string "name"
+    t.string "mh_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "makers", force: :cascade do |t|

@@ -9,12 +9,8 @@ COPY Gemfile /pierpontglobal-api/Gemfile
 COPY Gemfile.lock /pierpontglobal-api/Gemfile.lock
 
 COPY . /pierpontglobal-api
-RUN ["chmod", "+x", "/pierpontglobal-api/bin/start_rails_docker"]
 
 RUN gem install bundler
 RUN bundle check || bundle install
 
-CMD CONFIGURATION=true rails db:create
-CMD CONFIGURATION=true rails db:migrate
-CMD CONFIGURATION=true bundle exec sidekiq -c 1 &
 CMD bundle exec rails server -b 0.0.0.0
