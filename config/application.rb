@@ -43,16 +43,6 @@ module PierpontglobalApi
       c.user_id     = ENV['MAX_MIND_USER']
     end
 
-    config.lograge.enabled = true
-    config.lograge.formatter = Lograge::Formatters::Logstash.new
-    config.lograge.logger = LogStashLogger.new(type: :tcp, host: ENV['LOGSTASH_HOST'], port: 5000)
-    config.lograge.custom_options = lambda do |event|
-      exceptions = %w[controller action format registration]
-      {
-        params: event.payload[:params].except(*exceptions)
-      }
-    end
-
     unless ENV['CONFIGURATION']
       config.after_initialize do
         unless User.find_by_username('admin')

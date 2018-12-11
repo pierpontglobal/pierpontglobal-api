@@ -52,6 +52,7 @@ module Api
           end
 
           risk_score = maxmind_report.body.risk_score
+          p risk_score
           if risk_score > 2
             # TODO: Send alert to administrator
             @data[:warnings] << { source: 'maxmind_validation',

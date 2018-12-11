@@ -1,4 +1,6 @@
 require 'sidekiq/api'
+require 'aws-sdk-ecs'
+
 module Api
   module V1
     module Admin
@@ -7,6 +9,10 @@ module Api
           state = params[:state]
           case state
           when 'start'
+
+            ecs = Aws::ECS::Client.new
+            ecs.update_service(service: "SidekiqWorkers", cluster: "PierpontGlobal", desired_count: 1)
+
             PullCarsJob.perform_at(1.hour.from_now)
             sq = Sidekiq::ScheduledSet.new
             render json: { "message": "Pulling started 💣", "on_queue": sq.count }, status: :ok

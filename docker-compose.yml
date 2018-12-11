@@ -38,24 +38,6 @@ services:
     networks:
     - elk
 
-  logstash:
-    container_name: elk_logstash
-    build:
-      context: config/docker/logstash/
-    volumes:
-    - ./config/docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-    - ./config/docker/logstash/pipeline:/usr/share/logstash/pipeline:ro
-    ports:
-    - "5000:5000"
-    - "9600:9600"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    networks:
-    - elk
-    - api
-    depends_on:
-    - elasticsearch
-
   kibana:
     container_name: elk_kibana
     build:
@@ -82,8 +64,6 @@ services:
     - "5044:5044"
     networks:
     - elk
-    depends_on:
-    - logstash
 
   redis:
     user: root
@@ -105,8 +85,7 @@ services:
     restart: always
     user: root
     container_name: pierpont_api
-    build:
-      context: .
+    build: .
     command: bin/start_rails_docker
     volumes:
     - .:/pierpontglobal-api
@@ -115,7 +94,6 @@ services:
     - DB_PASSWORD=qusUt1i9obru4ISTUG2f
     - DB_USER=postgres
     - JOB_WORKER_URL=redis://redis:6379/0
-    - LOGSTASH_HOST=logstash
     ports:
     - "3000:3000"
     depends_on:
