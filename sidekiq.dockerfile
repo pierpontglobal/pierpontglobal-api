@@ -13,4 +13,4 @@ COPY . /sidekiq_worker
 RUN gem install bundler
 RUN bundle check || bundle install
 
-CMD CONFIGURATION=true bundle exec sidekiq -q car_pulling -c 7
+CMD CONFIGURATION=true bundle exec sidekiq -q car_pulling -c 10

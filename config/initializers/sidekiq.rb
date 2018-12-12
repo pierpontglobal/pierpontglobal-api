@@ -2,8 +2,7 @@ require 'sidekiq'
 require 'sidekiq/web'
 
 sidekiq_config = {
-  url: ENV['JOB_WORKER_URL'],
-  id: nil
+  url: ENV['JOB_WORKER_URL']
 }
 
 Sidekiq.configure_server do |config|
