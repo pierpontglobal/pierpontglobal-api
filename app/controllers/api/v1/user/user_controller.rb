@@ -5,13 +5,71 @@ module Api
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
-        skip_before_action :doorkeeper_authorize!, only: [:change_password, :modify_password]
+        skip_before_action :doorkeeper_authorize!,
+                           only: %i[change_password
+                                    modify_password]
 
         # Shows the current use information
         def me
           render json: @user.sanitized, status: :ok
         end
 
+        def is_phone_verified?
+          phone_sections = @user.phone_number.split '-'
+          country_code = phone_sections[0]
+          phone_number = phone_sections[1]
+          token = params[:token]
+
+          if !phone_number || !country_code || !token
+            render(json: { err: 'Missing fields' },
+                   status: :bad_request) && return
+          end
+
+          response = Authy::PhoneVerification.check(
+            verification_code: token,
+            country_code: country_code,
+            phone_number: phone_number
+          )
+
+          unless response.ok?
+            @user.phone_number_validated = false
+            render(json: { err: 'Verify Token Error' },
+                   status: :bad_request) && return
+          end
+
+          @user.phone_number_validated = true
+          @user.save!
+          render json: response, status: :ok
+        end
+
+        def set_2fa
+          @user
+        end
+
+        def send_phone_verification
+          phone_sections = @user.phone_number.split '-'
+          country_code = phone_sections[0]
+          phone_number = phone_sections[1]
+          via = params[:via]
+
+          if !phone_number || !country_code || !via
+            render(json: { err: 'Missing fields', phone_sections: phone_sections },
+                   status: :bad_request) && return
+          end
+
+          response = Authy::PhoneVerification.start(
+            via: via,
+            country_code: country_code,
+            phone_number: phone_number
+          )
+
+          unless response.ok?
+            render(json: { err: 'Error delivering code verification' },
+                   status: :bad_request) && return
+          end
+
+          render json: response, status: :ok
+        end
         def modify_user
           @user.update(permitted_user_params)
           @user.verified = false

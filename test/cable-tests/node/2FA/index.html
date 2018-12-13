@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Page Title</title>
+</head>
+
+<body>
+    <script src="/action_cable.js"></script>
+
+    <h1>Terst module for cable configuration</h1>
+    
+    <button onclick="window.App.tokenChannel.send_token()">SEND SMS NOTIFICATION</button>
+    <input id="code_field" type="text"><button onclick="window.App.tokenChannel.validate_code()">Validate</button>
+
+    <script>
+        var test_user_id = 3
+        window.App = {};
+        window.App.cable = ActionCable.createConsumer(`ws://0.0.0.0/cable?user_id=${test_user_id}&token=1650f0d18525a7d674805c69b2dec6b08dadad0c54042389db3194147a196342`);
+        window.App.tokenChannel = window.App.cable.subscriptions.create({
+            channel: 'AdminNotificationChannel',
+            token_test: 'Testing token'
+        }, {
+            connected: () => {
+                console.log(`Connected`);
+                window.App.tokenChannel.retrieve_notifications();
+            },
+            disconnected: () => {
+                console.warn(`Disconnected`);
+            },
+            received: (data) => {
+                console.log(data);
+            },
+            rejected: () => {
+                console.warn('Rejected!');
+            },
+            // Custom methods
+            send_token: function () {
+                return this.perform("send_token");
+            },
+            validate_code: function() {
+                console.log(document.getElementById('code_field').value);
+                return this.perform("validate_code", {code: document.getElementById('code_field').value})
+                window.App.cable.unsubscribe();
+            },
+            retrieve_notifications: function(){
+                console.log("Getting notifications...");
+                return this.perform("show_pending");
+            }
+        })
+    </script>
+</body>
+
+</html>

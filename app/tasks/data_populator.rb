@@ -7,40 +7,16 @@ require 'set'
 
 # Manages the communication with Manheim
 class DataPopulator
-  def initialize;
-  end
-
-  def update_car_data
-    url = URI.parse("https://integration1.api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")
-    p url
+  def update_car_data(from)
+    years = pull_years_id(from)
+    url = URI.parse("https://api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")
     req = Net::HTTP::Post.new(url.to_s)
     res = Net::HTTP.start(url.host, url.port,
                           use_ssl: url.scheme == 'https') do |http|
       http.request(req)
     end
     sales_cars = JSON.parse(res.body)
-    sales_cars['listings'].each do |car_sale_info|
-      @car_info = car_sale_info['vehicleInformation']
-      @car_sale = car_sale_info['saleInformation']
-      car = Car.where(vin: @car_info['vin']).first_or_create!
-      car.update!(
-        year: @car_info['year'],
-        sale_date: @car_sale['saleDate'],
-        odometer: @car_info['mileage'],
-        doors: @car_info['doorCount'],
-        odometer_unit: @car_info['odometerUnits'],
-        vehicle_type: look_for_type,
-        engine: @car_info['engine'],
-        model: look_for_model,
-        fuel_type: look_for_fuel,
-        interior_color: look_for_color(@car_info['interiorColor']),
-        exterior_color: look_for_color(@car_info['exteriorColor']),
-        body_style: look_for_body_style,
-        transmission: @car_info['transmission'].eql?('Automatic') ? true : false,
-        trim: @car_info['trim']
-      )
-      car.seller_types << look_for_seller_types
-    end
+    create_or_update(sales_cars)
   end
 
   def look_for_body_style
@@ -67,7 +43,7 @@ class DataPopulator
       types.push(SellerType.where(title: type).first_or_create)
     end
     types
-  rescue
+  rescue StandardError
     []
   end
 
@@ -76,6 +52,47 @@ class DataPopulator
     model = Model.where(name: @car_info['model']).first_or_create
     maker.models << model
     model
+  end
+
+  private
+
+  def create_or_update(sales_cars)
+    sales_cars['listings'].each do |car_sale_info|
+      @car_info = car_sale_info['vehicleInformation']
+      @car_sale = car_sale_info['saleInformation']
+      car = Car.where(vin: @car_info['vin']).first_or_create!
+      car.update!(
+        year: @car_info['year'],
+        sale_date: @car_sale['saleDate'],
+        odometer: @car_info['mileage'],
+        doors: @car_info['doorCount'],
+        odometer_unit: @car_info['odometerUnits'],
+        vehicle_type: look_for_type,
+        engine: @car_info['engine'],
+        model: look_for_model,
+        fuel_type: look_for_fuel,
+        interior_color: look_for_color(@car_info['interiorColor']),
+        exterior_color: look_for_color(@car_info['exteriorColor']),
+        body_style: look_for_body_style,
+        transmission: @car_info['transmission'].eql?('Automatic') ? true : false,
+        trim: @car_info['trim']
+      )
+      car.seller_types << look_for_seller_types
+    end
+  end
+
+  def pull_years_id(from)
+    url = URI.parse("https://api.manheim.com/isws-basic/parameters/YEAR?api_key=#{ENV['MANHEIM_API_KEY']}")
+    req = Net::HTTP::Get.new(url.to_s)
+    res = Net::HTTP.start(url.host, url.port,
+                          use_ssl: url.scheme == 'https') do |http|
+      http.request(req)
+    end
+    years = []
+    JSON.parse(res.body)['parameterValues'].each do |year_data|
+      years << year_data['id'] if year_data['name'].to_i >= from
+    end
+    p years
   end
 
 end

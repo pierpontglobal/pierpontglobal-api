@@ -1,10 +1,12 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.1'
-
 # Requirement compliant gems
 gem 'minfraud'
+
+# MSM Managers
+gem 'authy', '~> 2.7', '>= 2.7.2'
+gem 'twilio-ruby', '~> 5.15.0'
 
 gem 'bcrypt'
 gem 'figaro'
@@ -21,9 +23,8 @@ gem 'sinatra'
 # Database gems
 gem 'pg'
 
-# Documentation a good practices
+# Documentation and good practices
 gem 'rubocop-airbnb'
-gem 'rswag'
 
 # Logging system for production
 gem 'lograge'
@@ -42,6 +43,7 @@ gem 'cancancan'
 gem 'devise'
 gem 'doorkeeper'
 gem 'rolify'
+gem 'aws-sdk-ecs'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
@@ -68,7 +70,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
-
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

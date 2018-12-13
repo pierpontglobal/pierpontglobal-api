@@ -14,7 +14,7 @@ require "action_cable/engine"
 require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :development, or :production.
+# you've limited to :test, :develo pment, or :production.
 Bundler.require(*Rails.groups)
 
 module PierpontglobalApi
@@ -33,22 +33,14 @@ module PierpontglobalApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
 
+    config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
+
     config.api_only = true
     config.log_level = :debug
 
     Minfraud.configure do |c|
       c.license_key = ENV['MAX_MIND_KEY']
       c.user_id     = ENV['MAX_MIND_USER']
-    end
-
-    config.lograge.enabled = true
-    config.lograge.formatter = Lograge::Formatters::Logstash.new
-    config.lograge.logger = LogStashLogger.new(type: :tcp, host: ENV['LOGSTASH_HOST'], port: 5000)
-    config.lograge.custom_options = lambda do |event|
-      exceptions = %w[controller action format registration]
-      {
-        params: event.payload[:params].except(*exceptions)
-      }
     end
 
     unless ENV['CONFIGURATION']
@@ -58,7 +50,7 @@ module PierpontglobalApi
             email: 'support@pierpontglobal.com',
             username: 'admin',
             password: ENV['ADMIN_PASSWORD'],
-            phone_number: ENV['ADMIN_CONTACT']
+            phone_number:  ENV['ADMIN_CONTACT']
           )
           admin_user.skip_confirmation_notification!
           admin_user.save!

@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Installing dependencies
+      - bundle install
+  build:
+    commands:
+      - echo Starting database update/create
+      - bundle exec rails db:create
+      - bundle exec rails db:migrate
+  post_build:
+    commands:
+      - echo Finished migrations

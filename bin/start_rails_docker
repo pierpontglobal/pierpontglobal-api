@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -x
+
+gem install bundler
+bundle check || bundle install
+
+CONFIGURATION=true rails db:create
+CONFIGURATION=true rails db:migrate
+CONFIGURATION=true bundle exec sidekiq -q car_pulling -c 20 &
+
+bundle exec rails server -b 0.0.0.0
