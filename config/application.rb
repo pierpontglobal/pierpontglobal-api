@@ -1,17 +1,20 @@
+# frozen_string_literal: true
+
 require_relative 'boot'
 
-require "rails"
+require 'rails'
 # Pick the frameworks you want:
-require "active_model/railtie"
-require "active_job/railtie"
-require "active_record/railtie"
-require "active_storage/engine"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-require "action_view/railtie"
-require "action_cable/engine"
+require 'active_model/railtie'
+require 'active_job/railtie'
+require 'active_record/railtie'
+require 'active_storage/engine'
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
+require 'action_view/railtie'
+require 'action_cable/engine'
 # require "sprockets/railtie"
-require "rails/test_unit/railtie"
+require 'rails/test_unit/railtie'
+require 'rails_semantic_logger'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :develo pment, or :production.
@@ -19,7 +22,6 @@ Bundler.require(*Rails.groups)
 
 module PierpontglobalApi
   class Application < Rails::Application
-
     config.autoload_paths << "#{Rails.root}/lib"
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
@@ -35,8 +37,22 @@ module PierpontglobalApi
 
     config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 
-    config.api_only = true
-    config.log_level = :debug
+    config.api_only   = true
+    config.log_level  = :info
+
+    ### FILE LOGGING
+    log_dir = File.expand_path(File.join("#{Rails.root}/log/",
+                                         Rails.application.class.parent_name))
+    FileUtils.mkdir_p(log_dir)
+    path = File.join(log_dir, "#{Rails.env}.log")
+    logfile = File.open(path, 'a')
+    logfile.sync = true
+
+    config.semantic_logger.add_appender(file_name: logfile.path, formatter: :json)
+    config.semantic_logger.application = 'PierpontGlobalAPI'
+
+    config.colorize_logging = false
+    config.rails_semantic_logger.format = :json
 
     Minfraud.configure do |c|
       c.license_key = ENV['MAX_MIND_KEY']

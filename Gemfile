@@ -27,9 +27,8 @@ gem 'pg'
 gem 'rubocop-airbnb'
 
 # Logging system for production
-gem 'lograge'
-gem 'logstash-event'
-gem 'logstash-logger'
+gem 'awesome_print'
+gem 'rails_semantic_logger'
 
 # Mail senders gems
 gem 'sendgrid-ruby'

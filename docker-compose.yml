@@ -58,10 +58,13 @@ services:
     build:
       context: config/docker/filebeat/
     volumes:
-    - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-    - psql:/var/log/postgresql
+      - .:/pierpontglobal-api
+      - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - psql:/var/log/postgresql
     ports:
     - "5044:5044"
+    environment:
+      - ELASTIC_SEARCH_HOST=elasticsearch:9200
     networks:
     - elk
 
