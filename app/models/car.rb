@@ -12,6 +12,7 @@ class Car < ApplicationRecord
   scope :limit_search, lambda { |offset = 0, limit = 100|
     offset(offset)
       .limit(limit)
+      .uniq(:id)
   }
 
   scope :sanitized, lambda {
