@@ -45,7 +45,7 @@ Rails.application.routes.draw do
       end
 
       namespace :car do
-        get '/', to: 'car#show'
+        get '/latest', to: 'cars#show'
       end
 
       namespace :blacklist do

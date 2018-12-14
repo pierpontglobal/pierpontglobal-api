@@ -58,10 +58,13 @@ services:
     build:
       context: config/docker/filebeat/
     volumes:
-    - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-    - psql:/var/log/postgresql
+      - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - psql:/var/log/postgresql
     ports:
     - "5044:5044"
+    environment:
+      - ELASTIC_SEARCH_HOST=elasticsearch:9200
+      - LOGS_ROUTE=/pierpontglobal-api/logs/
     networks:
     - elk
 
@@ -89,6 +92,7 @@ services:
     command: bin/start_rails_docker
     volumes:
     - .:/pierpontglobal-api
+    - logs:/pierpontglobal-api/log
     environment:
     - DB_HOST=psql
     - DB_PASSWORD=qusUt1i9obru4ISTUG2f
@@ -113,4 +117,6 @@ volumes:
   nginx:
     driver: local
   redis:
+    driver: local
+  logs:
     driver: local
