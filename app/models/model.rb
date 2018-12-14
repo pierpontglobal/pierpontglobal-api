@@ -3,7 +3,7 @@ class Model < ApplicationRecord
 
   scope :sanitized, lambda {
     select("#{Model.table_name}.name AS car_model")
-      .joins(:maker)
+      .left_joins(:maker)
       .merge(Maker.sanitized)
   }
 

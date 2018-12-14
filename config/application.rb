@@ -37,8 +37,7 @@ module PierpontglobalApi
 
     config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 
-    config.api_only   = true
-    config.log_level  = :info
+    config.api_only = true
 
     ### FILE LOGGING
     log_dir = File.expand_path(File.join("#{Rails.root}/log/",
@@ -50,9 +49,6 @@ module PierpontglobalApi
 
     config.semantic_logger.add_appender(file_name: logfile.path, formatter: :json)
     config.semantic_logger.application = 'PierpontGlobalAPI'
-
-    config.colorize_logging = false
-    config.rails_semantic_logger.format = :json
 
     Minfraud.configure do |c|
       c.license_key = ENV['MAX_MIND_KEY']

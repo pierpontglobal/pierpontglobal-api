@@ -12,7 +12,7 @@ class Car < ApplicationRecord
   scope :limit_search, lambda { |offset = 0, limit = 100|
     offset(offset)
       .limit(limit)
-      .uniq(:id)
+      .distinct
   }
 
   scope :sanitized, lambda {
@@ -28,14 +28,27 @@ class Car < ApplicationRecord
            :condition,
            :engine,
            :trim)
-      .joins(:model).merge(Model.sanitized)
-      .joins(:fuel_type).merge(FuelType.sanitized)
-      .joins(:interior_color).merge(Color.sanitized('colors', 'interior'))
-      .joins(:exterior_color).merge(Color.sanitized('exterior_colors_cars',
-                                                    'exterior'))
-      .joins(:body_style).merge(BodyStyle.sanitized)
-      .joins(:vehicle_type).merge(VehicleType.sanitized)
-      .joins(:seller_types).merge(SellerType.sanitized)
+      .left_joins(:model).merge(Model.sanitized)
+      .left_joins(:fuel_type).merge(FuelType.sanitized)
+      .left_joins(:interior_color).merge(Color.sanitized('colors', 'interior'))
+      .left_joins(:exterior_color).merge(Color.sanitized('exterior_colors_cars',
+                                                         'exterior'))
+      .left_joins(:body_style).merge(BodyStyle.sanitized)
+      .left_joins(:vehicle_type).merge(VehicleType.sanitized)
+      .left_joins(:seller_types).merge(SellerType.sanitized)
+      .group(
+        'cars.id',
+        :car_model,
+        :car_maker,
+        :car_fuel,
+        :color_name_interior,
+        :color_hex_interior,
+        :color_name_exterior,
+        :color_hex_exterior,
+        :car_body_style,
+        :car_vehicle_type,
+        :car_type_code
+      )
   }
 
   scope :newest, lambda {
