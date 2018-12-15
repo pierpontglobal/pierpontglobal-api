@@ -1,9 +1,14 @@
 filebeat.prospectors:
   - input_type: log
-    paths: ["${LOGS_ROUTE}/PierpontglobalApi/*"]
+    paths: ["${LOGS_ROUTE}/PierpontglobalApi.log"]
     json.keys_under_root: true
     fields:
       app_name: api
+  - input_type: log
+    paths: ["${LOGS_ROUTE}/PierpontglobalHealth.log"]
+    json.keys_under_root: true
+    fields:
+      app_name: health
 
 output.elasticsearch:
   hosts: ["${ELASTIC_SEARCH_HOST}"]

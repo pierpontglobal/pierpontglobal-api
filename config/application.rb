@@ -4,7 +4,6 @@ require_relative 'boot'
 
 require 'rails'
 require 'socket'
-# Pick the frameworks you want:
 require 'active_model/railtie'
 require 'active_job/railtie'
 require 'active_record/railtie'
@@ -13,12 +12,9 @@ require 'action_controller/railtie'
 require 'action_mailer/railtie'
 require 'action_view/railtie'
 require 'action_cable/engine'
-# require "sprockets/railtie"
 require 'rails/test_unit/railtie'
 require 'rails_semantic_logger'
 
-# Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :develo pment, or :production.
 Bundler.require(*Rails.groups)
 
 module PierpontglobalApi
@@ -40,16 +36,13 @@ module PierpontglobalApi
 
     config.api_only = true
 
-    ### FILE LOGGING
-    log_dir = File.expand_path(File.join("#{Rails.root}/log/",
-                                         Rails.application.class.parent_name))
-    FileUtils.mkdir_p(log_dir)
-    path = File.join(log_dir, "#{Rails.env}.log")
-    logfile = File.open(path, 'a')
-    logfile.sync = true
+    app_name = 'PierpontglobalApi'
 
-    config.semantic_logger.add_appender(file_name: logfile.path, formatter: :json)
-    config.semantic_logger.application = 'PierpontGlobalAPI'
+    config.semantic_logger.add_appender(
+      appender: :elasticsearch,
+      url: (ENV['ELASTIC_SEARCH_URL']).to_s
+    )
+    config.semantic_logger.application = app_name
 
     Minfraud.configure do |c|
       c.license_key = ENV['MAX_MIND_KEY']
@@ -76,12 +69,11 @@ module PierpontglobalApi
     aws_client_es = Aws::ElasticsearchService::Client.new
     elasticsearch_domain = aws_client_es.describe_elasticsearch_domain_config(domain_name: 'kibana').first
     access_policy = JSON.parse(elasticsearch_domain.domain_config.access_policies.options)
-    ip_address = `curl http://checkip.amazonaws.com/`
+    ip_address = `curl -s http://checkip.amazonaws.com/`
     ip_address.delete!("\n")
     access_policy['Statement'][1]['Condition']['IpAddress']['aws:SourceIp'].append(ip_address)
     aws_client_es.update_elasticsearch_domain_config(domain_name: 'kibana', access_policies: access_policy.to_json)
 
-    puts access_policy
 
   end
 end

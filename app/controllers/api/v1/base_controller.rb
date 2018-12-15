@@ -10,13 +10,9 @@ module Api
       skip_before_action :doorkeeper_authorize!, only: :health
       skip_before_action :current_resource_owner, only: :health
 
-      def twilio_client
+      def twilio_client; end
 
-      end
-
-      def authy_client
-
-      end
+      def authy_client; end
 
       def health
         render json: { status: 'healthy' }, status: :ok
