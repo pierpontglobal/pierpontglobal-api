@@ -3,6 +3,7 @@
 require_relative 'boot'
 
 require 'rails'
+require 'socket'
 # Pick the frameworks you want:
 require 'active_model/railtie'
 require 'active_job/railtie'
@@ -70,5 +71,17 @@ module PierpontglobalApi
         end
       end
     end
+
+    # Register ip address to the access policy
+    aws_client_es = Aws::ElasticsearchService::Client.new
+    elasticsearch_domain = aws_client_es.describe_elasticsearch_domain_config(domain_name: 'kibana').first
+    access_policy = JSON.parse(elasticsearch_domain.domain_config.access_policies.options)
+    ip_address = `curl http://checkip.amazonaws.com/`
+    ip_address.delete!("\n")
+    access_policy['Statement'][1]['Condition']['IpAddress']['aws:SourceIp'].append(ip_address)
+    aws_client_es.update_elasticsearch_domain_config(domain_name: 'kibana', access_policies: access_policy.to_json)
+
+    puts access_policy
+
   end
 end

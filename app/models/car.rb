@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
+# Defines the cars model
 class Car < ApplicationRecord
+  searchkick word_middle: %i[model_name maker_name car_type]
+
+  def search_data
+    {
+      model_name: model.name,
+      maker_name: model.maker.name,
+      car_type: vehicle_type.type_code,
+      year: year,
+      timestamp: Time.now
+    }
+  end
+
   belongs_to :model, optional: true
   belongs_to :fuel_type, optional: true
   belongs_to :exterior_color, class_name: 'Color', optional: true
