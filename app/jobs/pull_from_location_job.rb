@@ -72,7 +72,7 @@ class PullFromLocationJob
   def look_for_seller_types
     types = []
     @car_info['sellerTypes'].each do |type|
-      types.push(SellerType.where(title: type).first_or_create)
+      types.push(SellerType.where(title: type.strip).first_or_create)
     end
     types
   rescue StandardError

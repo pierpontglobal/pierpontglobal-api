@@ -13,6 +13,16 @@ module Api
                             .newest,
                  status: :ok
         end
+
+        def all
+          render json: ::Car.limit_search(params[:offset], params[:limit])
+                            .sanitized,
+                 status: :ok
+        end
+
+        def query
+
+        end
       end
     end
   end

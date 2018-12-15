@@ -3,6 +3,7 @@
 require_relative 'boot'
 
 require 'rails'
+require 'socket'
 # Pick the frameworks you want:
 require 'active_model/railtie'
 require 'active_job/railtie'
@@ -37,8 +38,7 @@ module PierpontglobalApi
 
     config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 
-    config.api_only   = true
-    config.log_level  = :info
+    config.api_only = true
 
     ### FILE LOGGING
     log_dir = File.expand_path(File.join("#{Rails.root}/log/",
@@ -50,9 +50,6 @@ module PierpontglobalApi
 
     config.semantic_logger.add_appender(file_name: logfile.path, formatter: :json)
     config.semantic_logger.application = 'PierpontGlobalAPI'
-
-    config.colorize_logging = false
-    config.rails_semantic_logger.format = :json
 
     Minfraud.configure do |c|
       c.license_key = ENV['MAX_MIND_KEY']
@@ -74,5 +71,17 @@ module PierpontglobalApi
         end
       end
     end
+
+    # Register ip address to the access policy
+    aws_client_es = Aws::ElasticsearchService::Client.new
+    elasticsearch_domain = aws_client_es.describe_elasticsearch_domain_config(domain_name: 'kibana').first
+    access_policy = JSON.parse(elasticsearch_domain.domain_config.access_policies.options)
+    ip_address = `curl http://checkip.amazonaws.com/`
+    ip_address.delete!("\n")
+    access_policy['Statement'][1]['Condition']['IpAddress']['aws:SourceIp'].append(ip_address)
+    aws_client_es.update_elasticsearch_domain_config(domain_name: 'kibana', access_policies: access_policy.to_json)
+
+    puts access_policy
+
   end
 end

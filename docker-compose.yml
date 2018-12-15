@@ -92,7 +92,6 @@ services:
     command: bin/start_rails_docker
     volumes:
     - .:/pierpontglobal-api
-    - logs:/pierpontglobal-api/log
     environment:
     - DB_HOST=psql
     - DB_PASSWORD=qusUt1i9obru4ISTUG2f
@@ -117,6 +116,4 @@ volumes:
   nginx:
     driver: local
   redis:
-    driver: local
-  logs:
     driver: local
