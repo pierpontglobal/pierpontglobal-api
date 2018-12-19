@@ -10,7 +10,8 @@ class PullCarsJob
   sidekiq_options queue: 'car_pulling'
 
   def perform(*_args)
-    from_year = 2013 # TODO: This has to be modifiable
+
+    from_year = 2014 # TODO: This has to be modifiable
     limit_amount = 1000 # TODO: This has to be modifiable
 
     locations = Location.all
@@ -38,7 +39,6 @@ class PullCarsJob
   end
 
   def pull_amount(year, location, limit_amount)
-    puts "### GETTING AMOUNTS OF CARS Y: #{year} | A: #{location} ###"
 
     structure = {
       amount: 0,

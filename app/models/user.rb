@@ -41,6 +41,13 @@ class User < ApplicationRecord
     }
   end
 
+  def set_risk_status(risk_id, status)
+    risk_notice = risk_notices.where(id: risk_id).first
+    risk_notice.status = status
+    risk_notice.save!
+    risk_notice
+  end
+
   def try_count
     attempts = failed_attempts
     self.failed_attempts = attempts + 1
@@ -52,6 +59,16 @@ class User < ApplicationRecord
     self.failed_attempts = 0
     save!
     0
+  end
+
+  def unlock
+    self.verified = true
+    save!
+  end
+
+  def lock
+    self.verified = false
+    save!
   end
 
   def active?
