@@ -2,14 +2,23 @@
 
 # Defines the cars model
 class Car < ApplicationRecord
-  searchkick word_middle: %i[model_name maker_name car_type]
+  searchkick word_middle: [:car_search_identifiers],
+             callbacks: :async
 
   def search_data
     {
+      color: exterior_color.try(:name),
       model_name: model.name,
       maker_name: model.maker.name,
-      car_type: vehicle_type.type_code,
-      year: year,
+      car_type: vehicle_type.try(:type_code),
+      body_type: body_style.try(:name),
+      year: year.to_s,
+      doors: doors,
+      engine: engine,
+      fuel: fuel_type.try(:name),
+      transmission: transmission,
+      odometer: odometer.to_i,
+      car_search_identifiers: "#{exterior_color.name} #{year} #{model.maker.name} #{model.name} #{vehicle_type.type_code}",
       timestamp: Time.now
     }
   end

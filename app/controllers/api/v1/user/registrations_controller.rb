@@ -50,16 +50,15 @@ module Api
                    status: :bad_request
             return
           end
-
           risk_score = maxmind_report.body.risk_score
-          p risk_score
           if risk_score > 2
             # TODO: Send alert to administrator
             @data[:warnings] << { source: 'maxmind_validation',
                                   message: ::TEXT_RESPONSE[:high_risk] }
             @maxmind_notice = RiskNotice.create!(
               maxmind_risk: risk_score,
-              status: 'pending'
+              status: 'pending',
+              message: maxmind_report.body.to_json.html_safe
             )
           end
 
@@ -100,7 +99,7 @@ module Api
             else
               clean_up_passwords resource
               set_minimum_password_length
-              respond_with resource.merge(data: @data)
+              render json: resource.sanitized.merge(data: @data)
             end
             return
           end
@@ -224,8 +223,8 @@ module Api
         end
 
         def maxmind_report
-          # TODO: [IMPORTANT]* Get the real user ip address for the Minfraud verification
-          device = Minfraud::Components::Device.new(ip_address: '179.52.240.167')
+          # TODO: [IMPORTANT]* Get the real user ip address for the Minfraud verification #tree
+          device = Minfraud::Components::Device.new(ip_address: '178.101.8.186')
           email = Minfraud::Components::Email.new(
             address: params[:email],
             domain: params[:email].split('@').last

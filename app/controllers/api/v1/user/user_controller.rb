@@ -5,6 +5,10 @@ module Api
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
+
+        skip_before_action :active_user?,
+                           only: %i[change_password
+                                    modify_password]
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
                                     modify_password]
@@ -43,7 +47,9 @@ module Api
         end
 
         def set_2fa
-          @user
+          @user.require_2fa = true
+          @user.save!
+          render json: @user, status: :ok
         end
 
         def send_phone_verification

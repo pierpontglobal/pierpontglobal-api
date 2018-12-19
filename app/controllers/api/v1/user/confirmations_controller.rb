@@ -6,6 +6,7 @@ module Api
       # Handles the email confirmations
       class ConfirmationsController < Devise::ConfirmationsController
         skip_before_action :doorkeeper_authorize!
+
         # GET /resource/confirmation/new
         # def new
         #   super
@@ -21,7 +22,6 @@ module Api
           self.resource = resource_class.confirm_by_token(params[:confirmation_token])
           yield resource if block_given?
           if resource.errors.empty?
-            p resource.va
             respond_with_navigational(resource) do
               redirect_to "#{ENV['CLIENT_TARGET']}/confirmation?result=true"
             end

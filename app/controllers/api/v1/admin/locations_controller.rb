@@ -7,11 +7,14 @@ class Api::V1::Admin::LocationsController < Api::V1::AdminBaseController
            status: :ok
   end
 
-  def show; end # TODO
+  def show
+    render json: Location.all.sanitized, status: :ok
+  end
 
-  def delete; end # TODO
-
-  def update; end # TODO
+  def destroy
+    Location.find(params[:id]).destroy!
+    render json: { status: 'deleted' }, status: :ok
+  end
 
   private
 
