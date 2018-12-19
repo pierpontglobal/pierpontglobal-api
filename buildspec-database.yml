@@ -8,8 +8,8 @@ phases:
   build:
     commands:
       - echo Starting database update/create
-      - bundle exec rails db:create
-      - bundle exec rails db:migrate
+      - CONFIGURATION=true bundle exec rails db:create
+      - CONFIGURATION=true bundle exec rails db:migrate
   post_build:
     commands:
       - echo Finished migrations
