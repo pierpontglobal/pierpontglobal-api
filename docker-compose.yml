@@ -80,7 +80,7 @@ services:
     volumes:
     - redis:/var/log/redis
     ports:
-    - '6379'
+    - '6379:6379'
     networks:
     - api
 
@@ -97,12 +97,14 @@ services:
     - DB_PASSWORD=qusUt1i9obru4ISTUG2f
     - DB_USER=postgres
     - JOB_WORKER_URL=redis://redis:6379/0
+    - ELASTICSEARCH_URL=http://elasticsearch:9200
     ports:
     - "3000:3000"
     depends_on:
     - psql
     networks:
     - api
+    - elk
 
 networks:
   elk:

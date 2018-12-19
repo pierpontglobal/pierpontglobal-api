@@ -6,10 +6,4 @@ class Maker < ApplicationRecord
   scope :sanitized, lambda {
     select("#{Maker.table_name}.name AS car_maker")
   }
-
-  def search_data
-    {
-      name: name
-    }
-  end
 end
