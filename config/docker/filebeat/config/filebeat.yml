@@ -1,29 +1,20 @@
-filebeat.modules:
-- module: postgresql
-  log:
+filebeat.prospectors:
+  - input_type: log
+    paths: ["${LOGS_ROUTE}/PierpontglobalApi.log"]
+    json.keys_under_root: true
     fields:
-      service_esp: db
-    fields_under_root: true
-    enabled: true
-    var.paths: ["/var/log/postgresql/*.log"]
-- module: nginx
-  access:
+      app_name: api
+  - input_type: log
+    paths: ["${LOGS_ROUTE}/PierpontglobalHealth.log"]
+    json.keys_under_root: true
     fields:
-      service_esp: nginx
-    fields_under_root: true
-    enabled: true
-    var.paths: ["/var/log/nginx_pp/access.log"]
-  error:
-    fields:
-      service_esp: nginx
-    fields_under_root: true
-    enabled: true
-    var.paths: ["/var/log/nginx_pp/error.log"]
+      app_name: health
 
 output.elasticsearch:
-    hosts: ["elasticsearch:9200"]
-    index: "pierpont_%{[fileset.module]}-%{+yyyy.MM.dd}"
-
+  hosts: ["${ELASTIC_SEARCH_HOST}"]
+  template.name: pierpontapi_filebeat
+  template.path: pierpontapi_filebeat.template.json
+  index: "pierpont_%{[fields.app_name]}-%{+yyyy.MM.dd}"
 
 setup.template:
   name: 'pierpont_'

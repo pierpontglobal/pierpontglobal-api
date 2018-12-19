@@ -25,10 +25,14 @@ class PullFromLocationJob
   private
 
   def create_or_update(sales_cars)
+    puts sales_cars
+    p "------------------------------------------------------------------------------------"
     return if sales_cars['listings'].nil?
     sales_cars['listings'].each do |car_sale_info|
       @car_info = car_sale_info['vehicleInformation']
       @car_sale = car_sale_info['saleInformation']
+      puts car_sale_info
+      p "###################################################################################"
       car = Car.where(vin: @car_info['vin']).first_or_create!
       car.update!(
         year: @car_info['year'],
@@ -47,32 +51,31 @@ class PullFromLocationJob
         trim: @car_info['trim']
       )
       car.seller_types << look_for_seller_types
-      puts car.vin
     end
   end
 
   def look_for_body_style
-    BodyStyle.where(name: @car_info['bodyStyle']).first_or_create
+    BodyStyle.where(name: @car_info['bodyStyle']).first_or_create!
   end
 
   def look_for_color(title)
-    Color.where(name: title).first_or_create
+    Color.where(name: title).first_or_create!
   end
 
   def look_for_fuel
     fuel = @car_info['fuelType']
-    FuelType.where(name: fuel).first_or_create
+    FuelType.where(name: fuel).first_or_create!
   end
 
   def look_for_type
     type = @car_info['typeCode']
-    VehicleType.where(type_code: type).first_or_create
+    VehicleType.where(type_code: type).first_or_create!
   end
 
   def look_for_seller_types
     types = []
     @car_info['sellerTypes'].each do |type|
-      types.push(SellerType.where(title: type).first_or_create)
+      types.push(SellerType.where(title: type.strip).first_or_create!)
     end
     types
   rescue StandardError
@@ -80,8 +83,8 @@ class PullFromLocationJob
   end
 
   def look_for_model
-    maker = Maker.where(name: @car_info['make']).first_or_create
-    model = Model.where(name: @car_info['model']).first_or_create
+    maker = Maker.where(name: @car_info['make']).first_or_create!
+    model = Model.where(name: @car_info['model']).first_or_create!
     maker.models << model
     model
   end

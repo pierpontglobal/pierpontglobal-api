@@ -45,7 +45,9 @@ Rails.application.routes.draw do
       end
 
       namespace :car do
-        get '/', to: 'car#show'
+        get '/latest', to: 'cars#latest'
+        get '/all', to: 'cars#all'
+        get '/query', to: 'cars#query'
       end
 
       namespace :blacklist do
@@ -56,8 +58,19 @@ Rails.application.routes.draw do
 
       namespace :admin do
         post '/pulling/:state', to: 'cars#change_pulling'
+
+        # Users manager
+        patch '/users/block', to: 'users#block'
         patch '/users/unblock', to: 'users#unblock'
-        resource :location
+
+        # Risk notices
+        get '/users/notices', to: 'users#maxmind_notice'
+        get '/users/notices/:status', to: 'users#maxmind_notices'
+        patch '/users/notices/resolve', to: 'users#resolve_maxmind'
+        put '/users/notices/status', to: 'users#risk_notice_status'
+
+
+        resource :locations
       end
 
     end

@@ -46,6 +46,7 @@ GEM
     ast (2.4.0)
     authy (2.7.4)
       httpclient (>= 2.5.3.3)
+    awesome_print (1.8.0)
     aws-eventstream (1.0.1)
     aws-partitions (1.122.0)
     aws-sdk-core (3.44.0)
@@ -54,6 +55,9 @@ GEM
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
     aws-sdk-ecs (1.26.0)
+      aws-sdk-core (~> 3, >= 3.39.0)
+      aws-sigv4 (~> 1.0)
+    aws-sdk-elasticsearchservice (1.15.0)
       aws-sdk-core (~> 3, >= 3.39.0)
       aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.3)
@@ -76,6 +80,14 @@ GEM
     diff-lcs (1.3)
     doorkeeper (5.0.2)
       railties (>= 4.2)
+    elasticsearch (6.1.0)
+      elasticsearch-api (= 6.1.0)
+      elasticsearch-transport (= 6.1.0)
+    elasticsearch-api (6.1.0)
+      multi_json
+    elasticsearch-transport (6.1.0)
+      faraday
+      multi_json
     erubi (1.7.1)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
@@ -100,14 +112,6 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
-    lograge (0.10.0)
-      actionpack (>= 4)
-      activesupport (>= 4)
-      railties (>= 4)
-      request_store (~> 1.0)
-    logstash-event (1.2.02)
-    logstash-logger (0.26.1)
-      logstash-event (~> 1.2)
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -148,6 +152,7 @@ GEM
     powerpack (0.1.2)
     puma (3.12.0)
     rack (2.0.6)
+    rack-cors (1.0.2)
     rack-protection (2.0.4)
       rack
     rack-test (1.1.0)
@@ -170,6 +175,9 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
+    rails_semantic_logger (4.3.2)
+      rails (>= 3.2)
+      semantic_logger (~> 4.3)
     railties (5.2.1)
       actionpack (= 5.2.1)
       activesupport (= 5.2.1)
@@ -182,8 +190,6 @@ GEM
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     redis (4.0.3)
-    request_store (1.4.1)
-      rack (>= 1.4)
     responders (2.4.0)
       actionpack (>= 4.2.0, < 5.3)
       railties (>= 4.2.0, < 5.3)
@@ -221,6 +227,12 @@ GEM
     ruby-progressbar (1.10.0)
     ruby_dep (1.5.0)
     ruby_http_client (3.3.0)
+    searchkick (3.1.2)
+      activemodel (>= 4.2)
+      elasticsearch (>= 5)
+      hashie
+    semantic_logger (4.3.1)
+      concurrent-ruby (~> 1.0)
     sendgrid-ruby (5.3.0)
       ruby_http_client (~> 3.3.0)
       sinatra (>= 1.4.7, < 3)
@@ -269,7 +281,9 @@ PLATFORMS
 
 DEPENDENCIES
   authy (~> 2.7, >= 2.7.2)
+  awesome_print
   aws-sdk-ecs
+  aws-sdk-elasticsearchservice
   bcrypt
   bootsnap (>= 1.1.0)
   byebug
@@ -279,19 +293,19 @@ DEPENDENCIES
   figaro
   jbuilder
   listen (>= 3.0.5, < 3.2)
-  lograge
-  logstash-event
-  logstash-logger
   minfraud
   paperclip (~> 6.0.0)
   pg
   puma
+  rack-cors
   rails
+  rails_semantic_logger
   rake
   redis
   rolify
   rspec-rails
   rubocop-airbnb
+  searchkick
   sendgrid-ruby
   sidekiq
   sinatra
@@ -301,8 +315,5 @@ DEPENDENCIES
   twilio-ruby (~> 5.15.0)
   tzinfo-data
 
-RUBY VERSION
-   ruby 2.5.1p57
-
 BUNDLED WITH
-   1.16.5
+   1.17.2
