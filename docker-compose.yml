@@ -1,4 +1,4 @@
-version: '3.1'
+version: '2.1'
 
 # ACTUAL CONFIGURATION
 services:
@@ -35,6 +35,11 @@ services:
     - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
     networks:
     - elk
 
@@ -101,7 +106,8 @@ services:
     ports:
     - "3000:3000"
     depends_on:
-    - psql
+      elasticsearch:
+        condition: service_healthy
     networks:
     - api
     - elk

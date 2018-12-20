@@ -6,5 +6,8 @@ gem install bundler
 bundle check || bundle install
 
 CONFIGURATION=true bundle exec sidekiq -q car_pulling -c 5 &
+CONFIGURATION=true bundle exec rails db:create
+CONFIGURATION=true bundle exec rails db:migrate
+CONFIGURATION=true bundle exec rake searchkick:reindex CLASS=Car &
 
 bundle exec rails server -b 0.0.0.0

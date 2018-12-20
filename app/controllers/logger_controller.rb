@@ -20,6 +20,8 @@ class LoggerController < Doorkeeper::TokensController
       rbj.merge!(try_count: try_count).to_json
       self.response_body = rbj.to_json
     end
+  rescue NoMethodError
+    nil
   end
 
   def log_ip
