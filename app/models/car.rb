@@ -8,8 +8,8 @@ class Car < ApplicationRecord
   def search_data
     {
       color: exterior_color.try(:name),
-      model_name: model.name,
-      maker_name: model.maker.name,
+      model_name: model.try(:name),
+      maker_name: model.try(:maker).try(:name),
       car_type: vehicle_type.try(:type_code),
       body_type: body_style.try(:name),
       year: year.to_s,

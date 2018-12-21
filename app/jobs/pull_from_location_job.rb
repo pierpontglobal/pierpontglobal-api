@@ -26,13 +26,10 @@ class PullFromLocationJob
 
   def create_or_update(sales_cars)
     puts sales_cars
-    p "------------------------------------------------------------------------------------"
     return if sales_cars['listings'].nil?
     sales_cars['listings'].each do |car_sale_info|
       @car_info = car_sale_info['vehicleInformation']
       @car_sale = car_sale_info['saleInformation']
-      puts car_sale_info
-      p "###################################################################################"
       car = Car.where(vin: @car_info['vin']).first_or_create!
       car.update!(
         year: @car_info['year'],
