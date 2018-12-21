@@ -32,12 +32,10 @@ module Api
         # TODO: Preserve risk notices.
         def resolve_maxmind
           user = ::User.find params[:id]
-          risk_notice = user
-                        .risk_notices
-                        .where(id: params[:risk_notice_id])
-                        .first.destroy!
-          render json: risk_notice_processor(risk_notice), status: :ok
-
+          user.risk_notices
+              .find(params[:risk_notice_id])
+              .destroy!
+          render json: { status: 'success' }, status: :ok
         rescue NoMethodError => e
           render json: { error: e }, status: :bad_request
         end
