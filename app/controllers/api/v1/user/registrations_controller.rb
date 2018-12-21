@@ -209,6 +209,7 @@ module Api
 
         def user_present
           user = ::User.find_by(username: params[:username])
+          user ||= ::User.find_by(email: params[:email])
           user.present?
         end
 

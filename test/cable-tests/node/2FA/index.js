@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var port = 3000;
+var port = 3001;
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/action_cable.js', (req, res) => res.sendFile(__dirname + '/action_cable.js'));

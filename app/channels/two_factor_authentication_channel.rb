@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
 class TwoFactorAuthenticationChannel < ApplicationCable::Channel
+
   def subscribed
     stream_from "two_factor_authentication_channel_#{current_user.id}"
+  end
+
+  def unsubscribed
+    # Any cleanup needed when channel is unsubscribed
   end
 
   def validate_code(params)
@@ -22,13 +27,8 @@ class TwoFactorAuthenticationChannel < ApplicationCable::Channel
       phone_number: phone_number
     )
 
-    if response.ok?
-      ActionCable.server.broadcast "two_factor_authentication_channel_#{current_user.id}",
-                                   status: response
-    else
-      ActionCable.server.broadcast "two_factor_authentication_channel_#{current_user.id}",
-                                   status: response
-    end
+    ActionCable.server.broadcast "two_factor_authentication_channel_#{current_user.id}",
+                                 status: response
   end
 
   def send_token
@@ -48,16 +48,7 @@ class TwoFactorAuthenticationChannel < ApplicationCable::Channel
       phone_number: phone_number
     )
 
-    if response.ok?
-      ActionCable.server.broadcast "two_factor_authentication_channel_#{current_user.id}",
-                                   status: response
-    else
-      ActionCable.server.broadcast "two_factor_authentication_channel_#{current_user.id}",
-                                   status: response
-    end
-  end
-
-  def unsubscribed
-    # Any cleanup needed when channel is unsubscribed
+    ActionCable.server.broadcast "two_factor_authentication_channel_#{current_user.id}",
+                                 status: response
   end
 end

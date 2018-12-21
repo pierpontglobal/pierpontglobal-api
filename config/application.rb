@@ -34,13 +34,6 @@ module PierpontglobalApi
 
     config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins '*'
-        resource '*', :headers => :any, :methods => [:get, :post, :options, :patch, :delete]
-      end
-    end
-
     config.api_only = true
 
     app_name = 'PierpontglobalApi'
@@ -84,8 +77,6 @@ module PierpontglobalApi
         locations.each do |location|
           ::Location.where(location).first_or_create!
         end
-
-        PullCarsJob.perform_at(1.hour.from_now)
       end
     end
 
