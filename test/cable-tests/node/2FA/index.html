@@ -17,7 +17,8 @@
 
     <br>
 
-    <button onclick="start_web_socket()">Connect</button>
+    <button onclick="get_notifications()">Get admin notifications</button>
+    <button onclick="connect_to_background_task()">Backgorund task management</button>
 
     <br>
     
@@ -26,12 +27,12 @@
 
     <script>
 
-        var host = 'api.pierpontglobal.com';
+        var host = '0.0.0.0:3000';
         var token = '';
 
         function authenticate(){
             $.ajax({
-                url: `https://${host}/oauth/token`,
+                url: `http://${host}/oauth/token`,
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -49,7 +50,33 @@
             })
         }
 
-        function start_web_socket(){
+        function connect_to_background_task(){
+            window.App = {};
+            window.App.cable = ActionCable.createConsumer(`ws://${host}/cable?token=${token}`);
+            window.App.tokenChannel = window.App.cable.subscriptions.create({
+                channel: 'BackgroundProcessChannel'
+            }, {
+                connected: () => {
+                    console.log(`Connected`);
+                },
+                disconnected: () => {
+                    window.App.tokenChannel.unsubscribe();
+                    console.warn(`Disconnected`);
+                },
+                received: (data) => {
+                    console.log(data);
+                },
+                rejected: () => {
+                    console.warn('Rejected!');
+                },
+                // Custom methods
+                kill_worker: function () {
+                    return this.perform("kill_worker", {id: 999});
+                }
+            })
+        }
+
+        function get_notifications(){
             window.App = {};
             window.App.cable = ActionCable.createConsumer(`wss://${host}/cable?token=${token}`);
             window.App.tokenChannel = window.App.cable.subscriptions.create({
