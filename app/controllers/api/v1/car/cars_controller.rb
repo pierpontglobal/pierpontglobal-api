@@ -8,6 +8,8 @@ module Api
         skip_before_action :doorkeeper_authorize!
         skip_before_action :active_user?
 
+        # QUERY SYSTEM
+
         def latest
           render json: ::Car.limit_search(params[:offset], params[:limit])
                             .sanitized
@@ -51,6 +53,12 @@ module Api
                               where: selector_params)
 
           render json: { size: cars.total_count, cars: cars, available_arguments: cars.aggs }, status: :ok
+        end
+
+        # CAR STATE HISTORY CONTROLLER
+
+        def log_state_change
+
         end
 
         private
