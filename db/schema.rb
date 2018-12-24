@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_21_154104) do
+ActiveRecord::Schema.define(version: 2018_12_23_162612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "adquisitions", force: :cascade do |t|
+    t.bigint "car_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id"], name: "index_adquisitions_on_car_id"
+    t.index ["user_id"], name: "index_adquisitions_on_user_id"
+  end
 
   create_table "bid_collectors", force: :cascade do |t|
     t.integer "count"
@@ -251,6 +260,8 @@ ActiveRecord::Schema.define(version: 2018_12_21_154104) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "adquisition_id"
+    t.index ["adquisition_id"], name: "index_step_logs_on_adquisition_id"
     t.index ["step_group_id"], name: "index_step_logs_on_step_group_id"
   end
 
@@ -328,6 +339,8 @@ ActiveRecord::Schema.define(version: 2018_12_21_154104) do
     t.string "type_code"
   end
 
+  add_foreign_key "adquisitions", "cars"
+  add_foreign_key "adquisitions", "users"
   add_foreign_key "bid_collectors", "bids", column: "highest_id"
   add_foreign_key "bid_collectors", "cars"
   add_foreign_key "bids", "bid_collectors"
@@ -348,6 +361,7 @@ ActiveRecord::Schema.define(version: 2018_12_21_154104) do
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "verified_by_id"
   add_foreign_key "risk_notices", "users"
+  add_foreign_key "step_logs", "adquisitions"
   add_foreign_key "step_logs", "step_groups"
   add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars"
