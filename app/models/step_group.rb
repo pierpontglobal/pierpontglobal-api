@@ -1,0 +1,2 @@
+class StepGroup < ApplicationRecord
+end

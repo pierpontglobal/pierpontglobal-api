@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -45,7 +47,7 @@ Rails.application.configure do
   config.log_level = :info
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  config.log_tags = [:request_id]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -69,4 +71,24 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  config.paperclip_defaults = {
+    storage: :s3,
+    preserve_files: true,
+    s3_credentials: {
+      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+      s3_region: ENV['AWS_REGION']
+    },
+    bucket: 'pierpontglobal-api'
+  }
+
+  # Register ip address to the access policy
+  aws_client_es = Aws::ElasticsearchService::Client.new
+  elasticsearch_domain = aws_client_es.describe_elasticsearch_domain_config(domain_name: 'kibana').first
+  access_policy = JSON.parse(elasticsearch_domain.domain_config.access_policies.options)
+  ip_address = `curl -s http://checkip.amazonaws.com/`
+  ip_address.delete!("\n")
+  access_policy['Statement'][1]['Condition']['IpAddress']['aws:SourceIp'].append(ip_address)
+  aws_client_es.update_elasticsearch_domain_config(domain_name: 'kibana', access_policies: access_policy.to_json)
 end
