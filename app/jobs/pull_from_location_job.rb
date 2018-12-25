@@ -25,7 +25,6 @@ class PullFromLocationJob
   private
 
   def create_or_update(sales_cars)
-    puts sales_cars
     return if sales_cars['listings'].nil?
     sales_cars['listings'].each do |car_sale_info|
       @car_info = car_sale_info['vehicleInformation']
