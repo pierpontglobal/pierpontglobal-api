@@ -18,8 +18,9 @@ require 'rails_semantic_logger'
 Bundler.require(*Rails.groups)
 
 module PierpontglobalApi
+  # Rails configuration
   class Application < Rails::Application
-    config.autoload_paths << "#{Rails.root}/lib"
+    config.autoload_paths += %W[#{config.root}/lib]
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
@@ -77,16 +78,11 @@ module PierpontglobalApi
         locations.each do |location|
           ::Location.where(location).first_or_create!
         end
+
+        config.after_initialize do
+          ConfigMethods.new.register_ip
+        end
       end
     end
-
-    # Register ip address to the access policy
-    aws_client_es = Aws::ElasticsearchService::Client.new
-    elasticsearch_domain = aws_client_es.describe_elasticsearch_domain_config(domain_name: 'kibana').first
-    access_policy = JSON.parse(elasticsearch_domain.domain_config.access_policies.options)
-    ip_address = `curl -s http://checkip.amazonaws.com/`
-    ip_address.delete!("\n")
-    access_policy['Statement'][1]['Condition']['IpAddress']['aws:SourceIp'].append(ip_address)
-    aws_client_es.update_elasticsearch_domain_config(domain_name: 'kibana', access_policies: access_policy.to_json)
   end
 end

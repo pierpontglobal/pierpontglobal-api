@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_08_201328) do
+ActiveRecord::Schema.define(version: 2018_12_23_162612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "adquisitions", force: :cascade do |t|
+    t.bigint "car_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id"], name: "index_adquisitions_on_car_id"
+    t.index ["user_id"], name: "index_adquisitions_on_user_id"
+  end
 
   create_table "bid_collectors", force: :cascade do |t|
     t.integer "count"
@@ -81,6 +90,18 @@ ActiveRecord::Schema.define(version: 2018_12_08_201328) do
     t.string "hex"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "file_attachments", force: :cascade do |t|
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "file_file_name"
+    t.string "file_content_type"
+    t.integer "file_file_size"
+    t.datetime "file_updated_at"
+    t.index ["owner_type", "owner_id"], name: "index_file_attachments_on_owner_type_and_owner_id"
   end
 
   create_table "filters", force: :cascade do |t|
@@ -225,6 +246,25 @@ ActiveRecord::Schema.define(version: 2018_12_08_201328) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "step_groups", force: :cascade do |t|
+    t.string "name"
+    t.integer "step_number"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "step_logs", force: :cascade do |t|
+    t.bigint "step_group_id"
+    t.text "description"
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "adquisition_id"
+    t.index ["adquisition_id"], name: "index_step_logs_on_adquisition_id"
+    t.index ["step_group_id"], name: "index_step_logs_on_step_group_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -299,6 +339,8 @@ ActiveRecord::Schema.define(version: 2018_12_08_201328) do
     t.string "type_code"
   end
 
+  add_foreign_key "adquisitions", "cars"
+  add_foreign_key "adquisitions", "users"
   add_foreign_key "bid_collectors", "bids", column: "highest_id"
   add_foreign_key "bid_collectors", "cars"
   add_foreign_key "bids", "bid_collectors"
@@ -319,6 +361,8 @@ ActiveRecord::Schema.define(version: 2018_12_08_201328) do
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "verified_by_id"
   add_foreign_key "risk_notices", "users"
+  add_foreign_key "step_logs", "adquisitions"
+  add_foreign_key "step_logs", "step_groups"
   add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars"
   add_foreign_key "users_cars", "users"

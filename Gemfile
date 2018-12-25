@@ -45,6 +45,7 @@ gem 'aws-sdk-elasticsearchservice'
 gem 'cancancan'
 gem 'devise'
 gem 'doorkeeper'
+gem 'net-ping'
 gem 'rolify'
 
 # Elastic | Smart search
