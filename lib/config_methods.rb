@@ -30,6 +30,10 @@ class ConfigMethods
     aws_client_es.update_elasticsearch_domain_config(domain_name: 'kibana', access_policies: access_policy.to_json)
   end
 
+  def reindex_cars
+    `CONFIGURATION=true bundle exec rake searchkick:reindex CLASS=Car`
+  end
+
   private
 
   def up?(host)
