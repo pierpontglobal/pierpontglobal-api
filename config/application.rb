@@ -80,7 +80,9 @@ module PierpontglobalApi
         end
 
         config.after_initialize do
-          ConfigMethods.new.register_ip
+          config_methods = ConfigMethods.new
+          config_methods.register_ip
+          config_methods.reindex_cars
         end
       end
     end
