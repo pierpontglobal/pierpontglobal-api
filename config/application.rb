@@ -82,7 +82,7 @@ module PierpontglobalApi
         config.after_initialize do
           config_methods = ConfigMethods.new
           config_methods.register_ip
-          config_methods.reindex_cars
+          config_methods.reindex_cars unless ENV['NOREINDEX']
         end
       end
     end

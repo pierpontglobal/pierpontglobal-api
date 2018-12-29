@@ -51,7 +51,7 @@ module Api
             return
           end
           risk_score = maxmind_report.body.risk_score
-          if risk_score > 2
+          if risk_score > 20
             # TODO: Send alert to administrator
             @data[:warnings] << { source: 'maxmind_validation',
                                   message: ::TEXT_RESPONSE[:high_risk] }
@@ -225,7 +225,7 @@ module Api
 
         def maxmind_report
           # TODO: [IMPORTANT]* Get the real user ip address for the Minfraud verification #tree
-          device = Minfraud::Components::Device.new(ip_address: '178.101.8.186')
+          device = Minfraud::Components::Device.new(ip_address: '152.0.182.55')
           email = Minfraud::Components::Email.new(
             address: params[:email],
             domain: params[:email].split('@').last

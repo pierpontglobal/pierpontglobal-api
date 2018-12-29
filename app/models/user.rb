@@ -17,7 +17,7 @@ class User < ApplicationRecord
                            foreign_key: :resource_owner_id,
                            dependent: :delete_all # or :destroy if you need callbacks
 
-  has_many :risk_notices
+  has_many :risk_notices, dependent: :destroy
 
   def sanitized
     {

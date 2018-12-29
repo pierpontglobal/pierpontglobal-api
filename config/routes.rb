@@ -48,6 +48,7 @@ Rails.application.routes.draw do
         get '/latest', to: 'cars#latest'
         get '/all', to: 'cars#all'
         get '/query', to: 'cars#query'
+        post '/bid', to: 'bids#increase_bid'
       end
 
       namespace :blacklist do
