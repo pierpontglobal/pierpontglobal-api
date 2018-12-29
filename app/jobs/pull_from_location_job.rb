@@ -24,13 +24,26 @@ class PullFromLocationJob
 
   private
 
+  # Creates or updates cars
   def create_or_update(sales_cars)
     return if sales_cars['listings'].nil?
     sales_cars['listings'].each do |car_sale_info|
       @car_info = car_sale_info['vehicleInformation']
       @car_sale = car_sale_info['saleInformation']
+
       car = Car.where(vin: @car_info['vin']).first_or_create!
-      car.update!(
+      car_sale_object = SaleInformation.where(car_id: car.id).first_or_create!
+      car_sale_object.update(
+        current_bid: @car_info['currentBidPrice'],
+        channel: @car_sale['channel'],
+        sale_date: @car_sale['saleDate'],
+        auction_id: @car_sale['auctionId'],
+        auction_start_date: @car_sale['auctionStartDate'],
+        auction_end_date: @car_sale['auctionEndDate'],
+        action_location: @car_sale['auctionLocation']
+      )
+
+      car.update(
         year: @car_info['year'],
         sale_date: @car_sale['saleDate'],
         odometer: @car_info['mileage'],
@@ -46,7 +59,11 @@ class PullFromLocationJob
         transmission: @car_info['transmission'].eql?('Automatic') ? true : false,
         trim: @car_info['trim']
       )
-      car.seller_types << look_for_seller_types
+
+      seller_types = look_for_seller_types
+      seller_types.each do |seller_type|
+        (car.seller_types.push seller_types) unless car.seller_types.include? seller_type
+      end
     end
   end
 

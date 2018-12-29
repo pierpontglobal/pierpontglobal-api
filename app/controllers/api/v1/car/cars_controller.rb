@@ -52,7 +52,10 @@ module Api
                               aggs: %i[engine doors car_type maker_name model_name body_type fuel transmission odometer color],
                               where: selector_params)
 
-          render json: { size: cars.total_count, cars: cars, available_arguments: cars.aggs }, status: :ok
+          render json: { size: cars.total_count,
+                         cars: cars.map(&:create_structure),
+                         available_arguments: cars.aggs
+          }, status: :ok
         end
 
         # CAR STATE HISTORY CONTROLLER
