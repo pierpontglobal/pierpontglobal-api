@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_23_162612) do
+ActiveRecord::Schema.define(version: 2018_12_27_183434) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,8 +80,8 @@ ActiveRecord::Schema.define(version: 2018_12_23_162612) do
   end
 
   create_table "cars_seller_types", id: false, force: :cascade do |t|
-    t.bigint "car_id", null: false
-    t.bigint "seller_type_id", null: false
+    t.integer "car_id", null: false
+    t.integer "seller_type_id", null: false
     t.index ["car_id", "seller_type_id"], name: "index_cars_seller_types_on_car_id_and_seller_type_id"
   end
 
@@ -240,6 +240,20 @@ ActiveRecord::Schema.define(version: 2018_12_23_162612) do
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
   end
 
+  create_table "sale_informations", force: :cascade do |t|
+    t.bigint "car_id"
+    t.string "channel"
+    t.date "sale_date"
+    t.string "auction_id"
+    t.datetime "auction_start_date"
+    t.datetime "auction_end_date"
+    t.string "action_location"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "current_bid", precision: 13, scale: 2
+    t.index ["car_id"], name: "index_sale_informations_on_car_id"
+  end
+
   create_table "seller_types", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
@@ -361,6 +375,7 @@ ActiveRecord::Schema.define(version: 2018_12_23_162612) do
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "verified_by_id"
   add_foreign_key "risk_notices", "users"
+  add_foreign_key "sale_informations", "cars"
   add_foreign_key "step_logs", "adquisitions"
   add_foreign_key "step_logs", "step_groups"
   add_foreign_key "users", "users", column: "verified_by_id"
