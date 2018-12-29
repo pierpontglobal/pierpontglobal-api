@@ -13,8 +13,6 @@ class ConfigMethods
     ip_arrays = `ecs-cli ps --cluster PierpontGlobal | awk -v ORS=, 'FNR > 1 { if($3 != "ExitCode:"){ print $3 }}'`
                 .split(',')
                 .map { |a| a.split(':')[0] }
-    ip_arrays << `curl -s http://checkip.amazonaws.com/`.delete!("\n")
-    ip_arrays = ip_arrays.uniq
     ip_arrays.each do |ip|
       SemanticLogger['configuration'].info(
         type: 'IP_REGISTRATION',
