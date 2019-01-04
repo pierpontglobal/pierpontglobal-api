@@ -25,7 +25,7 @@ class ConfigMethods
     end
 
     access_policy['Statement'][1]['Condition']['IpAddress']['aws:SourceIp'] = ip_arrays
-    aws_client_es.update_elasticsearch_domain_config(domain_name: 'kibana', access_policies: access_policy.to_json)
+    aws_client_es.update_elasticsearch_domain_config(domain_name: 'kibana', access_policies: access_policy.to_json) unless ip_arrays.blank?
   end
 
   def reindex_cars
