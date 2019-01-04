@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_27_183434) do
+ActiveRecord::Schema.define(version: 2019_01_04_033018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,6 +102,16 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
     t.integer "file_file_size"
     t.datetime "file_updated_at"
     t.index ["owner_type", "owner_id"], name: "index_file_attachments_on_owner_type_and_owner_id"
+  end
+
+  create_table "file_directions", force: :cascade do |t|
+    t.bigint "car_id"
+    t.string "route"
+    t.integer "order"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id"], name: "index_file_directions_on_cars_id"
   end
 
   create_table "filters", force: :cascade do |t|
@@ -365,6 +375,7 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
   add_foreign_key "cars", "fuel_types"
   add_foreign_key "cars", "models"
   add_foreign_key "cars", "vehicle_types"
+  add_foreign_key "file_directions", "cars"
   add_foreign_key "funds", "payments"
   add_foreign_key "funds", "users"
   add_foreign_key "models", "makers"
