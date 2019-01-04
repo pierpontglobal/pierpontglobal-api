@@ -12,7 +12,7 @@ COPY Gemfile.lock /pierpontglobal-api/Gemfile.lock
 
 COPY . /pierpontglobal-api
 
-RUN gem install bundler
+RUN gem install bundler -v 1.17.3
 RUN bundle check || bundle install
 
 CMD bundle exec rails server -b 0.0.0.0
