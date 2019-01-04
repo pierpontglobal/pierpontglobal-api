@@ -31,6 +31,8 @@ class Car < ApplicationRecord
   belongs_to :vehicle_type, optional: true
   has_and_belongs_to_many :seller_types, dependent: :destroy
   has_one :sale_information, dependent: :destroy
+  has_many :file_attachments
+  has_many :file_directions
 
   scope :limit_search, lambda { |offset = 0, limit = 100|
     offset(offset)
@@ -66,6 +68,7 @@ class Car < ApplicationRecord
       .left_joins(:body_style).merge(BodyStyle.sanitized)
       .left_joins(:vehicle_type).merge(VehicleType.sanitized)
       .left_joins(:seller_types).merge(SellerType.sanitized)
+      .left_joins(:file_directions).merge(FileDirection.sanitized)
       .joins('INNER JOIN sale_informations ON cars.id = sale_informations.car_id')
       .group(
         'cars.id',
@@ -117,7 +120,8 @@ class Car < ApplicationRecord
         color_hex_exterior: color_hex_exterior,
         car_body_style: car_body_style,
         car_vehicle_type: car_vehicle_type,
-        car_type_code: car_type_code
+        car_type_code: car_type_code,
+        images: car_images
       },
       sale_information: {
         current_bid: current_bid,

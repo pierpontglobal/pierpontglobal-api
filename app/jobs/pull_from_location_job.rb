@@ -13,7 +13,7 @@ class PullFromLocationJob
     url = URI("https://api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")
 
     req = Net::HTTP::Post.new(url.to_s)
-    req["Content-Type"] = 'application/x-www-form-urlencoded'
+    req['Content-Type'] = 'application/x-www-form-urlencoded'
     req.body = "pageSize=#{params['chunks_size']}&YEAR=#{params['year']}&LOCATION=#{params['location']}&pageNumber=#{params['index']}"
     res = Net::HTTP.start(url.host, url.port, use_ssl: url.scheme == 'https') do |http|
       http.request(req)
@@ -42,6 +42,21 @@ class PullFromLocationJob
         auction_end_date: @car_sale['auctionEndDate'],
         action_location: @car_sale['auctionLocation']
       )
+
+      images_directories = FileDirection.where(car_id: car.id)
+      unless @car_info['images'].blank?
+        if images_directories.length != @car_info['images'].try(:length)
+          images_directories.each(&:destroy!)
+          @car_info['images'].each do |image|
+            FileDirection.create!(
+              car_id: car.id,
+              route: image['largeUrl'],
+              order: image['sequence'],
+              description: image['description']
+            )
+          end
+        end
+      end
 
       car.update(
         year: @car_info['year'],
