@@ -70,6 +70,9 @@ Rails.application.routes.draw do
         patch '/users/notices/resolve', to: 'users#resolve_maxmind'
         put '/users/notices/status', to: 'users#risk_notice_status'
 
+        # Configurations
+        get '/configuration/register_ip', to: 'configuration#register_ip'
+
         resource :step_groups do
           get 'all', to: 'step_groups#all'
         end
