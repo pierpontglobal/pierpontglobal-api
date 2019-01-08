@@ -37,6 +37,10 @@ Rails.application.routes.draw do
         post '/send/phone_verification', to: 'user#send_phone_verification'
         post '/receive/phone_verification_state', to: 'user#is_phone_verified?'
 
+        get '/availability', to: 'user#verify_availability'
+        get '/subscription', to: 'user#return_subscribed_info'
+        post '/subscription', to: 'user#subscribe'
+
         # Essential for 2FA
         namespace :token do
           post 'activate', to: 'tokens#activate'
