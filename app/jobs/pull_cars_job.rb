@@ -11,7 +11,6 @@ class PullCarsJob
 
   def perform(*_args)
     register_worker(obtain_token)
-    ::Car.search_index.clean_indices
 
     from_year = 2014 # TODO: This has to be modifiable
     limit_amount = 1000 # TODO: This has to be modifiable
