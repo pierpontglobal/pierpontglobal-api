@@ -44,6 +44,9 @@ module PierpontglobalApi
       appender: :elasticsearch,
       url: (ENV['ELASTICSEARCH_URL']).to_s
     )
+    config.log_tags = {
+      ip: :remote_ip
+    }
     config.semantic_logger.application = app_name
 
     Minfraud.configure do |c|
