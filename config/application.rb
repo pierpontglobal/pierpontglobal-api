@@ -40,6 +40,7 @@ module PierpontglobalApi
     app_name = 'PierpontglobalApi'
 
     config.semantic_logger.add_appender(
+      index: 'pierpont_api',
       appender: :elasticsearch,
       url: (ENV['ELASTICSEARCH_URL']).to_s
     )
