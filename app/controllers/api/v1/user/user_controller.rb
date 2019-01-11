@@ -5,17 +5,52 @@ module Api
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
-
         skip_before_action :active_user?,
                            only: %i[change_password
-                                    modify_password]
+                                    modify_password
+                                    subscribe
+                                    verify_availability
+                                    return_subscribed_info
+                                    send_payment_status]
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
-                                    modify_password]
+                                    modify_password
+                                    subscribe
+                                    verify_availability
+                                    return_subscribed_info
+                                    send_payment_status]
 
         # Shows the current use information
         def me
           render json: @user.sanitized, status: :ok
+        end
+
+        # TODO: remove this method
+        def send_payment_status
+          user = ::User.find(params[:id])
+          user.send_payment_status
+          render json: user, status: :ok
+        end
+
+        def return_subscribed_info
+          token = params[:token]
+          render json: SubscribedUser.find_by_token(token), status: :ok
+        end
+
+        def subscribe
+          user = SubscribedUser.create!(
+            first_name: params[:first_name],
+            last_name: params[:last_name],
+            email: params[:email],
+            phone_number: params[:phone_number]
+          )
+          user.send_confirmation
+
+          render json: { status: 'Created' }, status: :created
+        end
+
+        def verify_availability
+          render json: { available: ::User.where(email: params[:email]).size <= 0 }, status: :ok
         end
 
         def is_phone_verified?
@@ -76,6 +111,7 @@ module Api
 
           render json: response, status: :ok
         end
+
         def modify_user
           @user.update(permitted_user_params)
           @user.verified = false
