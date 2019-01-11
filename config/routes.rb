@@ -24,6 +24,9 @@ Rails.application.routes.draw do
       }, skip: %i[sessions password]
 
       namespace :user do
+
+        post '/payment/status', to: 'user#send_payment_status'
+
         get '/me', to: 'user#me'
         patch '/me', to: 'user#modify_user'
         patch '/me/address', to: 'user#modify_address'

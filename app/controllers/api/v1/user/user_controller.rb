@@ -10,17 +10,26 @@ module Api
                                     modify_password
                                     subscribe
                                     verify_availability
-                                    return_subscribed_info]
+                                    return_subscribed_info
+                                    send_payment_status]
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
                                     modify_password
                                     subscribe
                                     verify_availability
-                                    return_subscribed_info]
+                                    return_subscribed_info
+                                    send_payment_status]
 
         # Shows the current use information
         def me
           render json: @user.sanitized, status: :ok
+        end
+
+        # TODO: remove this method
+        def send_payment_status
+          user = ::User.find(params[:id])
+          user.send_payment_status
+          render json: user, status: :ok
         end
 
         def return_subscribed_info
