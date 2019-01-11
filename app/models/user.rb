@@ -41,6 +41,10 @@ class User < ApplicationRecord
     }
   end
 
+  def send_payment_status
+    ::UserMailer.new.send_payment_status(self )
+  end
+
   def set_risk_status(risk_id, status)
     risk_notice = risk_notices.where(id: risk_id).first
     risk_notice.status = status
