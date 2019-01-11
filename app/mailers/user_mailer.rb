@@ -11,7 +11,29 @@ class UserMailer < ApplicationMailer
     @sg.client.mail._('send').post(request_body: data)
   end
 
+  def send_payment_status(user)
+    set_client
+    @user = user
+    template = load_payment_success_template(user)
+    data = JSON.parse(template.to_json)
+    @sg.client.mail._('send').post(request_body: data)
+  end
+
   private
+
+  def load_payment_success_template(user)
+    { personalizations: [
+      {
+        to: [email: user.email],
+        dynamic_template_data: {
+          "account_id": "P#{user.id}",
+          "user_name": "#{user.first_name} #{user.last_name}",
+          "dealer_name": 'Elbipi Auto Sales'
+        }
+      }
+    ], from: { email: ENV['SOURCE_EMAIL'] },
+      template_id: 'd-e9e5d0a366a947c2a499f128cf87fbdf' }
+  end
 
   def load_confirmation_template(token, user)
     { personalizations: [
