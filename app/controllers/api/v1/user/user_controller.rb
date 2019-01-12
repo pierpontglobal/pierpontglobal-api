@@ -11,7 +11,12 @@ module Api
                                     subscribe
                                     verify_availability
                                     return_subscribed_info
-                                    send_payment_status]
+                                    send_payment_status
+                                    retrieve_dealer
+                                    create_dealer
+                                    update_dealer
+                                    log_out
+                                    me]
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
                                     modify_password
@@ -48,6 +53,48 @@ module Api
 
           render json: { status: 'Created' }, status: :created
         end
+
+        def log_out
+          @user.invalidate_session!
+          render json: { status: 'Invalidated' }, status: :ok
+        end
+
+        def create_dealer
+          dealer = ::Dealer.create!(
+            name: params[:name],
+            latitude: params[:latitude],
+            longitude: params[:longitude],
+            phone_number: params[:phone_number],
+            country: params[:country],
+            city: params[:city],
+            address1: params[:address1],
+            address2: params[:address2],
+            user: @user
+          )
+
+          render json: dealer, status: :created
+        end
+
+        def update_dealer
+          @user.dealer.update!(params.permit(
+                                 :name,
+                                 :latitude,
+                                 :longitude,
+                                 :phone_number,
+                                 :country,
+                                 :city,
+                                 :address1,
+                                 :address2
+                               ))
+          render json: @user.dealer, status: :ok
+        end
+
+        def retrieve_dealer
+          render json: Dealer.find_by(user: @user), status: :ok
+        end
+
+        # TODO: Allow the user to remove a dealer
+        def remove_dealer; end
 
         def verify_availability
           render json: { available: ::User.where(email: params[:email]).size <= 0 }, status: :ok

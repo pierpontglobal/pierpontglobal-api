@@ -18,6 +18,7 @@ class User < ApplicationRecord
                            dependent: :delete_all # or :destroy if you need callbacks
 
   has_many :risk_notices, dependent: :destroy
+  has_one :dealer
 
   def sanitized
     {
@@ -86,6 +87,12 @@ class User < ApplicationRecord
     append_condition(status, ::TEXT_RESPONSE[:high_risk]) unless risk_notices.empty?
 
     status
+  end
+
+  def invalidate_session!
+    self.access_tokens.each do |session|
+      session.destroy!
+    end
   end
 
   private

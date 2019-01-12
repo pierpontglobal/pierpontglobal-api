@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_07_165827) do
+ActiveRecord::Schema.define(version: 2019_01_12_195819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,6 +90,21 @@ ActiveRecord::Schema.define(version: 2019_01_07_165827) do
     t.string "hex"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "dealers", force: :cascade do |t|
+    t.string "name"
+    t.decimal "latitude", precision: 12, scale: 8
+    t.decimal "longitude", precision: 12, scale: 8
+    t.bigint "user_id"
+    t.string "phone_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "country"
+    t.string "city"
+    t.string "address1"
+    t.string "address2"
+    t.index ["user_id"], name: "index_dealers_on_user_id"
   end
 
   create_table "file_attachments", force: :cascade do |t|
@@ -386,6 +401,7 @@ ActiveRecord::Schema.define(version: 2019_01_07_165827) do
   add_foreign_key "cars", "fuel_types"
   add_foreign_key "cars", "models"
   add_foreign_key "cars", "vehicle_types"
+  add_foreign_key "dealers", "users"
   add_foreign_key "file_directions", "cars"
   add_foreign_key "funds", "payments"
   add_foreign_key "funds", "users"
