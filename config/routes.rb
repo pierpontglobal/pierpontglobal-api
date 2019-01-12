@@ -31,6 +31,8 @@ Rails.application.routes.draw do
         patch '/me', to: 'user#modify_user'
         patch '/me/address', to: 'user#modify_address'
 
+        post '/invalidate', to: 'user#log_out'
+
         put '/me/images', to: 'user#add_image'
         delete '/me/images', to: 'user#remove_image'
 
@@ -43,6 +45,10 @@ Rails.application.routes.draw do
         get '/availability', to: 'user#verify_availability'
         get '/subscription', to: 'user#return_subscribed_info'
         post '/subscription', to: 'user#subscribe'
+
+        get '/dealer', to: 'user#retrieve_dealer'
+        post '/dealer', to: 'user#create_dealer'
+        patch '/dealer', to: 'user#update_dealer'
 
         # Essential for 2FA
         namespace :token do
