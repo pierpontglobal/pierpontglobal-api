@@ -43,8 +43,8 @@ Rails.application.routes.draw do
         post '/receive/phone_verification_state', to: 'user#phone_verified?'
 
         get '/availability', to: 'user#verify_availability'
-        get '/subscription', to: 'subscriptions#return_subscribed_info'
-        post '/subscription', to: 'subscriptions#subscribe'
+        get '/subscription', to: 'user#return_subscribed_info'
+        post '/subscription', to: 'user#subscribe'
 
         namespace :dealers do
           get '/', to: 'dealers#retrieve_dealer'
