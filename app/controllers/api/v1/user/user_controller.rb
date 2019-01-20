@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
+require 'stripe'
+
 module Api
   module V1
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
         skip_before_action :active_user?,
-                           only: %i[change_password
+                           only: %i[default_card_source
+                                    change_password
                                     modify_password
                                     subscribe
                                     verify_availability
                                     return_subscribed_info
                                     send_payment_status
-                                    retrieve_dealer
-                                    create_dealer
-                                    update_dealer
                                     log_out
-                                    me]
+                                    info]
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
                                     modify_password
@@ -25,16 +25,20 @@ module Api
                                     return_subscribed_info
                                     send_payment_status]
 
-        # Shows the current use information
-        def me
-          render json: @user.sanitized, status: :ok
-        end
+        Stripe.api_key = ENV['STRIPE_KEY']
 
+        ############################################################################################
         # TODO: remove this method
         def send_payment_status
           user = ::User.find(params[:id])
           user.send_payment_status
           render json: user, status: :ok
+        end
+        ############################################################################################
+
+        # Shows the current use information
+        def info
+          render json: @user.sanitized, status: :ok
         end
 
         def return_subscribed_info
@@ -59,48 +63,11 @@ module Api
           render json: { status: 'Invalidated' }, status: :ok
         end
 
-        def create_dealer
-          dealer = ::Dealer.create!(
-            name: params[:name],
-            latitude: params[:latitude],
-            longitude: params[:longitude],
-            phone_number: params[:phone_number],
-            country: params[:country],
-            city: params[:city],
-            address1: params[:address1],
-            address2: params[:address2],
-            user: @user
-          )
-
-          render json: dealer, status: :created
-        end
-
-        def update_dealer
-          @user.dealer.update!(params.permit(
-                                 :name,
-                                 :latitude,
-                                 :longitude,
-                                 :phone_number,
-                                 :country,
-                                 :city,
-                                 :address1,
-                                 :address2
-                               ))
-          render json: @user.dealer, status: :ok
-        end
-
-        def retrieve_dealer
-          render json: Dealer.find_by(user: @user), status: :ok
-        end
-
-        # TODO: Allow the user to remove a dealer
-        def remove_dealer; end
-
         def verify_availability
           render json: { available: ::User.where(email: params[:email]).size <= 0 }, status: :ok
         end
 
-        def is_phone_verified?
+        def phone_verified?
           phone_sections = @user.phone_number.split '-'
           country_code = phone_sections[0]
           phone_number = phone_sections[1]
@@ -128,7 +95,7 @@ module Api
           render json: response, status: :ok
         end
 
-        def set_2fa
+        def set_two_factor_authentication
           @user.require_2fa = true
           @user.save!
           render json: @user, status: :ok

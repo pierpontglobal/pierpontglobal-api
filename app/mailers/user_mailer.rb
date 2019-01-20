@@ -28,7 +28,8 @@ class UserMailer < ApplicationMailer
         dynamic_template_data: {
           "account_id": "P#{user.id}",
           "user_name": "#{user.first_name} #{user.last_name}",
-          "dealer_name": 'Elbipi Auto Sales'
+          "dealer_name": 'RCarlos Services Auto Import',
+          "date": 'Enero 15, 2019'
         }
       }
     ], from: { email: ENV['SOURCE_EMAIL'] },
