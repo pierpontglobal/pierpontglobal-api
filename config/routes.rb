@@ -27,33 +27,52 @@ Rails.application.routes.draw do
 
         post '/payment/status', to: 'user#send_payment_status'
 
-        get '/me', to: 'user#me'
-        patch '/me', to: 'user#modify_user'
-        patch '/me/address', to: 'user#modify_address'
+        get '/', to: 'user#info'
+        patch '/', to: 'user#modify_user'
+        patch '/address', to: 'user#modify_address'
 
         post '/invalidate', to: 'user#log_out'
 
-        put '/me/images', to: 'user#add_image'
-        delete '/me/images', to: 'user#remove_image'
+        put '/images', to: 'user#add_image'
+        delete '/images', to: 'user#remove_image'
 
         put '/reset_password', to: 'user#modify_password'
         patch '/reset_password', to: 'user#change_password'
 
         post '/send/phone_verification', to: 'user#send_phone_verification'
-        post '/receive/phone_verification_state', to: 'user#is_phone_verified?'
+        post '/receive/phone_verification_state', to: 'user#phone_verified?'
 
         get '/availability', to: 'user#verify_availability'
-        get '/subscription', to: 'user#return_subscribed_info'
-        post '/subscription', to: 'user#subscribe'
+        get '/subscription', to: 'subscriptions#return_subscribed_info'
+        post '/subscription', to: 'subscriptions#subscribe'
 
-        get '/dealer', to: 'user#retrieve_dealer'
-        post '/dealer', to: 'user#create_dealer'
-        patch '/dealer', to: 'user#update_dealer'
+        namespace :dealers do
+          get '/', to: 'dealers#retrieve_dealer'
+          post '/', to: 'dealers#create_dealer'
+          patch '/', to: 'dealers#update_dealer'
+        end
+
+        namespace :cards do
+          get '/', to: 'cards#card_sources'
+          get '/default', to: 'cards#default_card_source'
+          post '/', to: 'cards#card_registration'
+          patch '/default', to: 'cards#change_default_card_source'
+          delete '/', to: 'cards#remove_card'
+        end
+
+        namespace :subscriptions do
+          get '/', to: 'subscriptions#current_subscription'
+          get '/view', to: 'subscriptions#subscription_view'
+          get '/payments', to: 'subscriptions#retrieve_payments'
+          post '/attach', to: 'subscriptions#attach_subscription'
+          post '/payment', to: 'subscriptions#payment'
+          patch '/renew', to: 'subscriptions#modify_renew_status'
+        end
 
         # Essential for 2FA
         namespace :token do
-          post 'activate', to: 'tokens#activate'
-          delete 'deactivate', to: 'tokens#deactivate'
+          post '/activate', to: 'tokens#activate'
+          delete '/deactivate', to: 'tokens#deactivate'
         end
       end
 

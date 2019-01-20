@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_12_195819) do
+ActiveRecord::Schema.define(version: 2019_01_14_163048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -314,6 +314,18 @@ ActiveRecord::Schema.define(version: 2019_01_12_195819) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "subscriptions", force: :cascade do |t|
+    t.bigint "user_id"
+    t.boolean "payment_status"
+    t.string "stripe_reference"
+    t.date "payment_date"
+    t.date "start_date"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -352,6 +364,7 @@ ActiveRecord::Schema.define(version: 2019_01_12_195819) do
     t.datetime "activation_code_sent_at"
     t.integer "activation_code_valid_for"
     t.string "temp_id"
+    t.string "stripe_customer"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -416,6 +429,7 @@ ActiveRecord::Schema.define(version: 2019_01_12_195819) do
   add_foreign_key "sale_informations", "cars"
   add_foreign_key "step_logs", "adquisitions"
   add_foreign_key "step_logs", "step_groups"
+  add_foreign_key "subscriptions", "users"
   add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars"
   add_foreign_key "users_cars", "users"
