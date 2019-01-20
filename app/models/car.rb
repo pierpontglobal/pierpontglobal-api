@@ -32,7 +32,7 @@ class Car < ApplicationRecord
   has_and_belongs_to_many :seller_types, dependent: :destroy
   has_one :sale_information, dependent: :destroy
   has_many :file_attachments
-  has_many :file_directions
+  has_many :file_directions, dependent: :destroy
 
   scope :limit_search, lambda { |offset = 0, limit = 100|
     offset(offset)

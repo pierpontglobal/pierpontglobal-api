@@ -29,19 +29,17 @@ class ConfigMethods
   end
 
   def reindex_cars
-    `CONFIGURATION=true bundle exec rake searchkick:reindex CLASS=Car`
+    Thread.new do
+      `CONFIGURATION=true bundle exec rake searchkick:reindex CLASS=Car`
+    end
   end
 
   private
 
-  def up?(host)
-    check = Net::Ping::External.new(host)
-    check.ping?
-  end
-
   def set_logger
     SemanticLogger.add_appender(
       appender: :elasticsearch,
+      index: 'pierpont_api',
       url: (ENV['ELASTICSEARCH_URL']).to_s
     )
   end
