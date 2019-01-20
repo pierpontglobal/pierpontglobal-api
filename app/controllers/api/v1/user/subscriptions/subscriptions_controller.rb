@@ -52,11 +52,11 @@ module Api
               active: subscription.plan.active
             }
             primary_payment_method = {
-              id: default_card.id,
-              brand: default_card.brand,
-              exp_month: default_card.exp_month,
-              exp_year: default_card.exp_year,
-              last4: default_card.last4
+              id: default_card.try(:id),
+              brand: default_card.try(:brand),
+              exp_month: default_card.try(:exp_month),
+              exp_year: default_card.try(:exp_year),
+              last4: default_card.try(:last4)
             }
             payments_history = payments.map do |payment|
               {
@@ -121,6 +121,8 @@ module Api
               interval: subscription.plan.interval,
               active: subscription.plan.active
             }, status: :ok
+          rescue
+            render json: { message: "No subscription" }, status: :ok
           end
 
           def retrieve_payments

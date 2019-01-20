@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'minfraud'
+require 'stripe'
 
 module Api
   module V1
@@ -8,6 +9,8 @@ module Api
       # Handles the registration process
       class RegistrationsController < Devise::RegistrationsController
         skip_before_action :doorkeeper_authorize!, only: :create
+
+        Stripe.api_key = ENV['STRIPE_KEY']
 
         # POST /resource
         def create
@@ -35,7 +38,7 @@ module Api
           # review it for activation.
 
           # 2) The user has to pass the manually added filters from the
-           # administrator to use the application.
+          # administrator to use the application.
 
           if local_blacklisted
             # TODO: Send alert to administrator
@@ -65,6 +68,22 @@ module Api
           else
             build_resource(@sign_up_params)
             update_risk_notice
+
+            stripe_customer = Stripe::Customer.create(
+                email: @sign_up_params[:email],
+                description: "Customer for #{@sign_up_params[:email]}"
+            )
+            resource.stripe_customer = stripe_customer.id
+            Stripe::Subscription.create(
+              customer: stripe_customer.id,
+              billing: 'send_invoice',
+              days_until_due: 30,
+              items: [
+                {
+                  plan: 'plan_ELmsSxYxjI36gE'
+                }
+              ]
+            )
 
             if params['2fa']
               ##################################################################

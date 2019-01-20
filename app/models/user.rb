@@ -18,7 +18,7 @@ class User < ApplicationRecord
                            dependent: :delete_all # or :destroy if you need callbacks
 
   has_many :risk_notices, dependent: :destroy
-  has_one :dealer
+  has_one :dealer, dependent: :destroy
 
   def sanitized
     {
