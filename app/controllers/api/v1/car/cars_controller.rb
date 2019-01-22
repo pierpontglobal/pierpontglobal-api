@@ -43,7 +43,7 @@ module Api
           selector_params[:odometer] = clean_range(params[:odometer]) if params[:odometer].present?
           selector_params[:color] = clean_array(params[:color]) if params[:color].present?
 
-          cars = ::Car.search(params[:q],
+          cars = ::Car.where("publish = ? AND expires < ?", true, Date.today).search(params[:q],
                               fields: [:car_search_identifiers],
                               limit: params[:limit],
                               offset: params[:offset],

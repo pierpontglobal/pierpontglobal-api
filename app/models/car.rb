@@ -40,6 +40,10 @@ class Car < ApplicationRecord
       .distinct
   }
 
+  scope :available_for_auction, lambda { |date|
+    select(:sale_date)
+  }
+
   scope :sanitized, lambda {
     select(:id,
            :year,
@@ -47,6 +51,7 @@ class Car < ApplicationRecord
            :odometer_unit,
            :displacement,
            :transmission,
+           :condition_report,
            :vin,
            :doors,
            :sale_date,
@@ -54,7 +59,6 @@ class Car < ApplicationRecord
            :engine,
            :trim,
            :channel,
-           :sale_date,
            :auction_id,
            :auction_start_date,
            :auction_end_date,
@@ -75,6 +79,7 @@ class Car < ApplicationRecord
         :car_model,
         :car_maker,
         :car_fuel,
+        :condition_report,
         :color_name_interior,
         :channel,
         :color_hex_interior,
@@ -121,7 +126,8 @@ class Car < ApplicationRecord
         car_body_style: car_body_style,
         car_vehicle_type: car_vehicle_type,
         car_type_code: car_type_code,
-        images: car_images
+        images: car_images,
+        cr: condition_report
       },
       sale_information: {
         current_bid: current_bid,

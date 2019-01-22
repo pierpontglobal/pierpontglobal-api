@@ -15,7 +15,7 @@ class PullFromLocationJob
 
     req = Net::HTTP::Post.new(url.to_s)
     req['Content-Type'] = 'application/x-www-form-urlencoded'
-    req.body = "pageSize=#{params['chunks_size']}&YEAR=#{params['year']}&LOCATION=#{params['location']}&pageNumber=#{params['index']}"
+    req.body = "pageSize=#{params['chunks_size']}&INVENTORY_SOURCE=57&YEAR=#{params['year']}&LOCATION=#{params['location']}&pageNumber=#{params['index']}"
     res = Net::HTTP.start(url.host, url.port, use_ssl: url.scheme == 'https') do |http|
       http.request(req)
     end
@@ -28,7 +28,7 @@ class PullFromLocationJob
   def register_worker(token)
     url = URI.parse('https://api.pierpontglobal.com/api/v1/admin/configuration/register_ip')
     req = Net::HTTP::Get.new(url.to_s)
-    req["Authorization"] = "Bearer #{token}"
+    req['Authorization'] = "Bearer #{token}"
 
     res = Net::HTTP.start(url.host, url.port,
                           use_ssl: url.scheme == 'https') do |http|
@@ -38,13 +38,13 @@ class PullFromLocationJob
   end
 
   def obtain_token
-    url = URI.parse("https://api.pierpontglobal.com/oauth/token")
+    url = URI.parse('https://api.pierpontglobal.com/oauth/token')
     req = Net::HTTP::Post.new(url.to_s)
-    req["Content-Type"] = 'application/json'
+    req['Content-Type'] = 'application/json'
     req.body = {
-        username: 'admin',
-        password: 'WefrucaT7TAhl4weNUdr',
-        grant_type: 'password'
+      username: 'admin',
+      password: 'WefrucaT7TAhl4weNUdr',
+      grant_type: 'password'
     }.to_json
 
     res = Net::HTTP.start(url.host, url.port,
@@ -60,6 +60,7 @@ class PullFromLocationJob
     sales_cars['listings'].each do |car_sale_info|
       @car_info = car_sale_info['vehicleInformation']
       @car_sale = car_sale_info['saleInformation']
+      next if @car_info['images'].blank?
 
       car = Car.where(vin: @car_info['vin']).first_or_create!
       car_sale_object = SaleInformation.where(car_id: car.id).first_or_create!
@@ -102,7 +103,8 @@ class PullFromLocationJob
         exterior_color: look_for_color(@car_info['exteriorColor']),
         body_style: look_for_body_style,
         transmission: @car_info['transmission'].eql?('Automatic') ? true : false,
-        trim: @car_info['trim']
+        trim: @car_info['trim'],
+        condition_report: @car_info['conditionGradeNumDecimal']
       )
 
       seller_types = look_for_seller_types
