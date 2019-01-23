@@ -18,7 +18,9 @@ class Car < ApplicationRecord
       fuel: fuel_type.try(:name),
       transmission: transmission,
       odometer: odometer.to_i,
-      car_search_identifiers: "#{exterior_color.try(:name)} #{year} #{model.try(:maker).try(:name)} #{model.try(:name)} #{vehicle_type.try(:type_code)}",
+      trim: trim,
+      vin: vin,
+      car_search_identifiers: "#{exterior_color.try(:name)} #{year} #{model.try(:maker).try(:name)} #{model.try(:name)} #{vehicle_type.try(:type_code)} #{vin} #{trim}",
       timestamp: Time.now
     }
   end

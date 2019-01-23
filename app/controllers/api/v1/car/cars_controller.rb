@@ -10,6 +10,10 @@ module Api
 
         # QUERY SYSTEM
 
+        def show
+          render json: ::Car.sanitized.find_by_vin(params[:vin]).create_structure, status: :ok
+        end
+
         def latest
           render json: ::Car.limit_search(params[:offset], params[:limit])
                             .sanitized
@@ -42,27 +46,26 @@ module Api
           end
           selector_params[:odometer] = clean_range(params[:odometer]) if params[:odometer].present?
           selector_params[:color] = clean_array(params[:color]) if params[:color].present?
+          selector_params[:trim] = clean_array(params[:trim]) if params[:trim].present?
+          selector_params[:year] = clean_array(params[:year]) if params[:year].present?
 
-          cars = ::Car.where("publish = ? AND expires < ?", true, Date.today).search(params[:q],
-                              fields: [:car_search_identifiers],
-                              limit: params[:limit],
-                              offset: params[:offset],
-                              operator: 'or',
-                              scope_results: ->(r) { r.sanitized },
-                              aggs: %i[engine doors car_type maker_name model_name body_type fuel transmission odometer color],
-                              where: selector_params)
+          cars = ::Car.where('auction_end_date < ?', Date.today).search(params[:q],
+                                                                        fields: [:car_search_identifiers],
+                                                                        limit: params[:limit],
+                                                                        offset: params[:offset],
+                                                                        operator: 'or',
+                                                                        scope_results: ->(r) { r.sanitized },
+                                                                        aggs: %i[engine doors car_type maker_name model_name body_type fuel transmission odometer color trim year],
+                                                                        where: selector_params)
 
           render json: { size: cars.total_count,
                          cars: cars.map(&:create_structure),
-                         available_arguments: cars.aggs
-          }, status: :ok
+                         available_arguments: cars.aggs }, status: :ok
         end
 
         # CAR STATE HISTORY CONTROLLER
 
-        def log_state_change
-
-        end
+        def log_state_change; end
 
         private
 

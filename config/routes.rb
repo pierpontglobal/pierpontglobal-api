@@ -77,6 +77,7 @@ Rails.application.routes.draw do
       end
 
       namespace :car do
+        get '/', to: 'cars#show'
         get '/latest', to: 'cars#latest'
         get '/all', to: 'cars#all'
         get '/query', to: 'cars#query'
