@@ -86,7 +86,6 @@ module PierpontglobalApi
 
     unless ENV['CONFIGURATION']
       config.after_initialize do
-        `echo ## Registering administrators ##`
 
         # DEFAULT ADMIN USER CREATION
         unless User.find_by_username('admin')
