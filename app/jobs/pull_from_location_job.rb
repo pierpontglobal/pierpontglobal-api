@@ -8,7 +8,7 @@ class PullFromLocationJob
   sidekiq_options queue: 'car_pulling'
 
   def perform(*args)
-    register_worker(obtain_token)
+    # register_worker(obtain_token)
     params = args.first
 
     url = URI("https://api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")

@@ -60,36 +60,32 @@ module PierpontglobalApi
       c.user_id = ENV['MAX_MIND_USER']
     end
 
-    `echo ## Registering IP Address`
-
-    url = URI.parse("https://api.pierpontglobal.com/oauth/token")
-    req = Net::HTTP::Post.new(url.to_s)
-    req["Content-Type"] = 'application/json'
-    req.body = {
-        username: 'admin',
-        password: 'WefrucaT7TAhl4weNUdr',
-        grant_type: 'password'
-    }.to_json
-
-    res = Net::HTTP.start(url.host, url.port,
-                          use_ssl: url.scheme == 'https') do |http|
-      http.request(req)
-    end
-    JSON.parse(res.body)['access_token']
-
-    url = URI.parse('https://api.pierpontglobal.com/api/v1/admin/configuration/register_ip')
-    req = Net::HTTP::Get.new(url.to_s)
-    req["Authorization"] = "Bearer #{JSON.parse(res.body)['access_token']}"
-
-    res = Net::HTTP.start(url.host, url.port,
-                          use_ssl: url.scheme == 'https') do |http|
-      http.request(req)
-    end
-    `echo #{res.body}`
+    #     url = URI.parse("https://api.pierpontglobal.com/oauth/token")
+    #     req = Net::HTTP::Post.new(url.to_s)
+    #     req["Content-Type"] = 'application/json'
+    #     req.body = {
+    #         username: 'admin',
+    #         password: 'WefrucaT7TAhl4weNUdr',
+    #         grant_type: 'password'
+    #     }.to_json
+    #
+    #     res = Net::HTTP.start(url.host, url.port,
+    #                           use_ssl: url.scheme == 'https') do |http|
+    #       http.request(req)
+    #     end
+    #     JSON.parse(res.body)['access_token']
+    #
+    #     url = URI.parse('https://api.pierpontglobal.com/api/v1/admin/configuration/register_ip')
+    #     req = Net::HTTP::Get.new(url.to_s)
+    #     req["Authorization"] = "Bearer #{JSON.parse(res.body)['access_token']}"
+    #
+    #     res = Net::HTTP.start(url.host, url.port,
+    #                           use_ssl: url.scheme == 'https') do |http|
+    #       http.request(req)
+    #     end
 
     unless ENV['CONFIGURATION']
       config.after_initialize do
-
         `echo ## Registering administrators ##`
 
         # DEFAULT ADMIN USER CREATION
@@ -104,8 +100,6 @@ module PierpontglobalApi
           admin_user.save!
           admin_user.add_role(:admin)
         end
-
-        `echo ## Setting up default locations ##`
 
         # DEFAULT WORKING LOCATIONS
         locations = [

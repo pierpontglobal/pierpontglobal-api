@@ -10,7 +10,7 @@ class PullCarsJob
   sidekiq_options queue: 'car_pulling'
 
   def perform(*_args)
-    register_worker(obtain_token)
+    # register_worker(obtain_token)
 
     from_year = 2014 # TODO: This has to be modifiable
     limit_amount = 1000 # TODO: This has to be modifiable
