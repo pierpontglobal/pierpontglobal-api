@@ -14,6 +14,7 @@ class PullFromLocationJob
     url = URI("https://api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")
 
     req = Net::HTTP::Post.new(url.to_s)
+
     req['Content-Type'] = 'application/x-www-form-urlencoded'
     req.body = "pageSize=#{params['chunks_size']}&INVENTORY_SOURCE=57&YEAR=#{params['year']}&LOCATION=#{params['location']}&pageNumber=#{params['index']}"
     res = Net::HTTP.start(url.host, url.port, use_ssl: url.scheme == 'https') do |http|
