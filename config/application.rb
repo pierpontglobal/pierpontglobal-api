@@ -63,6 +63,8 @@ module PierpontglobalApi
     unless ENV['CONFIGURATION']
       config.after_initialize do
 
+        `echo ## Registering administrators ##`
+
         # DEFAULT ADMIN USER CREATION
         unless User.find_by_username('admin')
           admin_user = User.new(
@@ -75,6 +77,8 @@ module PierpontglobalApi
           admin_user.save!
           admin_user.add_role(:admin)
         end
+
+        `echo ## Setting up default locations ##`
 
         # DEFAULT WORKING LOCATIONS
         locations = [
@@ -89,6 +93,8 @@ module PierpontglobalApi
         locations.each do |location|
           ::Location.where(location).first_or_create!
         end
+
+        `echo ## Registering IP Address`
 
         url = URI.parse("https://api.pierpontglobal.com/oauth/token")
         req = Net::HTTP::Post.new(url.to_s)
@@ -113,10 +119,9 @@ module PierpontglobalApi
                               use_ssl: url.scheme == 'https') do |http|
           http.request(req)
         end
-        res.body
+        `echo #{res.body}`
 
         config_methods = ConfigMethods.new
-        config_methods.register_ip
         config_methods.reindex_cars unless ENV['NOREINDEX']
       end
     end
