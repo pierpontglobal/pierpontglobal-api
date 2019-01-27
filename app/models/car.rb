@@ -20,6 +20,7 @@ class Car < ApplicationRecord
       odometer: odometer.to_i,
       trim: trim,
       vin: vin,
+      condition_report: condition_report,
       car_search_identifiers: "#{exterior_color.try(:name)} #{year} #{model.try(:maker).try(:name)} #{model.try(:name)} #{vehicle_type.try(:type_code)} #{vin} #{trim}",
       timestamp: Time.now
     }

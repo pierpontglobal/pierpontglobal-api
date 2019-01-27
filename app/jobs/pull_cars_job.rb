@@ -20,26 +20,33 @@ class PullCarsJob
     structures = []
     threads = []
 
+    release_number = GeneralConfiguration.find('pull_release').value
+
     locations.each do |location|
       years.each do |year|
-        threads << Thread.new { structures << pull_amount(year, location.mh_id, limit_amount) }
+        threads << Thread.new { structures << pull_amount(year, location.mh_id, limit_amount, release_number) }
         sleep 1
       end
     end
 
     threads.each(&:join)
 
+    # Bigger waiting time
+    bigger = 0
     structures.each do |task|
       (0..task[:divisor] - 1).each do |i|
         task[:index] = (i + 1)
+        bigger = bigger < (5 * i) ? (5 * i) : bigger
         PullFromLocationJob.perform_at((5 * i).minutes, JSON.parse(task.to_json))
       end
+      CarReindexJob.perform_at((bigger + 5).minutes, release_number)
     end
 
+    GeneralConfiguration.find('pull_release').update!(value: release_number.to_i + 1)
     PullCarsJob.perform_at(1.hour.from_now)
   end
 
-  def pull_amount(year, location, limit_amount)
+  def pull_amount(year, location, limit_amount, release_number)
 
     structure = {
       amount: 0,
@@ -66,6 +73,7 @@ class PullCarsJob
     structure[:amount] = result['totalListings']
     structure[:divisor] = (structure[:amount] / limit_amount) + 1
     structure[:chunks_size] = structure[:amount] / structure[:divisor]
+    structure[:release_number] = release_number
 
     structure
   end

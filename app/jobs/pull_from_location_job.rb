@@ -10,9 +10,7 @@ class PullFromLocationJob
   def perform(*args)
     # register_worker(obtain_token)
     params = args.first
-
     url = URI("https://api.manheim.com/isws-basic/listings?api_key=#{ENV['MANHEIM_API_KEY']}")
-
     req = Net::HTTP::Post.new(url.to_s)
 
     req['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -21,7 +19,7 @@ class PullFromLocationJob
       http.request(req)
     end
 
-    create_or_update JSON.parse(res.body)
+    create_or_update(JSON.parse(res.body), params['release_number'])
   end
 
   private
@@ -56,7 +54,7 @@ class PullFromLocationJob
   end
 
   # Creates or updates cars
-  def create_or_update(sales_cars)
+  def create_or_update(sales_cars, release_number)
     return if sales_cars['listings'].nil?
     sales_cars['listings'].each do |car_sale_info|
       @car_info = car_sale_info['vehicleInformation']
@@ -105,7 +103,8 @@ class PullFromLocationJob
         body_style: look_for_body_style,
         transmission: @car_info['transmission'].eql?('Automatic') ? true : false,
         trim: @car_info['trim'],
-        condition_report: @car_info['conditionGradeNumDecimal']
+        condition_report: @car_info['conditionGradeNumDecimal'],
+        release: release_number
       )
 
       seller_types = look_for_seller_types

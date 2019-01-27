@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_21_133422) do
+ActiveRecord::Schema.define(version: 2019_01_27_210020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 2019_01_21_133422) do
     t.string "trim"
     t.string "odometer_unit"
     t.decimal "condition_report", precision: 3, scale: 2
+    t.integer "release"
     t.index ["body_style_id"], name: "index_cars_on_body_style_id"
     t.index ["exterior_color_id"], name: "index_cars_on_exterior_color_id"
     t.index ["fuel_type_id"], name: "index_cars_on_fuel_type_id"
@@ -152,6 +153,12 @@ ActiveRecord::Schema.define(version: 2019_01_21_133422) do
     t.datetime "updated_at", null: false
     t.index ["payment_id"], name: "index_funds_on_payment_id"
     t.index ["user_id"], name: "index_funds_on_user_id"
+  end
+
+  create_table "general_configurations", primary_key: "key", id: :string, force: :cascade do |t|
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "locations", force: :cascade do |t|

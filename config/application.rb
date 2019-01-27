@@ -87,6 +87,9 @@ module PierpontglobalApi
     unless ENV['CONFIGURATION']
       config.after_initialize do
 
+        # INITIATING BASIC CONFIGURATIONS
+        GeneralConfiguration.first_or_create!(key: 'pull_release', value: '1')
+
         # DEFAULT ADMIN USER CREATION
         unless User.find_by_username('admin')
           admin_user = User.new(

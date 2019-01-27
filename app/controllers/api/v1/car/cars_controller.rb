@@ -49,14 +49,14 @@ module Api
           selector_params[:trim] = clean_array(params[:trim]) if params[:trim].present?
           selector_params[:year] = clean_array(params[:year]) if params[:year].present?
 
-          cars = ::Car.where('auction_end_date < ?', Date.today).search(params[:q],
-                                                                        fields: [:car_search_identifiers],
-                                                                        limit: params[:limit],
-                                                                        offset: params[:offset],
-                                                                        operator: 'or',
-                                                                        scope_results: ->(r) { r.sanitized },
-                                                                        aggs: %i[engine doors car_type maker_name model_name body_type fuel transmission odometer color trim year],
-                                                                        where: selector_params)
+          cars = ::Car.where(year: 2018).search(params[:q],
+                                                fields: [:car_search_identifiers],
+                                                limit: params[:limit],
+                                                offset: params[:offset],
+                                                operator: 'or',
+                                                scope_results: ->(r) { r.sanitized },
+                                                aggs: %i[engine doors car_type maker_name model_name body_type fuel transmission odometer color trim year],
+                                                where: selector_params)
 
           render json: { size: cars.total_count,
                          cars: cars.map(&:create_structure),
