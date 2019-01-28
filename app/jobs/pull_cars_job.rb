@@ -39,9 +39,9 @@ class PullCarsJob
         bigger = bigger < (5 * i) ? (5 * i) : bigger
         PullFromLocationJob.perform_at((5 * i).minutes, JSON.parse(task.to_json))
       end
-      CarReindexJob.perform_at((bigger + 5).minutes, release_number)
     end
 
+    CarReindexJob.perform_at((bigger + 5).minutes, release_number)
     GeneralConfiguration.find('pull_release').update!(value: release_number.to_i + 1)
     PullCarsJob.perform_at(1.hour.from_now)
   end
