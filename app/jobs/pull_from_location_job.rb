@@ -90,7 +90,7 @@ class PullFromLocationJob
 
       car.update(
         year: @car_info['year'],
-        sale_date: @car_sale['saleDate'],
+        sale_date: @car_sale['auctionStartDate'],
         odometer: @car_info['mileage'],
         doors: @car_info['doorCount'],
         odometer_unit: @car_info['odometerUnits'],

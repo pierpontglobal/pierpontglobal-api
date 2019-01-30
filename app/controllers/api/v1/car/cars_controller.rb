@@ -50,7 +50,8 @@ module Api
           selector_params[:color] = clean_array(params[:color]) if params[:color].present?
           selector_params[:trim] = clean_array(params[:trim]) if params[:trim].present?
           selector_params[:year] = clean_array(params[:year]) if params[:year].present?
-          selector_params[:release] = params[:release].present? ? params[:release] : (release - 1)
+          selector_params[:release] = { gte: (release - 7), lte: release }
+          selector_params[:sale_date] = { gt: Time.now }
 
           cars = ::Car.search(params[:q],
                               fields: [:car_search_identifiers],

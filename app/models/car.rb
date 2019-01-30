@@ -23,6 +23,7 @@ class Car < ApplicationRecord
       condition_report: condition_report,
       car_search_identifiers: "#{exterior_color.try(:name)} #{year} #{model.try(:maker).try(:name)} #{model.try(:name)} #{vehicle_type.try(:type_code)} #{vin} #{trim}",
       timestamp: Time.now,
+      sale_date: sale_date,
       release: release
     }
   end
