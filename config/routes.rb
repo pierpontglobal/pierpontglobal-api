@@ -93,6 +93,7 @@ Rails.application.routes.draw do
       namespace :admin do
         post '/pulling/:state', to: 'cars#change_pulling'
         post '/cars/clean', to: 'cars#clean_cars'
+        post '/cars/reindex', to: 'cars#reindex'
 
         # Users manager
         patch '/users/block', to: 'users#block'

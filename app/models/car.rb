@@ -22,7 +22,8 @@ class Car < ApplicationRecord
       vin: vin,
       condition_report: condition_report,
       car_search_identifiers: "#{exterior_color.try(:name)} #{year} #{model.try(:maker).try(:name)} #{model.try(:name)} #{vehicle_type.try(:type_code)} #{vin} #{trim}",
-      timestamp: Time.now
+      timestamp: Time.now,
+      release: release
     }
   end
 
@@ -61,6 +62,7 @@ class Car < ApplicationRecord
            :condition,
            :engine,
            :trim,
+           :release,
            :channel,
            :auction_id,
            :auction_start_date,
@@ -82,6 +84,7 @@ class Car < ApplicationRecord
         :car_model,
         :car_maker,
         :car_fuel,
+        :release,
         :condition_report,
         :color_name_interior,
         :channel,
@@ -130,7 +133,8 @@ class Car < ApplicationRecord
         car_vehicle_type: car_vehicle_type,
         car_type_code: car_type_code,
         images: car_images,
-        cr: condition_report
+        cr: condition_report,
+        release: release
       },
       sale_information: {
         current_bid: current_bid,

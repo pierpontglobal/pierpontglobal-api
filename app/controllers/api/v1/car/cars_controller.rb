@@ -32,6 +32,8 @@ module Api
           params[:offset] ||= 0
           params[:q] ||= '*'
 
+          release = GeneralConfiguration.find_by(key: 'pull_release').value.to_i
+
           selector_params = {}
           selector_params[:doors] = clean_array(params[:doors]) if params[:doors].present?
           selector_params[:car_type] = clean_array(params[:car_type]) if params[:car_type].present?
@@ -48,15 +50,16 @@ module Api
           selector_params[:color] = clean_array(params[:color]) if params[:color].present?
           selector_params[:trim] = clean_array(params[:trim]) if params[:trim].present?
           selector_params[:year] = clean_array(params[:year]) if params[:year].present?
+          selector_params[:release] = params[:release].present? ? params[:release] : (release - 1)
 
-          cars = ::Car.where(year: 2018).search(params[:q],
-                                                fields: [:car_search_identifiers],
-                                                limit: params[:limit],
-                                                offset: params[:offset],
-                                                operator: 'or',
-                                                scope_results: ->(r) { r.sanitized },
-                                                aggs: %i[engine doors car_type maker_name model_name body_type fuel transmission odometer color trim year],
-                                                where: selector_params)
+          cars = ::Car.search(params[:q],
+                              fields: [:car_search_identifiers],
+                              limit: params[:limit],
+                              offset: params[:offset],
+                              operator: 'or',
+                              scope_results: ->(r) { r.sanitized },
+                              aggs: %i[engine doors car_type maker_name model_name body_type fuel transmission odometer color trim year release],
+                              where: selector_params)
 
           render json: { size: cars.total_count,
                          cars: cars.map(&:create_structure),
