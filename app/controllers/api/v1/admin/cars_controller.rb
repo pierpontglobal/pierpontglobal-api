@@ -23,6 +23,16 @@ module Api
           end
         end
 
+        def clean_cars
+          release = GeneralConfiguration.find_by(key: 'pull_release').value
+          cars = []
+          ::Car.where("release < #{release} or release is null").each do |c|
+            cars.push(c.vin)
+            ::Car.searchkick_index.remove c
+          end
+          render json: cars, status: :ok
+        end
+
         private
 
         def stop_pulling
