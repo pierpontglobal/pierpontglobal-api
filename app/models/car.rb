@@ -39,16 +39,6 @@ class Car < ApplicationRecord
   has_many :file_attachments
   has_many :file_directions, dependent: :destroy
 
-  scope :limit_search, lambda { |offset = 0, limit = 100|
-    offset(offset)
-      .limit(limit)
-      .distinct
-  }
-
-  scope :available_for_auction, lambda { |date|
-    select(:sale_date)
-  }
-
   scope :sanitized, lambda {
     select(:id,
            :year,
@@ -102,10 +92,6 @@ class Car < ApplicationRecord
         :car_type_code,
         :current_bid
       )
-  }
-
-  scope :newest, lambda {
-    order('id DESC')
   }
 
   def create_structure

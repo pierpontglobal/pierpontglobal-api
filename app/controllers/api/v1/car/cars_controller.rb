@@ -14,9 +14,7 @@ module Api
         end
 
         def latest
-          render json: ::Car.limit_search(params[:offset], params[:limit])
-                            .sanitized
-                            .newest,
+          render json: ::Car.limit(params[:limit]).offset(params[:offset]).sanitized,
                  status: :ok
         end
 
