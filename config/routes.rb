@@ -48,7 +48,12 @@ Rails.application.routes.draw do
 
         namespace :funds do
           get '/', to: 'funds#show_funds'
+          get '/history', to: 'funds#funds_transactions'
           post '/', to: 'funds#add_funds'
+        end
+
+        namespace :transactions do
+          get '/manual-history', to: 'transactions#show_manual_transactions'
         end
 
         namespace :dealers do

@@ -76,8 +76,6 @@ class Car < ApplicationRecord
       .left_joins(:exterior_color).merge(Color.sanitized('exterior_colors_cars',
                                                          'exterior'))
       .left_joins(:body_style).merge(BodyStyle.sanitized)
-      .left_joins(:vehicle_type).merge(VehicleType.sanitized)
-      .left_joins(:seller_types).merge(SellerType.sanitized)
       .left_joins(:file_directions).merge(FileDirection.sanitized)
       .joins('INNER JOIN sale_informations ON cars.id = sale_informations.car_id')
       .group(
@@ -97,9 +95,7 @@ class Car < ApplicationRecord
         :auction_start_date,
         :car_body_style,
         :auction_end_date,
-        :car_vehicle_type,
         :action_location,
-        :car_type_code,
         :current_bid
       )
   }

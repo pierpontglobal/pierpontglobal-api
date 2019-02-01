@@ -44,6 +44,10 @@ module Api
             render json: last_record, status: :ok
           end
 
+          def funds_transactions
+            render json: @user.funds, status: :ok
+          end
+
           def request_refund
             # TODO: Allow the user to request a refund
           end
