@@ -5,7 +5,6 @@ module Api
     module Car
       # Allow the caller to administer the cars on the database
       class CarsController < Api::V1::BaseController
-        skip_before_action :doorkeeper_authorize!
         skip_before_action :active_user?
 
         # QUERY SYSTEM
