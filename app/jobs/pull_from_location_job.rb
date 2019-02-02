@@ -101,6 +101,7 @@ class PullFromLocationJob
         interior_color: look_for_color(@car_info['interiorColor']),
         exterior_color: look_for_color(@car_info['exteriorColor']),
         body_style: look_for_body_style,
+        cr_url: @car_info['crURL'],
         transmission: @car_info['transmission'].eql?('Automatic') ? true : false,
         trim: @car_info['trim'],
         condition_report: @car_info['conditionGradeNumDecimal'],

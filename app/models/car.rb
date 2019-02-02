@@ -59,6 +59,7 @@ class Car < ApplicationRecord
            :auction_start_date,
            :auction_end_date,
            :action_location,
+           :cr_url,
            :current_bid)
       .left_joins(:model).merge(Model.sanitized)
       .left_joins(:fuel_type).merge(FuelType.sanitized)
@@ -87,6 +88,7 @@ class Car < ApplicationRecord
         :auction_start_date,
         :car_body_style,
         :auction_end_date,
+        :cr_url,
         :car_vehicle_type,
         :action_location,
         :car_type_code,
@@ -121,6 +123,7 @@ class Car < ApplicationRecord
         car_type_code: car_type_code,
         images: car_images,
         cr: condition_report,
+        cr_url: cr_url,
         release: release
       },
       sale_information: {
