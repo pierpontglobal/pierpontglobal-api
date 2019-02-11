@@ -30,6 +30,7 @@ Rails.application.routes.draw do
         get '/', to: 'user#info'
         patch '/', to: 'user#modify_user'
         patch '/address', to: 'user#modify_address'
+        post '/resend-confirmation', to: 'user#resend_confirmation'
 
         post '/invalidate', to: 'user#log_out'
 
@@ -91,6 +92,9 @@ Rails.application.routes.draw do
         get '/latest', to: 'cars#latest'
         get '/all', to: 'cars#all'
         get '/query', to: 'cars#query'
+        patch '/price-request', to: 'cars#price_request'
+
+        get '/bid', to: 'bids#show'
         post '/bid', to: 'bids#increase_bid'
       end
 
@@ -139,7 +143,6 @@ Rails.application.routes.draw do
 
         resource :locations
       end
-
     end
   end
 end

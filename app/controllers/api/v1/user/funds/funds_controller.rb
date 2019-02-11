@@ -28,6 +28,7 @@ module Api
                 payment: nil,
                 balance: last_balance + params[:amount],
                 amount: params[:amount],
+                holding: last_record ? last_record.holding : 0,
                 credit: true,
                 user: @user,
                 source_id: charge.id

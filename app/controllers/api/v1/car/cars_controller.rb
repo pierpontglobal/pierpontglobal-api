@@ -24,6 +24,16 @@ module Api
                  status: :ok
         end
 
+        def price_request
+          data = {
+              user_id: @user.id,
+              vin: params['vin'],
+              action: 'query_mmr'
+          }
+          ActionCable.server.broadcast('price_query_channel_admin', data.to_json)
+          render json: { status: 'sent' }, status: :ok
+        end
+
         def query
           params[:limit] ||= 20
           params[:offset] ||= 0
@@ -53,6 +63,7 @@ module Api
           cars = ::Car.search(params[:q],
                               fields: [:car_search_identifiers],
                               limit: params[:limit],
+                              boost_by: { condition_report: { factor: 5 }, release: { factor: 10 } },
                               offset: params[:offset],
                               operator: 'or',
                               scope_results: ->(r) { r.sanitized },

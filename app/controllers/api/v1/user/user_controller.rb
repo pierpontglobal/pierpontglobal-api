@@ -16,6 +16,7 @@ module Api
                                     return_subscribed_info
                                     send_payment_status
                                     log_out
+                                    resend_confirmation
                                     info]
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
@@ -23,7 +24,8 @@ module Api
                                     subscribe
                                     verify_availability
                                     return_subscribed_info
-                                    send_payment_status]
+                                    send_payment_statu
+                                    resend_confirmation]
 
         Stripe.api_key = ENV['STRIPE_KEY']
 
@@ -39,6 +41,12 @@ module Api
         # Shows the current use information
         def info
           render json: @user.sanitized, status: :ok
+        end
+
+        def resend_confirmation
+          user = SubscribedUser.find_by(email: params[:email])
+          user.send_confirmation
+          render json: { status: 'Sent' }, status: :ok
         end
 
         def return_subscribed_info

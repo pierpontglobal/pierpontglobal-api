@@ -51,6 +51,7 @@ class Car < ApplicationRecord
            :doors,
            :sale_date,
            :condition,
+           :whole_price,
            :engine,
            :trim,
            :release,
@@ -79,6 +80,7 @@ class Car < ApplicationRecord
         :release,
         :condition_report,
         :color_name_interior,
+        :whole_price,
         :channel,
         :color_hex_interior,
         :sale_date,
@@ -127,6 +129,7 @@ class Car < ApplicationRecord
         release: release
       },
       sale_information: {
+        whole_price: whole_price,
         current_bid: current_bid,
         channel: channel,
         auction_id: auction_id,
