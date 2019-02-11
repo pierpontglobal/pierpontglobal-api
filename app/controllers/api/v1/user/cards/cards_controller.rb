@@ -34,7 +34,6 @@ module Api
               sources.each do |source|
                 card_sources << source if source.object == 'card'
               end
-              p card_sources
               render json: card_sources, status: :ok
             else
               render json: { message: 'No cards registered' }, status: :ok

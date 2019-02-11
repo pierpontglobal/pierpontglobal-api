@@ -46,6 +46,16 @@ Rails.application.routes.draw do
         get '/subscription', to: 'user#return_subscribed_info'
         post '/subscription', to: 'user#subscribe'
 
+        namespace :funds do
+          get '/', to: 'funds#show_funds'
+          get '/history', to: 'funds#funds_transactions'
+          post '/', to: 'funds#add_funds'
+        end
+
+        namespace :transactions do
+          get '/manual-history', to: 'transactions#show_manual_transactions'
+        end
+
         namespace :dealers do
           get '/', to: 'dealers#retrieve_dealer'
           post '/', to: 'dealers#create_dealer'
@@ -77,6 +87,7 @@ Rails.application.routes.draw do
       end
 
       namespace :car do
+        get '/', to: 'cars#show'
         get '/latest', to: 'cars#latest'
         get '/all', to: 'cars#all'
         get '/query', to: 'cars#query'
@@ -91,6 +102,8 @@ Rails.application.routes.draw do
 
       namespace :admin do
         post '/pulling/:state', to: 'cars#change_pulling'
+        post '/cars/clean', to: 'cars#clean_cars'
+        post '/cars/reindex', to: 'cars#reindex'
 
         # Users manager
         patch '/users/block', to: 'users#block'
@@ -111,6 +124,17 @@ Rails.application.routes.draw do
 
         resource :step_logs do
           get '/acquisition/all', to: 'step_logs#all_from_adquisition'
+        end
+
+        scope :funds do
+          post '/', to: 'funds#add_funds'
+          delete '/', to: 'funds#remove_funds'
+          get '/', to: 'funds#show_funds'
+        end
+
+        scope :transactions do
+          post '/', to: 'transactions#create_transaction'
+          delete '/', to: 'transactions#remove_transaction'
         end
 
         resource :locations
