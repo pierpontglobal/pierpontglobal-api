@@ -1,24 +1,81 @@
 # frozen_string_literal: true
 
+require 'stripe'
+
 module Api
   module V1
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
-
         skip_before_action :active_user?,
-                           only: %i[change_password
-                                    modify_password]
+                           only: %i[default_card_source
+                                    change_password
+                                    modify_password
+                                    subscribe
+                                    verify_availability
+                                    return_subscribed_info
+                                    send_payment_status
+                                    log_out
+                                    resend_confirmation
+                                    info]
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
-                                    modify_password]
+                                    modify_password
+                                    subscribe
+                                    verify_availability
+                                    return_subscribed_info
+                                    send_payment_statu
+                                    resend_confirmation]
+
+        Stripe.api_key = ENV['STRIPE_KEY']
+
+        ############################################################################################
+        # TODO: remove this method
+        def send_payment_status
+          user = ::User.find(params[:id])
+          user.send_payment_status
+          render json: user, status: :ok
+        end
+        ############################################################################################
 
         # Shows the current use information
-        def me
+        def info
           render json: @user.sanitized, status: :ok
         end
 
-        def is_phone_verified?
+        def resend_confirmation
+          user = SubscribedUser.find_by(email: params[:email])
+          user.send_confirmation
+          render json: { status: 'Sent' }, status: :ok
+        end
+
+        def return_subscribed_info
+          token = params[:token]
+          render json: SubscribedUser.find_by_token(token), status: :ok
+        end
+
+        def subscribe
+          user = SubscribedUser.create!(
+            first_name: params[:first_name],
+            last_name: params[:last_name],
+            email: params[:email],
+            phone_number: params[:phone_number]
+          )
+          user.send_confirmation
+
+          render json: { status: 'Created' }, status: :created
+        end
+
+        def log_out
+          @user.invalidate_session!
+          render json: { status: 'Invalidated' }, status: :ok
+        end
+
+        def verify_availability
+          render json: { available: ::User.where(email: params[:email]).size <= 0 }, status: :ok
+        end
+
+        def phone_verified?
           phone_sections = @user.phone_number.split '-'
           country_code = phone_sections[0]
           phone_number = phone_sections[1]
@@ -46,7 +103,7 @@ module Api
           render json: response, status: :ok
         end
 
-        def set_2fa
+        def set_two_factor_authentication
           @user.require_2fa = true
           @user.save!
           render json: @user, status: :ok
@@ -76,6 +133,7 @@ module Api
 
           render json: response, status: :ok
         end
+
         def modify_user
           @user.update(permitted_user_params)
           @user.verified = false

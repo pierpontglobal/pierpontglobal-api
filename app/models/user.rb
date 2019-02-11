@@ -18,6 +18,8 @@ class User < ApplicationRecord
                            dependent: :delete_all # or :destroy if you need callbacks
 
   has_many :risk_notices, dependent: :destroy
+  has_one :dealer, dependent: :destroy
+  has_many :funds
 
   def sanitized
     {
@@ -39,6 +41,10 @@ class User < ApplicationRecord
       require_2fa: require_2fa,
       phone_number_validated: phone_number_validated
     }
+  end
+
+  def send_payment_status
+    ::UserMailer.new.send_payment_status(self )
   end
 
   def set_risk_status(risk_id, status)
@@ -82,6 +88,12 @@ class User < ApplicationRecord
     append_condition(status, ::TEXT_RESPONSE[:high_risk]) unless risk_notices.empty?
 
     status
+  end
+
+  def invalidate_session!
+    self.access_tokens.each do |session|
+      session.destroy!
+    end
   end
 
   private

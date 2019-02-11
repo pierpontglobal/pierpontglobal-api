@@ -17,12 +17,15 @@ gem 'puma'
 gem 'rails'
 gem 'redis'
 
+# Payment services
+gem 'stripe'
+
 # Run task asynchronously
 gem 'rake'
 gem 'sidekiq'
 gem 'sinatra'
 
-# Database gems
+# Database gems``
 gem 'pg'
 
 # Documentation and good practices

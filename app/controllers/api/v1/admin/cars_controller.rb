@@ -23,6 +23,19 @@ module Api
           end
         end
 
+        def clean_cars
+          cars = []
+          ::Car.where("release < #{params[:release_no]} or release is null").each do |c|
+            cars.push(c.vin)
+            ::Car.searchkick_index.remove c
+          end
+          render json: cars, status: :ok
+        end
+
+        def reindex
+          render ::Car.reindex, json: :ok
+        end
+
         private
 
         def stop_pulling
@@ -34,7 +47,7 @@ module Api
         def start_pulling
           PullCarsJob.perform_at(1.hour.from_now)
           sq = Sidekiq::ScheduledSet.new
-          render json: {"message": 'Pulling started 💣', "on_queue": sq.count}, status: :ok
+          render json: { "message": 'Pulling started 💣', "on_queue": sq.count }, status: :ok
         end
       end
     end

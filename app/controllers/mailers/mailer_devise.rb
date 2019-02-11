@@ -16,9 +16,11 @@ module Mailers
     # Sends transactional email for confirmation instructions
     def confirmation_instructions(record, token, opts = {})
       set_client
-      data = load_confirmation_template(token, record)
-      j_data = JSON.parse(data.to_json)
-      @sg.client.mail._('send').post(request_body: j_data)
+      # if record.confirmed_at.nil?
+      #   data = load_confirmation_template(token, record)
+      #   j_data = JSON.parse(data.to_json)
+      #   @sg.client.mail._('send').post(request_body: j_data)
+      # end
     end
 
     private

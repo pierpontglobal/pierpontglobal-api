@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_27_183434) do
+ActiveRecord::Schema.define(version: 2019_02_05_030152) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,10 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
     t.string "engine"
     t.string "trim"
     t.string "odometer_unit"
+    t.decimal "condition_report", precision: 3, scale: 2
+    t.integer "release"
+    t.string "cr_url"
+    t.integer "whole_price"
     t.index ["body_style_id"], name: "index_cars_on_body_style_id"
     t.index ["exterior_color_id"], name: "index_cars_on_exterior_color_id"
     t.index ["fuel_type_id"], name: "index_cars_on_fuel_type_id"
@@ -92,6 +96,21 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "dealers", force: :cascade do |t|
+    t.string "name"
+    t.decimal "latitude", precision: 12, scale: 8
+    t.decimal "longitude", precision: 12, scale: 8
+    t.bigint "user_id"
+    t.string "phone_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "country"
+    t.string "city"
+    t.string "address1"
+    t.string "address2"
+    t.index ["user_id"], name: "index_dealers_on_user_id"
+  end
+
   create_table "file_attachments", force: :cascade do |t|
     t.string "owner_type"
     t.bigint "owner_id"
@@ -102,6 +121,16 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
     t.integer "file_file_size"
     t.datetime "file_updated_at"
     t.index ["owner_type", "owner_id"], name: "index_file_attachments_on_owner_type_and_owner_id"
+  end
+
+  create_table "file_directions", force: :cascade do |t|
+    t.bigint "car_id"
+    t.string "route"
+    t.integer "order"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id"], name: "index_file_directions_on_cars_id"
   end
 
   create_table "filters", force: :cascade do |t|
@@ -118,14 +147,23 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
   end
 
   create_table "funds", force: :cascade do |t|
-    t.decimal "past_balance", precision: 14, scale: 4
-    t.decimal "current_amount", precision: 14, scale: 4
+    t.decimal "balance", precision: 14, scale: 4
+    t.decimal "amount", precision: 14, scale: 4
     t.bigint "user_id"
     t.bigint "payment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "credit"
+    t.string "source_id"
+    t.decimal "holding", precision: 14, scale: 4
     t.index ["payment_id"], name: "index_funds_on_payment_id"
     t.index ["user_id"], name: "index_funds_on_user_id"
+  end
+
+  create_table "general_configurations", primary_key: "key", id: :string, force: :cascade do |t|
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "locations", force: :cascade do |t|
@@ -279,6 +317,28 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
     t.index ["step_group_id"], name: "index_step_logs_on_step_group_id"
   end
 
+  create_table "subscribed_users", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "phone_number"
+    t.string "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.bigint "user_id"
+    t.boolean "payment_status"
+    t.string "stripe_reference"
+    t.date "payment_date"
+    t.date "start_date"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -316,6 +376,8 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
     t.string "verification_code"
     t.datetime "activation_code_sent_at"
     t.integer "activation_code_valid_for"
+    t.string "temp_id"
+    t.string "stripe_customer"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -365,6 +427,8 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
   add_foreign_key "cars", "fuel_types"
   add_foreign_key "cars", "models"
   add_foreign_key "cars", "vehicle_types"
+  add_foreign_key "dealers", "users"
+  add_foreign_key "file_directions", "cars"
   add_foreign_key "funds", "payments"
   add_foreign_key "funds", "users"
   add_foreign_key "models", "makers"
@@ -378,6 +442,7 @@ ActiveRecord::Schema.define(version: 2018_12_27_183434) do
   add_foreign_key "sale_informations", "cars"
   add_foreign_key "step_logs", "adquisitions"
   add_foreign_key "step_logs", "step_groups"
+  add_foreign_key "subscriptions", "users"
   add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars"
   add_foreign_key "users_cars", "users"

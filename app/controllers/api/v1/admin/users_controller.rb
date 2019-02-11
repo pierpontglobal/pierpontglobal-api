@@ -5,6 +5,7 @@ module Api
     module Admin
       # Allow the administrator to manage the users
       class UsersController < Api::V1::AdminBaseController
+
         def unblock
           user = ::User.find params[:id]
           user.unlock
