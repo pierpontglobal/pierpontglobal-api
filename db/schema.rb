@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_14_163048) do
+ActiveRecord::Schema.define(version: 2019_02_05_030152) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,10 @@ ActiveRecord::Schema.define(version: 2019_01_14_163048) do
     t.string "engine"
     t.string "trim"
     t.string "odometer_unit"
+    t.decimal "condition_report", precision: 3, scale: 2
+    t.integer "release"
+    t.string "cr_url"
+    t.integer "whole_price"
     t.index ["body_style_id"], name: "index_cars_on_body_style_id"
     t.index ["exterior_color_id"], name: "index_cars_on_exterior_color_id"
     t.index ["fuel_type_id"], name: "index_cars_on_fuel_type_id"
@@ -143,14 +147,23 @@ ActiveRecord::Schema.define(version: 2019_01_14_163048) do
   end
 
   create_table "funds", force: :cascade do |t|
-    t.decimal "past_balance", precision: 14, scale: 4
-    t.decimal "current_amount", precision: 14, scale: 4
+    t.decimal "balance", precision: 14, scale: 4
+    t.decimal "amount", precision: 14, scale: 4
     t.bigint "user_id"
     t.bigint "payment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "credit"
+    t.string "source_id"
+    t.decimal "holding", precision: 14, scale: 4
     t.index ["payment_id"], name: "index_funds_on_payment_id"
     t.index ["user_id"], name: "index_funds_on_user_id"
+  end
+
+  create_table "general_configurations", primary_key: "key", id: :string, force: :cascade do |t|
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "locations", force: :cascade do |t|
