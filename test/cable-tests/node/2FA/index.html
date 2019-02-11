@@ -102,7 +102,7 @@
                 },
                 validate_code: function() {
                     console.log(document.getElementById('code_field').value);
-                    return this.perform("validate_code", {code: document.getElementById('code_field').value})
+                    return this.perform("validate_code", {code: document.getElementById('code_field').value});
                     window.App.cable.unsubscribe();
                 },
                 retrieve_notifications: function(){

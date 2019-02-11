@@ -14,6 +14,10 @@ require 'action_view/railtie'
 require 'action_cable/engine'
 require 'rails/test_unit/railtie'
 require 'rails_semantic_logger'
+require 'net/http'
+require 'uri'
+require 'json'
+require 'set'
 
 Bundler.require(*Rails.groups)
 
@@ -37,25 +41,55 @@ module PierpontglobalApi
 
     config.api_only = true
 
-    app_name = 'PierpontglobalApi'
+    Thread.new do
+      app_name = 'PierpontglobalApi'
 
-    config.semantic_logger.add_appender(
-      index: 'pierpont_api',
-      appender: :elasticsearch,
-      url: (ENV['ELASTICSEARCH_URL']).to_s
-    )
-    config.log_tags = {
-      ip: :remote_ip
-    }
-    config.semantic_logger.application = app_name
+      config.semantic_logger.add_appender(
+        index: 'pierpont_api',
+        appender: :elasticsearch,
+        url: (ENV['ELASTICSEARCH_URL']).to_s
+      )
+      config.log_tags = {
+        ip: :remote_ip
+      }
+      config.semantic_logger.application = app_name
+    end
 
     Minfraud.configure do |c|
       c.license_key = ENV['MAX_MIND_KEY']
       c.user_id = ENV['MAX_MIND_USER']
     end
 
+    #     url = URI.parse("https://api.pierpontglobal.com/oauth/token")
+    #     req = Net::HTTP::Post.new(url.to_s)
+    #     req["Content-Type"] = 'application/json'
+    #     req.body = {
+    #         username: 'admin',
+    #         password: 'WefrucaT7TAhl4weNUdr',
+    #         grant_type: 'password'
+    #     }.to_json
+    #
+    #     res = Net::HTTP.start(url.host, url.port,
+    #                           use_ssl: url.scheme == 'https') do |http|
+    #       http.request(req)
+    #     end
+    #     JSON.parse(res.body)['access_token']
+    #
+    #     url = URI.parse('https://api.pierpontglobal.com/api/v1/admin/configuration/register_ip')
+    #     req = Net::HTTP::Get.new(url.to_s)
+    #     req["Authorization"] = "Bearer #{JSON.parse(res.body)['access_token']}"
+    #
+    #     res = Net::HTTP.start(url.host, url.port,
+    #                           use_ssl: url.scheme == 'https') do |http|
+    #       http.request(req)
+    #     end
+
     unless ENV['CONFIGURATION']
       config.after_initialize do
+
+        # INITIATING BASIC CONFIGURATIONS
+        GeneralConfiguration.first_or_create!(key: 'pull_release', value: '1')
+
         # DEFAULT ADMIN USER CREATION
         unless User.find_by_username('admin')
           admin_user = User.new(
@@ -83,11 +117,8 @@ module PierpontglobalApi
           ::Location.where(location).first_or_create!
         end
 
-        config.after_initialize do
-          config_methods = ConfigMethods.new
-          config_methods.register_ip
-          config_methods.reindex_cars unless ENV['NOREINDEX']
-        end
+        config_methods = ConfigMethods.new
+        config_methods.reindex_cars unless ENV['NOREINDEX']
       end
     end
   end

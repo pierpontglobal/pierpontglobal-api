@@ -19,6 +19,7 @@ class User < ApplicationRecord
 
   has_many :risk_notices, dependent: :destroy
   has_one :dealer, dependent: :destroy
+  has_many :funds
 
   def sanitized
     {

@@ -119,7 +119,8 @@ module Api
               plan_id: subscription.plan.id,
               amount: subscription.plan.amount,
               interval: subscription.plan.interval,
-              active: subscription.plan.active
+              active: subscription.plan.active,
+              paid: (@user_stripe.invoices(paid: false).data.size < 1)
             }, status: :ok
           rescue
             render json: { message: "No subscription" }, status: :ok
