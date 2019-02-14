@@ -14,8 +14,8 @@ module Api
         # Creates a new filter
         def create
           filter = Filter.create!(
-            scope: params[:scope],
-            value: params[:value]
+              attach_vehicle_info: params[:attach_vehicle_info],
+              value: params[:value]
           )
           render json: filter, status: :ok
         rescue => e
@@ -26,7 +26,7 @@ module Api
           filter = if params[:id].present?
                      Filter.find(params[:id])
                    else
-                     Filter.where(scope: params[:scope], value: params[:value])
+                     Filter.where(scope: params[:attach_vehicle_info], value: params[:value])
                    end
           filter.update(filter_permitted_params)
         rescue => e
@@ -34,7 +34,7 @@ module Api
         end
 
         def destroy
-          filtered = Filter.where(scope: params[:scope], value: params[:value])
+          filtered = Filter.where(scope: params[:attach_vehicle_info], value: params[:value])
           filtered.first.destroy!
           render json: { status: 'successful' }, status: :ok
         rescue => e

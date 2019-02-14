@@ -6,12 +6,12 @@ class SaleInformation < ApplicationRecord
 
   scope :sanitize, lambda {
     select(
-      :channel,
-      :sale_date,
-      :action_id,
-      :action_start_date,
-      :action_end_date,
-      :auction_location
+      "#{SaleInformation.table_name}.channel",
+      "#{SaleInformation.table_name}.sale_date",
+      "#{SaleInformation.table_name}.auction_id",
+      "#{SaleInformation.table_name}.auction_start_date",
+      "#{SaleInformation.table_name}.auction_end_date",
+      "#{SaleInformation.table_name}.action_location"
     )
   }
 end
