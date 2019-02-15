@@ -5,15 +5,16 @@ module Api
     module User
       module Bids
         class BidsController < Api::V1::BaseController
-        skip_before_action :active_user?
+          skip_before_action :active_user?
 
-        def show
-          render json: ::Bid.where(user: @user).attach_vehicle_info, status: :ok
-        end
-
-        def delete
-        end
+          def show
+            render json: ::Bid.where(user: @user).attach_vehicle_info, status: :ok
           end
+
+          def delete
+            # bid = ::Bid.find_by(user_id: 47, id: 11)
+          end
+        end
       end
     end
   end
