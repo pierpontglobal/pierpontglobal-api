@@ -132,6 +132,7 @@ Rails.application.routes.draw do
           delete '/', to: 'bid#delete_bid'
           patch '/', to: 'bid#change_bid_status'
           patch '/success', to: 'bid#notify_success'
+          patch '/submitted', to: 'bid#flag_submitted'
         end
 
         resource :step_groups do
