@@ -145,11 +145,11 @@ module Api
           private
 
           def stripe_user
-            unless @user.stripe_customer
-              render json: { message: 'Not associated billable identity' }, status: :ok
-              return
-            end
             @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
+          rescue StandardError => e
+            @user.update(stripe_customer: nil)
+            render json: { message: 'Not associated billable identity', error: e }, status: :not_found
+            nil # Close request
           end
         end
       end
