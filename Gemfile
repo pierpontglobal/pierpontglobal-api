@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Requirement compliant gems
+gem 'rb-readline'
 gem 'minfraud'
 
 # MSM Managers

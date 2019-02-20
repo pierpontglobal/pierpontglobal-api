@@ -70,6 +70,7 @@ Rails.application.routes.draw do
         namespace :cards do
           get '/', to: 'cards#card_sources'
           get '/default', to: 'cards#default_card_source'
+          get '/coupon', to: 'cards#coupon'
           post '/', to: 'cards#card_registration'
           patch '/default', to: 'cards#change_default_card_source'
           delete '/', to: 'cards#remove_card'
