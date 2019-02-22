@@ -127,6 +127,11 @@ Rails.application.routes.draw do
         # Configurations
         get '/configuration/register_ip', to: 'configuration#register_ip'
 
+        namespace :administrator do
+          get '/', to: 'administrators#show'
+          get '/logs', to: 'administrators#show_logs'
+        end
+
         namespace :bid do
           get '/', to: 'bid#show_bid'
           get '/all', to: 'bid#show_bids'
