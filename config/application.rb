@@ -100,7 +100,7 @@ module PierpontglobalApi
           )
           admin_user.skip_confirmation_notification!
           admin_user.save!
-          admin_user.add_role(:admin)
+          admin_user.add_role(:super_admin)
         end
 
         # DEFAULT WORKING LOCATIONS

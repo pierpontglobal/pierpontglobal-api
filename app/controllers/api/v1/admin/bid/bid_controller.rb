@@ -28,12 +28,15 @@ module Api
                 .offset(params[:offset])
                                 .map(&:create_structure), status: :ok
             end
+
+            record_activity("Reviewing bids with flag: #{priority}")
           rescue StandardError => e
             render json: { error: e }, status: :bad_request
           end
 
           # GET: /
           def show_bid
+            record_activity("Reviewing bid with ID: #{@bid.id}")
             render json: @bid.create_structure, status: :ok
           rescue StandardError => e
             render json: { error: e }, status: :bad_request
@@ -41,6 +44,7 @@ module Api
 
           # PATCH: /
           def change_bid_status
+            record_activity("Changing bid with ID: #{@bid.id}")
             render json: { success: @bid.update!(status: params[:status]) }, status: :ok
           rescue StandardError => e
             render json: { error: e }, status: :bad_request
@@ -51,6 +55,7 @@ module Api
 
             if @bid.success == false
               render json: { error: 'Already removed bid' }, status: :bad_request
+              record_activity("Intent of removing bid with ID: #{@bid.id}")
               return
             end
 
@@ -75,6 +80,8 @@ module Api
               source_id: "Retrieved from failed bid: #{@bid.id}"
             )
 
+            record_activity("Removing bid with ID: #{@bid.id}")
+
             render json: fund_retrieval, status: :ok
           rescue StandardError => e
             render json: { error: e }, status: :bad_request
@@ -82,6 +89,7 @@ module Api
 
           # PATCH: /submitted
           def flag_submitted
+            record_activity("Flagging (#{params[:submitted]}) bid with ID: #{@bid.id}")
             render json: { success: @bid.update!(submitted: params[:submitted]) }, status: :ok
           rescue StandardError => e
             render json: { error: e }, status: :bad_request
@@ -89,6 +97,7 @@ module Api
 
           # PATCH: /success
           def notify_success
+            record_activity("Notifying (#{params[:success]}) bid with ID: #{@bid.id}")
             render json: { success: @bid.update!(success: params[:success]) }, status: :ok
           rescue StandardError => e
             render json: { error: e }, status: :bad_request

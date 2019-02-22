@@ -18,6 +18,7 @@ module Api
             user: payment.user,
             source_id: 'Manually applied'
           )
+          record_activity("Adding #{fund.amount} to user #{payment.user} funds")
           render json: fund, status: :ok
         end
 
@@ -32,6 +33,7 @@ module Api
             user: fund.user,
             source_id: 'Virtually generated'
           )
+          record_activity("Removing #{counter.amount} to user #{fund.user} funds")
           render json: counter, status: :ok
         end
 

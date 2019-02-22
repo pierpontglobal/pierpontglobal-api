@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_15_230324) do
+ActiveRecord::Schema.define(version: 2019_02_21_192444) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "activity_logs", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "browser"
+    t.string "ip_address"
+    t.string "controller"
+    t.string "action"
+    t.string "params"
+    t.string "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_activity_logs_on_user_id"
+  end
 
   create_table "adquisitions", force: :cascade do |t|
     t.bigint "car_id"
@@ -418,6 +431,7 @@ ActiveRecord::Schema.define(version: 2019_02_15_230324) do
     t.string "type_code"
   end
 
+  add_foreign_key "activity_logs", "users"
   add_foreign_key "adquisitions", "cars"
   add_foreign_key "adquisitions", "users"
   add_foreign_key "bid_collectors", "bids", column: "highest_id"
