@@ -70,6 +70,7 @@ Rails.application.routes.draw do
         namespace :cards do
           get '/', to: 'cards#card_sources'
           get '/default', to: 'cards#default_card_source'
+          get '/coupon', to: 'cards#coupon'
           post '/', to: 'cards#card_registration'
           patch '/default', to: 'cards#change_default_card_source'
           delete '/', to: 'cards#remove_card'
@@ -125,6 +126,22 @@ Rails.application.routes.draw do
 
         # Configurations
         get '/configuration/register_ip', to: 'configuration#register_ip'
+
+        namespace :administrator do
+          get '/', to: 'administrators#show'
+          get '/logs', to: 'administrators#show_logs'
+        end
+
+        namespace :bid do
+          get '/', to: 'bid#show_bid'
+          get '/all', to: 'bid#show_bids'
+          get '/collectors', to: 'bid#bid_collector'
+          get '/collectors/:bid_collector_id', to: 'bid#bid_details'
+          delete '/', to: 'bid#delete_bid'
+          patch '/', to: 'bid#change_bid_status'
+          patch '/success', to: 'bid#notify_success'
+          patch '/submitted', to: 'bid#flag_submitted'
+        end
 
         resource :step_groups do
           get 'all', to: 'step_groups#all'
