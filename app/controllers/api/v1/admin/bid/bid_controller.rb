@@ -6,7 +6,30 @@ module Api
       module Bid
         # Manages the bid process from the administrator perspective
         class BidController < Api::V1::AdminBaseController
-          before_action :set_bid, except: %w[show_bids]
+          before_action :set_bid, except: %w[show_bids bid_collector bid_details]
+
+          # GET: /collectors
+          def bid_collector
+            render json: ::BidCollector
+              .with_action_date
+              .where("auction_start_date > '#{DateTime.now}'")
+              .limit(params[:limit])
+              .offset(params[:offset])
+              .map(&:create_structure)
+          rescue StandardError => e
+            render json: e, status: :bad_request
+          end
+
+          # GET: /collectors/:bid_collector_id
+          def bid_details
+            bid_collector = ::BidCollector
+                            .with_action_date
+                            .find(params[:bid_collector_id])
+                            .create_structure
+            render json: bid_collector, status: :ok
+          rescue StandardError => e
+            render json: e, status: :not_found
+          end
 
           # GET: /all
           def show_bids
@@ -52,7 +75,6 @@ module Api
 
           # DELETE: /
           def delete_bid
-
             if @bid.success == false
               render json: { error: 'Already removed bid' }, status: :bad_request
               record_activity("Intent of removing bid with ID: #{@bid.id}")

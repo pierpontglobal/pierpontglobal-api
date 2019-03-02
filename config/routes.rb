@@ -135,6 +135,8 @@ Rails.application.routes.draw do
         namespace :bid do
           get '/', to: 'bid#show_bid'
           get '/all', to: 'bid#show_bids'
+          get '/collectors', to: 'bid#bid_collector'
+          get '/collectors/:bid_collector_id', to: 'bid#bid_details'
           delete '/', to: 'bid#delete_bid'
           patch '/', to: 'bid#change_bid_status'
           patch '/success', to: 'bid#notify_success'

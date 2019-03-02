@@ -21,9 +21,8 @@ class Bid < ApplicationRecord
 
   def create_structure
     {
-      bid_deatails: self,
+      bid_details: self,
       user: user,
-      bid_collector: bid_collector,
       car_details: Car.where(id: bid_collector.car.id).sanitized.first.create_structure
     }
   end
