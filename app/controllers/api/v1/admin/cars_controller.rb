@@ -13,6 +13,7 @@ module Api
         # Controls the pulling process
         def change_pulling
           state = params[:state]
+          record_activity("Change pulling status to: #{state}")
           case state
           when 'start'
             start_pulling
@@ -29,10 +30,12 @@ module Api
             cars.push(c.vin)
             ::Car.searchkick_index.remove c
           end
+          record_activity('Cleaning cars data set')
           render json: cars, status: :ok
         end
 
         def reindex
+          record_activity('Reloading cars from non-persistent memory')
           render ::Car.reindex, json: :ok
         end
 
