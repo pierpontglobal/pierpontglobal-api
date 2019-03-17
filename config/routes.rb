@@ -101,6 +101,8 @@ Rails.application.routes.draw do
 
         get '/bid', to: 'bids#show'
         post '/bid', to: 'bids#increase_bid'
+        patch '/bid', to: 'bids#modify_bid'
+        delete '/bid', to: 'bid#deactivate_bid'
       end
 
       namespace :blacklist do

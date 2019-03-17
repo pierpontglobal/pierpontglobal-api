@@ -6,6 +6,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Requirement compliant gems
 gem 'rb-readline'
 gem 'minfraud'
+gem 'ostruct'
 
 # MSM Managers
 gem 'authy', '~> 2.7', '>= 2.7.2'

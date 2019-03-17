@@ -5,11 +5,14 @@ module Api
     module Car
       # Control the bids
       class BidsController < Api::V1::BaseController
-        skip_before_action :active_user? # TODO: REMOVE IN PRODUCTION
+        skip_before_action :active_user?
+        before_action :set_car
+        before_action :check_window_to_modify, except: :show
+        before_action :check_amount_with_balance, except: :show
+        before_action :set_bid_collector
 
         def show
-          bid_collector = BidCollector.find_by(car_id: params['car_id'])
-          bids = bid_collector.bids
+          bids = @bid_collector.bids
           user_bids = bids.find_by(user_id: @user.id)
           throw StandardError if user_bids.blank?
           render json: user_bids, status: :ok
@@ -17,62 +20,81 @@ module Api
           render json: { message: 'No bids' }, status: :not_found
         end
 
-        def increase_bid
-          car_id = params[:car_id]
+        def deactivate_bid
+          bid_id = params[:bid_id]
+          user_bid = @user.bids.find(bid_id)
+          remove_bid(user_bid)
+        end
+
+        def modify_bid
+          bid_id = params[:bid_id]
           amount = params[:amount]
+          user_bid = @user.bids.find(bid_id)
 
-          fund_object = @user.funds.last
-          balance = fund_object.balance || 0
-          amount_fraction = amount * 10 / 100
+          remove_bid(user_bid)
+          add_bid(amount)
+        end
 
-          if amount_fraction > (balance - fund_object.holding)
-            render json: { status: 'failed',
-                           message: 'The amount submitted does not correlates with your balance' },
-                   status: :bad_request
-            return
-          end
-
-          if DateTime.now > (::Car.find(car_id).sale_information.auction_start_date - 1.hour)
-            render json: { status: 'failed',
-                           message: 'The bidding process closed' },
-                   status: :bad_request
-            return
-          end
-
-          bid_collector = BidCollector.where(car_id: car_id).first_or_create
-
-          bid = Bid.create!(
-            amount: params[:amount],
-            user: @user,
-            bid_collector: bid_collector
-          )
-
-          bid_collector.count = (bid_collector.count || 0) + 1
-          bid_collector.highest_id = bid_collector.bids.order(amount: :desc).first.id
-          bid_collector.save!
-
-          Fund.create!(
-            payment: nil,
-            balance: balance,
-            amount: 0,
-            credit: false,
-            holding: fund_object.holding + (amount * 10 / 100),
-            user: @user,
-            source_id: "On going bid: #{bid_collector.id}"
-          )
-
-          bid_collectors = ::BidCollector
-                           .with_action_date
-                           .where("auction_start_date > '#{DateTime.now}'")
-                           .limit(params[:limit])
-                           .offset(params[:offset])
-                           .map(&:create_structure)
-
-          ActionCable.server.broadcast('bid_status_channel', bid_collectors.to_json)
+        def increase_bid
+          amount = params[:amount]
+          bid = add_bid(amount)
 
           render json: { status: 'success',
                          message: bid,
                          step: 'posting' }, status: :ok
+        end
+
+        private
+
+        def set_bid_collector
+          @bid_collector = BidCollector.where(car: @car).first_or_create!
+        end
+
+        def close_proposal_with(message)
+          render json: { status: 'closed',
+                         message: message },
+                 status: :bad_request
+          nil
+        end
+
+        def check_amount_with_balance
+          amount_to_bid = params[:amount]
+          amount_fraction = amount_to_bid * 0.1 # 10% of the amount
+          user_fund = @user.fund
+
+          fail_message = 'The amount submitted does not correlates with your balance'
+          close_proposal_with(fail_message) if amount_fraction > user_fund.available
+        end
+
+        def check_window_to_modify
+          current_time = Time.now
+          bid_end_time = @car.sale_information.auction_start_date
+          bid_modification_closing_time = bid_end_time - 1.hour
+
+          fail_message = 'Passed time to modify'
+          close_proposal_with(fail_message) if current_time > bid_modification_closing_time
+        end
+
+        def set_car
+          @car = ::Car.find(params[:car_id]) if params[:car_id]
+          @car = @user.bids.find(params[:bid_id]).bid_collector.car if params[:bid_id]
+        rescue StandardError => _e
+          fail_message = 'Could not get the requested car or bid information'
+          close_proposal_with(fail_message)
+        end
+
+        def remove_bid(bid)
+          user_fund = @user.fund
+          user_fund.release_from_bid(bid)
+        end
+
+        def add_bid(amount)
+          Bid.create!(
+            amount: amount,
+            user: @user,
+            status: 'active',
+            bid_collector: @bid_collector
+          )
         end
       end
     end

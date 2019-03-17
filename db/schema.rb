@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(version: 2019_02_21_192444) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["car_id"], name: "index_file_directions_on_cars_id"
+    t.index ["car_id"], name: "index_file_directions_on_car_id"
   end
 
   create_table "filters", force: :cascade do |t|
@@ -341,6 +341,7 @@ ActiveRecord::Schema.define(version: 2019_02_21_192444) do
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_subscribed_users_on_token"
   end
 
   create_table "subscriptions", force: :cascade do |t|

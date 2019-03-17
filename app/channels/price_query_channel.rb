@@ -2,6 +2,9 @@
 
 # Manages the background task for admin
 class PriceQueryChannel < ApplicationCable::Channel
+
+  def subscribe; end
+
   def subscribed
     if current_user.has_role? :admin
       stream_from 'price_query_channel_admin'
@@ -22,6 +25,8 @@ class PriceQueryChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("price_query_channel_#{params['user']}",
                                  params.to_json)
   end
+
+  def unsubscribe; end
 
   private
 

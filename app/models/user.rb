@@ -22,6 +22,7 @@ class User < ApplicationRecord
   has_many :risk_notices, dependent: :destroy
   has_one :dealer, dependent: :destroy
   has_many :funds
+  has_many :bids
 
   def sanitized
     {
@@ -99,7 +100,11 @@ class User < ApplicationRecord
   end
 
   def assign_default_role
-    add_role(:user) if self.roles.blank?
+    add_role(:user) if roles.blank?
+  end
+
+  def fund
+    funds.last
   end
 
   private
