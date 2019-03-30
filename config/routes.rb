@@ -9,6 +9,13 @@ Rails.application.routes.draw do
     controllers tokens: 'logger'
   end
 
+  scope '/oauth' do
+    get '/application', to: 'oauth#application_name'
+    post '/application', to: 'oauth#create_application'
+    post '/login', to: 'oauth#authenticate'
+    post '/user', to: 'oauth#authorized_user'
+  end
+
   mount ActionCable.server => '/cable'
 
   # Relative to the routes that belongs to the API
