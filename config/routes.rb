@@ -16,6 +16,12 @@ Rails.application.routes.draw do
     post '/user', to: 'oauth#authorized_user'
   end
 
+  namespace :oauth do
+    namespace :cars do
+      get '/:vin', to: 'cars#show'
+    end
+  end
+
   mount ActionCable.server => '/cable'
 
   # Relative to the routes that belongs to the API

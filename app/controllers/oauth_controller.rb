@@ -46,4 +46,19 @@ class OauthController < ApplicationController
   rescue StandardError => _e
     render json: 'Wrong credentials.', status: :unauthorized
   end
+
+  private
+
+  def authenticate_app
+    pk = params[:pk]
+    sk = params[:sk]
+    uuid = params[:uuid]
+
+    @oauth_app = ApplicationOath.where(pk: pk, sk: sk).first
+    @current_user = OauthApplicationUser.find_by(application_oath: @oauth_app.id, user_id: uuid)
+    unless @current_user.present?
+      render json: { message: 'Authentication process failed for app' }, status: :unauthorized
+      nil
+    end
+  end
 end

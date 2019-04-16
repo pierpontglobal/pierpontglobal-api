@@ -10,14 +10,14 @@ services:
       -c log_min_messages='WARNING'
       -c log_rotation_age='1d'
       -c log_rotation_size='1GB'
-    container_name: db_postgresql
+    container_name: pierpontglobal-psql
     hostname: psql
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: 'qusUt1i9obru4ISTUG2f'
     ports:
-    - "5432:5432"
+    - "5432"
     volumes:
     - psql:/var/log/postgresql
     networks:
@@ -25,14 +25,14 @@ services:
     - api
 
   elasticsearch:
-    container_name: elk_elasticsearch
+    container_name: pierpontglobal-elasticsearch
     build:
       context: config/docker/elasticsearch/
     volumes:
     - ./config/docker/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
-    - "9200:9200"
-    - "9300:9300"
+    - "9200"
+    - "9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     healthcheck:
@@ -44,40 +44,23 @@ services:
     - elk
 
   kibana:
-    container_name: elk_kibana
+    container_name: pierpontglobal-kibana
     build:
       context: config/docker/kibana/
     volumes:
     - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
     ports:
-    - "5601:5601"
+    - "5601"
     networks:
     - elk
     depends_on:
     - elasticsearch
 
-  filebeat:
-    restart: always
-    container_name: elk_filebeat
-    user: root
-    build:
-      context: config/docker/filebeat/
-    volumes:
-      - ./config/docker/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - psql:/var/log/postgresql
-    ports:
-    - "5044:5044"
-    environment:
-      - ELASTIC_SEARCH_HOST=elasticsearch:9200
-      - LOGS_ROUTE=/pierpontglobal-api/logs/
-    networks:
-    - elk
-
   redis:
     user: root
     restart: always
     command: '--logfile /var/log/redis/redis-server.log'
-    container_name: redis
+    container_name: pierpontglobal-redis
     build:
       context: config/docker/redis
     logging:
@@ -85,14 +68,14 @@ services:
     volumes:
     - redis:/var/log/redis
     ports:
-    - '6379:6379'
+    - '6379'
     networks:
     - api
 
   rails:
     restart: always
     user: root
-    container_name: pierpont_api
+    container_name: pierpontglobal-api
     build: .
     command: bin/start_rails_docker
     volumes:
@@ -103,6 +86,7 @@ services:
     - DB_USER=postgres
     - JOB_WORKER_URL=redis://redis:6379/0
     - ELASTICSEARCH_URL=http://elasticsearch:9200
+    - STRIPE_KEY=sk_test_D1EcOcPXzM1XkpDUo7dQnQF0
     - PORT=3000
     ports:
     - "3000:3000"
