@@ -3,6 +3,8 @@
 class User < ApplicationRecord
   validates :username, presence: true, on: :create
   validates :phone_number, presence: true, on: :create
+  after_create :assign_default_role
+  after_find :assign_default_role
 
   rolify
 
@@ -20,6 +22,7 @@ class User < ApplicationRecord
   has_many :risk_notices, dependent: :destroy
   has_one :dealer, dependent: :destroy
   has_many :funds
+  has_many :bids
 
   def sanitized
     {
@@ -37,14 +40,16 @@ class User < ApplicationRecord
         secondary_address: secondary_address
       },
       verified: verified,
-      roles: roles,
+      roles: roles.map(&:name),
       require_2fa: require_2fa,
-      phone_number_validated: phone_number_validated
+      phone_number_validated: phone_number_validated,
+      last_sign_in_at: current_sign_in_at,
+      last_sign_in_ip: current_sign_in_ip.to_s
     }
   end
 
   def send_payment_status
-    ::UserMailer.new.send_payment_status(self )
+    ::UserMailer.new.send_payment_status(self)
   end
 
   def set_risk_status(risk_id, status)
@@ -91,9 +96,15 @@ class User < ApplicationRecord
   end
 
   def invalidate_session!
-    self.access_tokens.each do |session|
-      session.destroy!
-    end
+    access_tokens.each(&:destroy!)
+  end
+
+  def assign_default_role
+    add_role(:user) if roles.blank?
+  end
+
+  def fund
+    funds.last
   end
 
   private

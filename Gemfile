@@ -4,7 +4,9 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Requirement compliant gems
+gem 'rb-readline'
 gem 'minfraud'
+gem 'ostruct'
 
 # MSM Managers
 gem 'authy', '~> 2.7', '>= 2.7.2'
@@ -52,6 +54,8 @@ gem 'net-ping'
 gem 'rolify'
 
 # Elastic | Smart search
+gem 'elasticsearch'
+gem 'faraday_middleware-aws-sigv4'
 gem 'searchkick'
 
 # Use ActiveStorage variant

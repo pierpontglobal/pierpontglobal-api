@@ -69,38 +69,38 @@ module Api
             build_resource(@sign_up_params)
             update_risk_notice
 
-            stripe_customer = Stripe::Customer.create(
-                email: @sign_up_params[:email],
-                description: "Customer for #{@sign_up_params[:email]}"
-            )
-            resource.stripe_customer = stripe_customer.id
-            Stripe::Subscription.create(
-              customer: stripe_customer.id,
-              billing: 'send_invoice',
-              days_until_due: 30,
-              items: [
-                {
-                  plan: 'plan_ELmsSxYxjI36gE'
-                }
-              ]
-            )
+            #             stripe_customer = Stripe::Customer.create(
+            #                 email: @sign_up_params[:email],
+            #                 description: "Customer for #{@sign_up_params[:email]}"
+            #             )
+            #             resource.stripe_customer = stripe_customer.id
+            #             Stripe::Subscription.create(
+            #               customer: stripe_customer.id,
+            #               billing: 'send_invoice',
+            #               days_until_due: 30,
+            #               items: [
+            #                 {
+            #                   plan: 'plan_ELmsSxYxjI36gE'
+            #                 }
+            #               ]
+            #             )
 
-            if params['2fa']
-              ##################################################################
-              # USER PHONE VERIFICATION :START
-              ##################################################################
-
-              resource.require_2fa = true
-              unless send_phone_verification resource
-                data[:warnings] << { source: 'phone_verification', message: 'Couldn\'t send phone verification' }
-              end
-
-              ##################################################################
-              # USER PHONE VERIFICATION :END
-              ##################################################################
-            else
-              resource.require_2fa = false
-            end
+            #             if params['2fa']
+            #               ##################################################################
+            #               # USER PHONE VERIFICATION :START
+            #               ##################################################################
+            #
+            #               resource.require_2fa = true
+            #               unless send_phone_verification resource
+            #                 data[:warnings] << { source: 'phone_verification', message: 'Couldn\'t send phone verification' }
+            #               end
+            #
+            #               ##################################################################
+            #               # USER PHONE VERIFICATION :END
+            #               ##################################################################
+            #             else
+            #               resource.require_2fa = false
+            #             end
 
             resource.save
             if resource.persisted?
