@@ -2,8 +2,10 @@
 
 class AdminNotificationChannel < ApplicationCable::Channel
   def subscribed
+    puts '>>>>>>>>>>>>>>>>>>>>>>>'
+    puts current_user.inspect
+    stream_from "admin_notification_single_#{params[:user_id]}"
     stream_from 'admin_notification_to_admin'
-    stream_from "admin_notification_single_#{current_user.id}"
   end
 
   def show_pending
@@ -15,7 +17,7 @@ class AdminNotificationChannel < ApplicationCable::Channel
     end
 
     ActionCable.server.broadcast(
-      "admin_notification_single_#{current_user.id}",
+      "admin_notification_single_#{params[:user_id]}",
       notifications
     )
   end

@@ -35,6 +35,9 @@ module Api
               )
             end
 
+            NotificationHandler.send_notification('New funds', "Amount: #{params[:amount]}, Last balance #{last_balance}, New balance: #{last_balance + params[:amount]}",
+                                                  charge, @user[:id])
+
             render json: charge, status: :ok
           rescue Stripe::CardError => e
             render json: e, status: :bad_request

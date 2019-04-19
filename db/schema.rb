@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_27_024209) do
+ActiveRecord::Schema.define(version: 2019_04_19_050108) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -191,6 +191,24 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "issue_solutions", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "velocity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "issue_id"
+    t.index ["issue_id"], name: "index_issue_solutions_on_issue_id"
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "custom_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "mh_id"
@@ -217,6 +235,14 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
     t.boolean "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "read_at"
+    t.integer "receiver_id"
+    t.integer "actor_id"
+    t.string "notification_type"
+    t.bigint "issues_id"
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["issues_id"], name: "index_notifications_on_issues_id"
+    t.index ["receiver_id"], name: "index_notifications_on_receiver_id"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -470,7 +496,9 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
   add_foreign_key "file_directions", "cars"
   add_foreign_key "funds", "payments"
   add_foreign_key "funds", "users"
+  add_foreign_key "issue_solutions", "issues"
   add_foreign_key "models", "makers"
+  add_foreign_key "notifications", "issues", column: "issues_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"

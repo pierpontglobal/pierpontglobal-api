@@ -218,3 +218,4 @@ end
 
 require "#{Rails.root}/lib/token_response_logging"
 Doorkeeper::OAuth::TokenResponse.send :prepend, TokenResponseLogging
+Doorkeeper::OAuth::TokenResponse.send :prepend, CustomTokenResponse
