@@ -11,7 +11,7 @@ module Api
           # GET: /collectors
           def bid_collector
             render json: ::BidCollector
-              .with_action_date
+              .with_auction_date
               .where("auction_start_date > '#{DateTime.now}'")
               .limit(params[:limit])
               .offset(params[:offset])
@@ -23,7 +23,7 @@ module Api
           # GET: /collectors/:bid_collector_id
           def bid_details
             bid_collector = ::BidCollector
-                            .with_action_date
+                            .with_auction_date
                             .find(params[:bid_collector_id])
                             .create_structure
             render json: bid_collector, status: :ok

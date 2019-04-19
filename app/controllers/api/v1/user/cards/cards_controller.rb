@@ -21,16 +21,18 @@ module Api
           end
 
           def card_registration
-            customer = Stripe::Customer.retrieve(@user.stripe_customer)
-            customer.sources.create(source: params['card_token'])
-          rescue StandardError => e
+            # customer = Stripe::Customer.retrieve(@user.stripe_customer)
+            # customer.sources.create(source: params['card_token'])
+          # rescue StandardError => e
             customer = Stripe::Customer.create(
               source: params['card_token'],
               email: @user.email
             )
             @user.update!(stripe_customer: customer.id)
 
-            Stripe::Subscription.create(
+            p "#{params['coupon']} #######################################"
+
+            st = Stripe::Subscription.create(
               customer: customer.id,
               items: [
                 {
@@ -39,6 +41,8 @@ module Api
               ],
               coupon: params['coupon'] || ''
             )
+
+            p "#{st} #########################################"
           ensure
             render json: { status: 'created' }, status: :created
           end

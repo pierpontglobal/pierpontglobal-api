@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_21_192444) do
+ActiveRecord::Schema.define(version: 2019_03_27_024209) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,15 @@ ActiveRecord::Schema.define(version: 2019_02_21_192444) do
     t.datetime "updated_at", null: false
     t.index ["car_id"], name: "index_adquisitions_on_car_id"
     t.index ["user_id"], name: "index_adquisitions_on_user_id"
+  end
+
+  create_table "application_oaths", force: :cascade do |t|
+    t.string "name"
+    t.string "pk"
+    t.string "sk"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "callback"
   end
 
   create_table "bid_collectors", force: :cascade do |t|
@@ -146,7 +155,7 @@ ActiveRecord::Schema.define(version: 2019_02_21_192444) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["car_id"], name: "index_file_directions_on_cars_id"
+    t.index ["car_id"], name: "index_file_directions_on_car_id"
   end
 
   create_table "filters", force: :cascade do |t|
@@ -241,6 +250,18 @@ ActiveRecord::Schema.define(version: 2019_02_21_192444) do
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
     t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
+  end
+
+  create_table "oauth_application_users", force: :cascade do |t|
+    t.bigint "application_oath_id"
+    t.string "token"
+    t.datetime "valid_until"
+    t.boolean "active"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["application_oath_id"], name: "index_oauth_application_users_on_application_oath_id"
+    t.index ["user_id"], name: "index_oauth_application_users_on_user_id"
   end
 
   create_table "oauth_applications", force: :cascade do |t|
@@ -341,6 +362,7 @@ ActiveRecord::Schema.define(version: 2019_02_21_192444) do
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_subscribed_users_on_token"
   end
 
   create_table "subscriptions", force: :cascade do |t|
@@ -453,6 +475,8 @@ ActiveRecord::Schema.define(version: 2019_02_21_192444) do
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
+  add_foreign_key "oauth_application_users", "application_oaths"
+  add_foreign_key "oauth_application_users", "users"
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "verified_by_id"
   add_foreign_key "risk_notices", "users"

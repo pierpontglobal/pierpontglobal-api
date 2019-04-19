@@ -9,6 +9,19 @@ Rails.application.routes.draw do
     controllers tokens: 'logger'
   end
 
+  scope '/oauth' do
+    get '/application', to: 'oauth#application_name'
+    post '/application', to: 'oauth#create_application'
+    post '/login', to: 'oauth#authenticate'
+    post '/user', to: 'oauth#authorized_user'
+  end
+
+  namespace :oauth do
+    namespace :cars do
+      get '/:vin', to: 'cars#show'
+    end
+  end
+
   mount ActionCable.server => '/cable'
 
   # Relative to the routes that belongs to the API
@@ -101,6 +114,8 @@ Rails.application.routes.draw do
 
         get '/bid', to: 'bids#show'
         post '/bid', to: 'bids#increase_bid'
+        patch '/bid', to: 'bids#modify_bid'
+        delete '/bid', to: 'bid#deactivate_bid'
       end
 
       namespace :blacklist do

@@ -18,6 +18,11 @@ require 'net/http'
 require 'uri'
 require 'json'
 require 'set'
+require 'aws-sdk-elasticsearchservice'
+require 'elasticsearch'
+require 'faraday_middleware/aws_sigv4'
+
+require_relative '../app/Appenders/elasticsearch_aws'
 
 Bundler.require(*Rails.groups)
 
@@ -45,9 +50,13 @@ module PierpontglobalApi
       app_name = 'PierpontglobalApi'
 
       config.semantic_logger.add_appender(
-        index: 'pierpont_api',
-        appender: :elasticsearch,
-        url: (ENV['ELASTICSEARCH_URL']).to_s
+        appender: ElasticsearchAWS.new(
+          url: 'https://search-kibana-dunwccauo3hrpqnh2amsv3vofm.us-east-1.es.amazonaws.com',
+          index: 'pierpontglobal-api',
+          access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+          secrete_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+          region: ENV['AWS_REGION']
+        )
       )
       config.log_tags = {
         ip: :remote_ip
@@ -60,33 +69,8 @@ module PierpontglobalApi
       c.user_id = ENV['MAX_MIND_USER']
     end
 
-    #     url = URI.parse("https://api.pierpontglobal.com/oauth/token")
-    #     req = Net::HTTP::Post.new(url.to_s)
-    #     req["Content-Type"] = 'application/json'
-    #     req.body = {
-    #         username: 'admin',
-    #         password: 'WefrucaT7TAhl4weNUdr',
-    #         grant_type: 'password'
-    #     }.to_json
-    #
-    #     res = Net::HTTP.start(url.host, url.port,
-    #                           use_ssl: url.scheme == 'https') do |http|
-    #       http.request(req)
-    #     end
-    #     JSON.parse(res.body)['access_token']
-    #
-    #     url = URI.parse('https://api.pierpontglobal.com/api/v1/admin/configuration/register_ip')
-    #     req = Net::HTTP::Get.new(url.to_s)
-    #     req["Authorization"] = "Bearer #{JSON.parse(res.body)['access_token']}"
-    #
-    #     res = Net::HTTP.start(url.host, url.port,
-    #                           use_ssl: url.scheme == 'https') do |http|
-    #       http.request(req)
-    #     end
-
     unless ENV['CONFIGURATION']
       config.after_initialize do
-
         # INITIATING BASIC CONFIGURATIONS
         GeneralConfiguration.first_or_create!(key: 'pull_release', value: '1')
 
