@@ -102,7 +102,11 @@ module PierpontglobalApi
           ::Location.where(location).first_or_create!
         end
 
-        ::Car.reindex unless ENV['NOREINDEX']
+        Thread.new do
+          release = GeneralConfiguration.find_by(key: 'pull_release').value.to_i
+          release_range = release - 2
+          ::Car.where("release >= #{release_range}").reindex unless ENV['NOREINDEX']
+        end
       end
     end
   end
