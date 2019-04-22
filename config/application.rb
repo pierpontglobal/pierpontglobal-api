@@ -21,6 +21,7 @@ require 'set'
 require 'aws-sdk-elasticsearchservice'
 require 'elasticsearch'
 require 'faraday_middleware/aws_sigv4'
+require './lib/notification_handler'
 
 require_relative '../app/Appenders/elasticsearch_aws'
 
