@@ -39,7 +39,7 @@ module Api
           amount = params[:amount]
           bid = add_bid(amount)
 
-          NotificationHandler.send_notification('Increase bid', 'Bid has been increased', bid, current_user[:id])
+          NotificationHandler.send_notification('Increase bid', 'Bid has been increased', bid, @user[:id])
 
           render json: { status: 'success',
                          message: bid,

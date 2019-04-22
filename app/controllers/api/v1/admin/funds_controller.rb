@@ -23,7 +23,7 @@ module Api
           NotificationHandler.send_notification('Added funds', 'New funds has been added', {
               payment: payment,
               fund: fund
-          }, current_user[:id])
+          }, @user[:id])
 
           render json: fund, status: :ok
         end
@@ -44,7 +44,7 @@ module Api
           NotificationHandler.send_notification('Removed funds', 'New funds has been removed', {
               counter: counter,
               fund: counter
-          }, current_user[:id])
+          }, @user[:id])
 
           render json: counter, status: :ok
         end
