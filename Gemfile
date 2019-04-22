@@ -54,6 +54,8 @@ gem 'net-ping'
 gem 'rolify'
 
 # Elastic | Smart search
+gem 'elasticsearch'
+gem 'faraday_middleware-aws-sigv4'
 gem 'searchkick'
 
 # Use ActiveStorage variant

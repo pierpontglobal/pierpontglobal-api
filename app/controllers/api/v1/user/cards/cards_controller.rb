@@ -20,6 +20,13 @@ module Api
             render json: { error: 'No coupon with the given identifier' }, status: :not_found
           end
 
+          def append_card
+            @user_stripe.sources.create(source: params['card_token'])
+            render json: { status: 'created' }, status: :created
+          rescue StandardError => e
+            render json: { status: 'error', message: e }, status: :bad_request
+          end
+
           def card_registration
             customer = Stripe::Customer.create(
               source: params['card_token'],

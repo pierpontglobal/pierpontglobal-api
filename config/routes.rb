@@ -85,6 +85,7 @@ Rails.application.routes.draw do
           get '/default', to: 'cards#default_card_source'
           get '/coupon', to: 'cards#coupon'
           post '/', to: 'cards#card_registration'
+          post '/append', to: 'cards#append_card'
           patch '/default', to: 'cards#change_default_card_source'
           delete '/', to: 'cards#remove_card'
         end
