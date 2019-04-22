@@ -24,6 +24,8 @@ class User < ApplicationRecord
   has_many :funds
   has_many :bids
 
+  has_many :notifications
+
   def sanitized
     {
       id: id,

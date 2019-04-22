@@ -125,6 +125,13 @@ Rails.application.routes.draw do
         delete '/filters', to: 'filter#destroy'
       end
 
+      namespace :notification do
+        get '/', to: 'notifications#show_by_current_user'
+        post '/read', to: 'notifications#read_notification'
+        post '/read_all', to: 'notifications#read_all'
+        post '/', to: 'notifications#add_notification_to_current_user'
+      end
+
       namespace :admin do
         post '/pulling/:state', to: 'cars#change_pulling'
         post '/cars/clean', to: 'cars#clean_cars'

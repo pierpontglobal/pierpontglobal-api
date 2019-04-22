@@ -34,7 +34,7 @@ module Api
             )
             @user.update!(stripe_customer: customer.id)
 
-            Stripe::Subscription.create(
+            st = Stripe::Subscription.create(
               customer: customer.id,
               items: [
                 {
@@ -44,6 +44,9 @@ module Api
               coupon: params['coupon'] || ''
             )
           ensure
+            # Create notification for current_user
+            NotificationHandler.send_notification('New card', "You have added a new card to your account: #{customer[:email]}", st, @user[:id])
+
             render json: { status: 'created' }, status: :created
           end
 
@@ -84,6 +87,9 @@ module Api
           def remove_card
             if @user.stripe_customer
               customer = Stripe::Customer.retrieve(@user.stripe_customer)
+
+              NotificationHandler.send_notification('Deleted card', "You have removed a card from your account: #{customer[:email]}", customer, @user[:id])
+
               render json: customer.sources.retrieve(params['card_id']).delete, status: :ok
             else
               render json: { message: 'No cards registered' }, status: :ok
@@ -96,6 +102,8 @@ module Api
             @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
           rescue StandardError => e
             @user.update(stripe_customer: nil)
+            NotificationHandler.send_notification('Payment error',
+      "It seems that you do'nt have payment information related to your account: #{@user[:email]}", @user, @user[:id], ::Notification::ALERT_NOTIFICATION)
             render json: { message: 'Not associated billable identity', error: e }, status: :not_found
             nil # Close request
           end
