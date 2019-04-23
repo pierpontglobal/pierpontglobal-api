@@ -17,7 +17,8 @@ module Api
                                     send_payment_status
                                     log_out
                                     resend_confirmation
-                                    info]
+                                    info
+                                    modify_user]
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
                                     modify_password
