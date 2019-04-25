@@ -103,8 +103,6 @@ module Api
             @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
           rescue StandardError => e
             @user.update(stripe_customer: nil)
-            NotificationHandler.send_notification('Payment error',
-      "It seems that you do'nt have payment information related to your account: #{@user[:email]}", @user, @user[:id], ::Notification::ALERT_NOTIFICATION)
             render json: { message: 'Not associated billable identity', error: e }, status: :not_found
             nil # Close request
           end
