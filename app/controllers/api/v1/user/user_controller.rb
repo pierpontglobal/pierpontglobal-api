@@ -7,17 +7,7 @@ module Api
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
-        skip_before_action :active_user?,
-                           only: %i[default_card_source
-                                    change_password
-                                    modify_password
-                                    subscribe
-                                    verify_availability
-                                    return_subscribed_info
-                                    send_payment_status
-                                    log_out
-                                    resend_confirmation
-                                    info]
+        skip_before_action :active_user?
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
                                     modify_password
@@ -66,8 +56,26 @@ module Api
           render json: { status: 'Created' }, status: :created
         end
 
+        def deregister_notifier
+          Subscriber.find_by!(one_signal_uuid: params[:one_signal_uuid]).destroy! if params[:one_signal_uuid].present?
+        rescue StandardError
+          puts "Subscriber does not exist #{params[:one_signal_uuid]}"
+        end
+
+        def register_notifier
+          Subscriber.create!(
+            user: @user,
+            one_signal_uuid: params[:one_signal_uuid]
+          )
+          render json: {status: 'success', message: 'Added successfully'}, status: :ok
+        rescue StandardError
+          deregister_notifier
+          register_notifier
+        end
+
         def log_out
           @user.invalidate_session!
+          deregister_notifier
           render json: { status: 'Invalidated' }, status: :ok
         end
 
