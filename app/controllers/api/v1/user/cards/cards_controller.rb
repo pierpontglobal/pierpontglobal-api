@@ -21,7 +21,8 @@ module Api
           end
 
           def append_card
-            @user_stripe.sources.create(source: params['card_token'])
+            card = @user_stripe.sources.create(source: params['card_token'])
+            NotificationHandler.send_notification('Appended card', "You have added a new card to your account: #{@user[:email]}. Brand: #{card[:brand]}. Card name: #{card[:name]}", card, @user[:id])
             render json: { status: 'created' }, status: :created
           rescue StandardError => e
             render json: { status: 'error', message: e }, status: :bad_request
