@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_19_050108) do
+ActiveRecord::Schema.define(version: 2019_04_25_003038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -391,6 +391,13 @@ ActiveRecord::Schema.define(version: 2019_04_19_050108) do
     t.index ["token"], name: "index_subscribed_users_on_token"
   end
 
+  create_table "subscribers", id: false, force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "one_signal_uuid", null: false
+    t.index ["one_signal_uuid"], name: "index_subscribers_on_one_signal_uuid", unique: true
+    t.index ["user_id"], name: "index_subscribers_on_user_id"
+  end
+
   create_table "subscriptions", force: :cascade do |t|
     t.bigint "user_id"
     t.boolean "payment_status"
@@ -511,6 +518,7 @@ ActiveRecord::Schema.define(version: 2019_04_19_050108) do
   add_foreign_key "sale_informations", "cars"
   add_foreign_key "step_logs", "adquisitions"
   add_foreign_key "step_logs", "step_groups"
+  add_foreign_key "subscribers", "users"
   add_foreign_key "subscriptions", "users"
   add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars"
