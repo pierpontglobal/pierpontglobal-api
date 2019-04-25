@@ -41,6 +41,10 @@ Rails.application.routes.draw do
         post '/payment/status', to: 'user#send_payment_status'
 
         get '/', to: 'user#info'
+
+        post '/notifier', to: 'user#register_notifier'
+        delete '/notifier', to: 'user#deregister_notifier'
+
         patch '/', to: 'user#modify_user'
         patch '/address', to: 'user#modify_address'
         post '/resend-confirmation', to: 'user#resend_confirmation'

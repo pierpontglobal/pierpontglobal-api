@@ -84,7 +84,7 @@ services:
     - DB_PASSWORD=qusUt1i9obru4ISTUG2f
     - DB_USER=postgres
     - JOB_WORKER_URL=redis://redis:6379/0
-    - ELASTICSEARCH_URL=https://search-kibana-dunwccauo3hrpqnh2amsv3vofm.us-east-1.es.amazonaws.com
+    - ELASTICSEARCH_URL=http://elasticsearch:9200
     - STRIPE_KEY=sk_test_D1EcOcPXzM1XkpDUo7dQnQF0
     - PORT=3000
     ports:
