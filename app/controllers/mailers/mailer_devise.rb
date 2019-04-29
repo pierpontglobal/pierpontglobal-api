@@ -63,7 +63,7 @@ module Mailers
     def load_contact_form_template(userEmail, phone, name, company, message )
       { personalizations: [
           {
-              to: [email: 'digrape07@gmail.com'],
+              to: [email: ENV['SOURCE_EMAIL']],
               dynamic_template_data: {
                   user_phone: phone,
                   user_name: name,
