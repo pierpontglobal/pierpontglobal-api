@@ -15,7 +15,8 @@ module Api
                                     verify_availability
                                     return_subscribed_info
                                     send_payment_statu
-                                    resend_confirmation]
+                                    resend_confirmation,
+                                    send_contact_form]
 
         Stripe.api_key = ENV['STRIPE_KEY']
 
@@ -172,6 +173,18 @@ module Api
           else
             render json: { status: 'failed' }, status: :ok
           end
+        end
+
+        def send_contact_form
+          email = ::Mailers::MailerDevise.new.contact_message(
+              params[:email],
+              params[:phone],
+              params[:name],
+              params[:company],
+              params[:message]
+          )
+          email.inspect
+          render json: { status: 'sent', email: email }, status: :ok
         end
 
         def modify_password
