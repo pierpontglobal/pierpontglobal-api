@@ -49,6 +49,8 @@ Rails.application.routes.draw do
         patch '/address', to: 'user#modify_address'
         post '/resend-confirmation', to: 'user#resend_confirmation'
 
+        post '/send-contact-form', to: 'user#send_contact_form'
+
         post '/invalidate', to: 'user#log_out'
 
         put '/images', to: 'user#add_image'
