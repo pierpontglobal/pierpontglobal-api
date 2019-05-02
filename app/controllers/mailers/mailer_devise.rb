@@ -6,6 +6,13 @@ module Mailers
   class MailerDevise < Devise::Mailer
     default template_path: 'mailers'
 
+    def contact_message(email, phone, name, company, message)
+      set_client
+      data = load_contact_form_template(email, phone, name, company, message)
+      j_data = JSON.parse(data.to_json)
+      @sg.client.mail._('send').post(request_body: j_data)
+    end
+
     def password_change(email, token, callback)
       set_client
       data = load_password_change_template(token, email, callback)
@@ -51,6 +58,21 @@ module Mailers
         }
       ], from: { email: ENV['SOURCE_EMAIL'] },
         template_id: 'd-16b03d18163947a7b7cb79a102024f2b' }
+    end
+
+    def load_contact_form_template(userEmail, phone, name, company, message )
+      { personalizations: [
+          {
+              to: [email: ENV['SOURCE_EMAIL']],
+              dynamic_template_data: {
+                  user_phone: phone,
+                  user_name: name,
+                  user_company: company,
+                  user_message: message
+              }
+          }
+      ], from: { email: userEmail },
+        template_id: 'd-ec2dca6cc9f44a5e8211b71e43f35618' }
     end
 
     protected

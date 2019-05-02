@@ -155,6 +155,7 @@ module Api
           private
 
           def stripe_user
+            puts @user.inspect
             @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
           rescue StandardError => e
             @user.update(stripe_customer: nil)
