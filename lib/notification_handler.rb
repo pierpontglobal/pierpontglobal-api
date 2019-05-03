@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 module NotificationHandler
-  def self.send_notification(title, message, payload, receiver_id, type = Notification::INFO_NOTIFICATION, issue_id = nil, actor_id = 1)
+  def self.send_notification(title, message, payload, receiver_id, type = Notification::INFO_NOTIFICATION, issue_id = nil, lang = "en", actor_id = 1)
+
+    # TODO: "lang" is in english by default. Every request made in the client includes a params named lang. Please in the call
+    # for this action, include it and then, based on that, translate the selected text. Need to find an efficient way to handle this on RoR.
+
     hash_data = {
       message: message,
       title: title,
