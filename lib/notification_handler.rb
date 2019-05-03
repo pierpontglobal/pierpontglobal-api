@@ -38,6 +38,7 @@ module NotificationHandler
       subtitle: { en: 'Visit the app' },
       include_player_ids: user.subscribers.map(&:one_signal_uuid)
     }
+    puts params
     uri = URI.parse('https://onesignal.com/api/v1/notifications')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
