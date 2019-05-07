@@ -155,10 +155,13 @@ module Api
           private
 
           def stripe_user
-            puts @user.inspect
+
             @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
+
+          rescue Stripe::APIConnectionError => e
+            render json: { message: 'Connection with stripe failed', error: e }, status: :service_unavailable
+
           rescue StandardError => e
-            @user.update(stripe_customer: nil)
             render json: { message: 'Not associated billable identity', error: e }, status: :not_found
             nil # Close request
           end
