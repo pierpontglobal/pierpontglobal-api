@@ -71,6 +71,25 @@ services:
     networks:
     - api
 
+  ppg-worker:
+    restart: always
+    user: root
+    container_name: pierpontglobal-price-worker
+    build:
+      context: config/docker/ppg-price-worker
+    environment:
+      - IDENTITY_URL=http://rails:3000
+      - USERNAME=admin
+      - PASSWORD=WefrucaT7TAhl4weNUdr
+      - WEB_SOCKET_URL=ws://rails:3000
+      - TARGET_USER=pierpontllc
+      - TARGET_PASSWORD=Kittie123!
+    networks:
+      - api
+    depends_on:
+      rails:
+        condition: service_healthy
+
   rails:
     restart: always
     user: root
@@ -95,6 +114,11 @@ services:
     networks:
     - api
     - elk
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
 
 networks:
   elk:
