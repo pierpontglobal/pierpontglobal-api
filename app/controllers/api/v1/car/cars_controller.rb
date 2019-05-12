@@ -64,6 +64,7 @@ module Api
                               fields: [:car_search_identifiers],
                               limit: params[:limit],
                               boost_by: { condition_report: { factor: 5 }, release: { factor: 10 } },
+                              order: { _score: :desc, _id: :desc },
                               offset: params[:offset],
                               operator: 'or',
                               scope_results: ->(r) { r.sanitized },
