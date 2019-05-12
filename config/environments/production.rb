@@ -46,6 +46,24 @@ Rails.application.configure do
   # when problems arise.
   config.log_level = :info
 
+  Thread.new do
+    app_name = 'PierpontglobalApi'
+
+    config.semantic_logger.add_appender(
+      appender: ElasticsearchAWS.new(
+        url: 'https://search-kibana-dunwccauo3hrpqnh2amsv3vofm.us-east-1.es.amazonaws.com',
+        index: 'pierpontglobal-api',
+        access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+        secrete_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+        region: ENV['AWS_REGION']
+      )
+    )
+    config.log_tags = {
+      ip: :remote_ip
+    }
+    config.semantic_logger.application = app_name
+  end
+
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
 

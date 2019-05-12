@@ -47,24 +47,6 @@ module PierpontglobalApi
 
     config.api_only = true
 
-    Thread.new do
-      app_name = 'PierpontglobalApi'
-
-      config.semantic_logger.add_appender(
-        appender: ElasticsearchAWS.new(
-          url: 'https://search-kibana-dunwccauo3hrpqnh2amsv3vofm.us-east-1.es.amazonaws.com',
-          index: 'pierpontglobal-api',
-          access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-          secrete_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-          region: ENV['AWS_REGION']
-        )
-      )
-      config.log_tags = {
-        ip: :remote_ip
-      }
-      config.semantic_logger.application = app_name
-    end
-
     Minfraud.configure do |c|
       c.license_key = ENV['MAX_MIND_KEY']
       c.user_id = ENV['MAX_MIND_USER']

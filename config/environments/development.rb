@@ -52,6 +52,20 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   config.log_level = :info
 
+  Thread.new do
+    app_name = 'PierpontglobalApi'
+
+    config.semantic_logger.add_appender(
+        index: 'pierpontglobal_api',
+        appender: :elasticsearch,
+        url: (ENV['ELASTICSEARCH_URL']).to_s
+    )
+    config.log_tags = {
+        ip: :remote_ip
+    }
+    config.semantic_logger.application = app_name
+  end
+
   ActionMailer::Base.smtp_settings = {
     user_name: 'apikey',
     password: ENV['SENDGRID_API_KEY_SMTP'],
