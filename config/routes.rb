@@ -191,6 +191,12 @@ Rails.application.routes.draw do
           delete '/', to: 'transactions#remove_transaction'
         end
 
+        namespace :user do
+          get '/', to: 'users#show_all'
+          get '/single', to: 'users#show'
+          post '/email', to: 'users#send_email'
+        end
+
         resource :locations
       end
     end

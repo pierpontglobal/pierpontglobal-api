@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_25_003038) do
+ActiveRecord::Schema.define(version: 2019_05_14_182622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -449,6 +449,7 @@ ActiveRecord::Schema.define(version: 2019_04_25_003038) do
     t.integer "activation_code_valid_for"
     t.string "temp_id"
     t.string "stripe_customer"
+    t.boolean "starred", default: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

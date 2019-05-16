@@ -27,6 +27,22 @@ class User < ApplicationRecord
   has_many :notifications
   has_many :subscribers
 
+  def sanitized_for_admin
+    {
+      id: id,
+      name: first_name || 'Not available',
+      lastName: last_name || 'Not Available',
+      avatar: 'https://avatars.servers.getgo.com/2205256774854474505_medium.jpg',
+      nickname: username,
+      company: dealer.try(:name) || 'Not created',
+      email: email,
+      phone: phone_number,
+      address: primary_address,
+      birthday: '',
+      notes: ''
+    }
+  end
+
   def sanitized
     {
       id: id,
