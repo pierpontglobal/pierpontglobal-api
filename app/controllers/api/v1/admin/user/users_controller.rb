@@ -49,7 +49,7 @@ module Api
                 to: [email: user.email],
                 dynamic_template_data: data
               }
-            ], from: { email: ENV['SOURCE_EMAIL'], name: 'PierpontGlobal' },
+            ], from: { email: ENV['SOURCE_EMAIL'], name: 'PierpontGlobal', avatar: 'https://s.gravatar.com/avatar/fe3820aaa4b394d3050d5f2c476fccea?s=80' },
               template_id: template_id }
           end
 
