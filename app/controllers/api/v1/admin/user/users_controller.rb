@@ -35,18 +35,25 @@ module Api
             users = ::User.find(params[:ids])
             template_id = params[:template_id]
             users.each do |user|
-              template = load_email(user, nil, template_id)
+              template = load_email(user.email, nil, template_id)
               data = JSON.parse(template.to_json)
               @sg.client.mail._('send').post(request_body: data)
             end
           end
 
+          def send_direct_email
+            set_client
+            template = load_email(params[:email], nil, params[:template_id])
+            data = JSON.parse(template.to_json)
+            @sg.client.mail._('send').post(request_body: data)
+          end
+
           private
 
-          def load_email(user, data, template_id)
+          def load_email(email, data, template_id)
             { personalizations: [
               {
-                to: [email: user.email],
+                to: [email: email],
                 dynamic_template_data: data
               }
             ], from: { email: ENV['SOURCE_EMAIL'], name: 'PierpontGlobal', avatar: 'https://s.gravatar.com/avatar/fe3820aaa4b394d3050d5f2c476fccea?s=80' },
