@@ -38,6 +38,10 @@ Rails.application.routes.draw do
 
       namespace :user do
 
+        # Attribute set
+
+        get '/settings', to: 'user#settings'
+
         post '/payment/status', to: 'user#send_payment_status'
 
         get '/', to: 'user#info'
