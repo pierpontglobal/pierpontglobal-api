@@ -8,4 +8,12 @@ class Model < ApplicationRecord
       .merge(Maker.sanitized)
   }
 
+  def sanitazed_info
+    {
+        id: id,
+        maker: ::Maker.where(:id => maker_id).map(&:sanitazed_info)[0],
+        name: name
+    }
+  end
+
 end

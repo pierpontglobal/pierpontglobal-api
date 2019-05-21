@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_14_182622) do
+ActiveRecord::Schema.define(version: 2019_05_20_191424) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -410,6 +410,13 @@ ActiveRecord::Schema.define(version: 2019_05_14_182622) do
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
 
+  create_table "user_saved_cars", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "car_id"
+    t.index ["car_id"], name: "index_user_saved_cars_on_car_id"
+    t.index ["user_id"], name: "index_user_saved_cars_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -521,6 +528,8 @@ ActiveRecord::Schema.define(version: 2019_05_14_182622) do
   add_foreign_key "step_logs", "step_groups"
   add_foreign_key "subscribers", "users"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "user_saved_cars", "cars"
+  add_foreign_key "user_saved_cars", "users"
   add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars"
   add_foreign_key "users_cars", "users"

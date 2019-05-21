@@ -6,4 +6,11 @@ class Maker < ApplicationRecord
   scope :sanitized, lambda {
     select("#{Maker.table_name}.name AS car_maker")
   }
+
+  def sanitazed_info
+    {
+        id: id,
+        name: name
+    }
+  end
 end

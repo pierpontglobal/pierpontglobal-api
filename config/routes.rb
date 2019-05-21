@@ -70,6 +70,8 @@ Rails.application.routes.draw do
         get '/subscription', to: 'user#return_subscribed_info'
         post '/subscription', to: 'user#subscribe'
 
+        get '/saved_cars', to: 'user#saved_cars'
+
         namespace :funds do
           get '/', to: 'funds#show_funds'
           get '/history', to: 'funds#funds_transactions'
@@ -122,6 +124,8 @@ Rails.application.routes.draw do
         get '/all', to: 'cars#all'
         get '/query', to: 'cars#query'
         patch '/price-request', to: 'cars#price_request'
+        post '/save', to: 'cars#save_vehicle'
+        delete '/delete', to: 'cars#remove_user_vehicle'
 
         get '/bid', to: 'bids#show'
         post '/bid', to: 'bids#increase_bid'

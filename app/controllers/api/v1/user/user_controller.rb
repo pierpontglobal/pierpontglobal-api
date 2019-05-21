@@ -20,41 +20,56 @@ module Api
 
         Stripe.api_key = ENV['STRIPE_KEY']
 
+        def saved_cars
+          cars = ::Car.includes(:users).where('users.id' => @user[:id]).map(&:create_simple_structure)
+          render json: { cars: cars }, :status => :ok
+        end
+
         def settings
 
-          customer = Stripe::Customer.retrieve(@user.stripe_customer)
-          sources = customer.sources.data
-          card_sources = []
-          sources.each do |source|
-            card_sources << source if source.object == 'card'
+          if @user.stripe_customer.present?
+            customer = Stripe::Customer.retrieve(@user.stripe_customer)
+            sources = customer.sources.data
+            card_sources = []
+            sources.each do |source|
+              card_sources << source if source.object == 'card'
+            end
+
+
+            subscription = customer.subscriptions.data.first
+            product = Stripe::Product.retrieve(subscription.plan.product)
+            subscription_details =  {
+                id: subscription.id,
+                billing_type: subscription.billing,
+                cancelled_at: subscription.canceled_at,
+                last_billing: Time.at(subscription.billing_cycle_anchor),
+                days_until_due: Time.at(subscription.days_until_due || 0),
+                created_at: Time.at(subscription.created),
+                current_period_end: Time.at(subscription.current_period_end),
+                current_period_start: Time.at(subscription.current_period_start),
+                plan_name: product.name,
+                plan_id: subscription.plan.id,
+                amount: subscription.plan.amount,
+                interval: subscription.plan.interval,
+                active: subscription.plan.active,
+                paid: (customer.invoices(paid: false).data.size < 1)
+            }
+
+            render json: {
+                user: @user.sanitized,
+                dealer: @user.dealer,
+                card_sources: card_sources,
+                subcripcion_details: subscription_details
+            }, status: :ok
+          else
+            render json: {
+                user: @user.sanitized,
+                dealer: @user.dealer,
+                card_sources: nil,
+                subcripcion_details: nil
+            }, status: :ok
           end
 
-
-          subscription = customer.subscriptions.data.first
-          product = Stripe::Product.retrieve(subscription.plan.product)
-          subscription_details =  {
-              id: subscription.id,
-              billing_type: subscription.billing,
-              cancelled_at: subscription.canceled_at,
-              last_billing: Time.at(subscription.billing_cycle_anchor),
-              days_until_due: Time.at(subscription.days_until_due || 0),
-              created_at: Time.at(subscription.created),
-              current_period_end: Time.at(subscription.current_period_end),
-              current_period_start: Time.at(subscription.current_period_start),
-              plan_name: product.name,
-              plan_id: subscription.plan.id,
-              amount: subscription.plan.amount,
-              interval: subscription.plan.interval,
-              active: subscription.plan.active,
-              paid: (customer.invoices(paid: false).data.size < 1)
-          }
-
-          render json: {
-            user: @user.sanitized,
-            dealer: @user.dealer,
-            card_sources: card_sources,
-            subcripcion_details: subscription_details
-          }, status: :ok
         end
 
         # Shows the current use information
