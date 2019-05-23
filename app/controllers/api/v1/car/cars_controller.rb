@@ -8,9 +8,9 @@ module Api
         skip_before_action :active_user?
 
         def save_vehicle
-          if params[:car_id].present?
+          if params[:vin].present?
             # TODO: Verify if the car is not saved already
-            vehicle = ::Car.find(params[:car_id])
+            vehicle = ::Car.find_by(:vin => params[:vin])
             if vehicle.present?
               ::UserSavedCar.create!(user_id: @user.id, car_id: vehicle[:id])
               # ::User.cars.create(user_id: @user.id, car_id: vehicle[:id])
@@ -22,14 +22,14 @@ module Api
             end
 
           else
-            render json: { message: 'Please, provide a car id' }, :status => :bad_request
+            render json: { message: 'Please, provide a car vin' }, :status => :bad_request
           end
         end
 
         def remove_user_vehicle
-          if params[:car_id].present?
+          if params[:vin].present?
             # TODO: Verify if the car is saved
-            vehicle = ::Car.find(params[:car_id])
+            vehicle = ::Car.find_by(:vin => params[:vin])
             if vehicle
               result = ::UserSavedCar.find_by(:user_id => @user[:id], :car_id => vehicle[:id]).destroy!
               render json: {
@@ -38,12 +38,12 @@ module Api
               }, :status => :ok
             else
               render json: {
-                  message: "Couldn't find a car with id = #{params[:car_id]}"
+                  message: "Couldn't find a car with vin = #{params[:vin]}"
               }, :status => :not_found
             end
 
           else
-            render json: { message: 'Please, provide a car id' }, :status => :bad_request
+            render json: { message: 'Please, provide a car vin' }, :status => :bad_request
           end
         end
 

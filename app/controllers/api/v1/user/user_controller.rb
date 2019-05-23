@@ -21,7 +21,9 @@ module Api
         Stripe.api_key = ENV['STRIPE_KEY']
 
         def saved_cars
-          cars = ::Car.includes(:users).where('users.id' => @user[:id]).map(&:create_simple_structure)
+
+          #cars = ::Car.includes(:users).where('users.id' => @user[:id]).map(&:sanitized)
+          cars = ::Car.sanitized.joins(:user_saved_cars).where('cars.id = user_saved_cars.car_id')
           render json: { cars: cars }, :status => :ok
         end
 
