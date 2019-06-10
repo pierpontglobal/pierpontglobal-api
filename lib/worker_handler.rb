@@ -8,13 +8,13 @@ module WorkerHandler
     @security_group = "'sg-0903654f2c06b4b19'"
     @task_definition = 'SidekiqWorker:50'
 
-    @worker_number = 0
+    @worker_number = Sidekiq::ProcessSet.new.size || 0
 
     Thread.new do
       while true do
         update_worker_number
         # ------------------- #
-        sleep 20
+        sleep 20Z
       end
     end
   end
