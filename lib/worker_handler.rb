@@ -26,20 +26,20 @@ module WorkerHandler
   def self.update_worker_number
     logger = Logger.new(STDOUT)
     logger.info "Scouting workers necessities"
-    Sidekiq::Queue.all.each do |queue|
-      queue_size = Sidekiq::Queue.new(queue.name).size
-      required_workers_size = (queue_size/10.0).ceil
-      workers_size = (required_workers_size - @worker_number)
-      if workers_size > 0
-        logger.info "Deploying: #{workers_size} workers"
-        (0...workers_size).each do
+
+    queue_size = Sidekiq::Queue.all.map(&:size).sum
+    required_workers_size = (queue_size/10.0).ceil
+    remaining_workers = (required_workers_size - @worker_number)
+
+    if remaining_workers > 0
+      Sidekiq::Queue.all.each do |queue|
+        logger.info "Deploying: #{remaining_workers} workers"
+        logger.info "Active workers #{@worker_number}"
+        (0...remaining_workers).each do
           deploy_worker(queue.name)
         end
-      else
-        trim_workers
       end
-    end
-    if Sidekiq::Queue.all.size.zero?
+    else
       trim_workers
     end
   rescue
