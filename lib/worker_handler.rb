@@ -8,6 +8,8 @@ module WorkerHandler
     @security_group = "'sg-0903654f2c06b4b19'"
     @task_definition = 'SidekiqWorker:50'
 
+    @worker_number = 0
+
     Thread.new do
       while true do
         update_worker_number
@@ -23,8 +25,7 @@ module WorkerHandler
     Sidekiq::Queue.all.each do |queue|
       queue_size = Sidekiq::Queue.new(queue.name).size
       required_workers_size = (queue_size/10.0).ceil
-      actual_workers_size = Sidekiq::ProcessSet.new.size
-      workers_size = (required_workers_size - actual_workers_size)
+      workers_size = (required_workers_size - @worker_number)
       if workers_size > 0
         logger.info "Deploying: #{workers_size} workers"
         (0..workers_size).each do
@@ -47,12 +48,14 @@ module WorkerHandler
     workers.each do |worker|
       if worker['busy'].zero?
         logger.info "Killing worker #{worker['hostname']}"
+        @worker_number -= 1
         worker.stop!
       end
     end
   end
 
   def self.deploy_worker(queue)
+    @worker_number += 1
     result = `aws ecs run-task --cluster #{@cluster_name} --network-configuration "awsvpcConfiguration={subnets=[#{@subnets}],securityGroups=[#{@security_group}],assignPublicIp='ENABLED'}" --launch-type FARGATE --started-by PPGWorkerHandler --task-definition #{@task_definition} --region $AWS_REGION --overrides "containerOverrides={name='SidekiqWorker',environment=[{name='QUEUENAME',value='#{queue}'}]}"`
     JSON.parse(result)
   end
