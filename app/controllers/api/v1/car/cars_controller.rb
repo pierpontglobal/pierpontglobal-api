@@ -7,6 +7,8 @@ module Api
       class CarsController < Api::V1::BaseController
         skip_before_action :active_user?
 
+
+
         # QUERY SYSTEM
 
         def show

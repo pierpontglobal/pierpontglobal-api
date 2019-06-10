@@ -31,7 +31,7 @@ services:
     volumes:
     - ./config/docker/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
-    - "9200"
+    - "9200:9200"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     healthcheck:
@@ -42,18 +42,18 @@ services:
     networks:
     - elk
 
-  kibana:
-    container_name: pierpontglobal-kibana
-    build:
-      context: config/docker/kibana/
-    volumes:
-    - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
-    ports:
-    - "5601:5601"
-    networks:
-    - elk
-    depends_on:
-    - elasticsearch
+#  kibana:
+#    container_name: pierpontglobal-kibana
+#    build:
+#      context: config/docker/kibana/
+#    volumes:
+#    - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
+#    ports:
+#    - "5601:5601"
+#    networks:
+#    - elk
+#    depends_on:
+#    - elasticsearch
 
   redis:
     user: root
@@ -71,31 +71,50 @@ services:
     networks:
     - api
 
-  ppg-worker:
-    restart: always
+#  ppg-worker:
+#    restart: always
+#    user: root
+#    container_name: pierpontglobal-price-worker
+#    build:
+#      context: config/docker/ppg-price-worker
+#    environment:
+#      - IDENTITY_URL=http://rails:3000
+#      - USERNAME=admin
+#      - PASSWORD=WefrucaT7TAhl4weNUdr
+#      - WEB_SOCKET_URL=ws://rails:3000
+#      - TARGET_USER=pierpontllc
+#      - TARGET_PASSWORD=Kittie123!
+#    networks:
+#      - api
+#    depends_on:
+#      rails:
+#        condition: service_healthy
+
+  sidekiq:
     user: root
-    container_name: pierpontglobal-price-worker
     build:
-      context: config/docker/ppg-price-worker
+      context: .
+      dockerfile: sidekiq.dockerfile
     environment:
-      - IDENTITY_URL=http://rails:3000
-      - USERNAME=admin
-      - PASSWORD=WefrucaT7TAhl4weNUdr
-      - WEB_SOCKET_URL=ws://rails:3000
-      - TARGET_USER=pierpontllc
-      - TARGET_PASSWORD=Kittie123!
-    networks:
-      - api
+      - DB_HOST=psql
+      - DB_PASSWORD=qusUt1i9obru4ISTUG2f
+      - DB_USER=postgres
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - JOB_WORKER_URL=redis://redis:6379/0
+      - QUEUENAME=car_pulling
+      - SLAVE=true
     depends_on:
       rails:
         condition: service_healthy
+    networks:
+      - api
+      - elk
 
   rails:
     restart: always
     user: root
     container_name: pierpontglobal-api
     build: .
-    command: bin/start_rails_docker
     volumes:
     - .:/pierpontglobal-api
     environment:
@@ -106,6 +125,9 @@ services:
     - ELASTICSEARCH_URL=http://elasticsearch:9200
     - STRIPE_KEY=sk_test_D1EcOcPXzM1XkpDUo7dQnQF0
     - PORT=3000
+    - AWS_REGION=us-east-1
+    - AWS_ACCESS_KEY_ID=AKIAI566CCS72L4YKO4A
+    - AWS_SECRET_ACCESS_KEY=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
     ports:
     - "3000:3000"
     depends_on:

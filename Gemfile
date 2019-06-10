@@ -25,6 +25,7 @@ gem 'stripe'
 # Run task asynchronously
 gem 'rake'
 gem 'sidekiq'
+gem 'connection_pool'
 gem 'sinatra'
 
 # Database gems``
@@ -75,6 +76,8 @@ group :development, :test do
 
   # Test
   gem 'rspec-rails', '~> 3.8'
+  gem 'faker'
+  gem 'factory_bot_rails'
 end
 
 group :development do

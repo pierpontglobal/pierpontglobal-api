@@ -42,7 +42,7 @@ class UserMailer < ApplicationMailer
         to: [email: user.email],
         dynamic_template_data: {
           user_name: "#{user.first_name} #{user.last_name}",
-          host: Rails.env.production? ? 'https://pierpontglobal.com' : 'http://0.0.0.0:3001',
+          host: Rails.env.production? ? 'https://pierpontglobal.com' : 'http://localhost:4000',
           token: token
         }
       }

@@ -69,6 +69,7 @@ Rails.application.routes.draw do
         get '/availability', to: 'user#verify_availability'
         get '/subscription', to: 'user#return_subscribed_info'
         post '/subscription', to: 'user#subscribe'
+        post '/verify', to: 'user#verify_user'
 
         namespace :funds do
           get '/', to: 'funds#show_funds'

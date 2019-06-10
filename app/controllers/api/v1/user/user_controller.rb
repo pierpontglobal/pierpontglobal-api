@@ -15,8 +15,9 @@ module Api
                                     verify_availability
                                     return_subscribed_info
                                     send_payment_statu
-                                    resend_confirmation,
-                                    send_contact_form]
+                                    resend_confirmation
+                                    send_contact_form
+                                    verify_user]
 
         Stripe.api_key = ENV['STRIPE_KEY']
 
@@ -71,6 +72,17 @@ module Api
         def return_subscribed_info
           token = params[:token]
           render json: SubscribedUser.find_by_token(token), status: :ok
+        end
+
+        def verify_user
+          user = SubscribedUser.where(token: params['token'], verified_on: nil).first
+          if user.present?
+            user.update!(verified_on: Time.now)
+            ActionCable.server.broadcast("verification_channel_#{user.email}", {verified: true})
+            render json: {verified: true}, status: :ok
+          else
+            render json: {verified: false}, status: :ok
+          end
         end
 
         def subscribe

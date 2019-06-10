@@ -35,4 +35,33 @@ end
 
 card_issue.issue_solutions = to_add_solutions
 
-# 2.
+# 2. Release handler seed
+GeneralConfiguration.first_or_create!(key: 'pull_release', value: '1')
+
+# 3. Create Admin user
+unless User.find_by_username('admin')
+  admin_user = User.new(
+      email: 'support@pierpontglobal.com',
+      username: 'admin',
+      password: ENV['ADMIN_PASSWORD'],
+      phone_number: ENV['ADMIN_CONTACT']
+  )
+  admin_user.skip_confirmation_notification!
+  admin_user.save!
+  admin_user.add_role(:admin)
+  admin_user.add_role(:super_admin)
+end
+
+# 4. Adding predefined locations
+locations = [
+    { "name": 'Manheim Fort Lauderdale', "mh_id": 162 },
+    { "name": 'Manheim Palm Beach', "mh_id": 205 },
+    { "name": 'Manheim Orlando', "mh_id": 139 },
+    { "name": 'Manheim Tampa', "mh_id": 151 },
+    { "name": 'Manheim St Pete', "mh_id": 197 },
+    { "name": 'Manheim Central Florida', "mh_id": 126 }
+]
+
+locations.each do |location|
+  ::Location.where(location).first_or_create!
+end

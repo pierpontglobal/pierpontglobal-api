@@ -2,10 +2,11 @@
 
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-    identified_by :current_user
+    identified_by :current_user, :device_identifier
 
     def connect
       self.current_user = auth_user
+      self.device_identifier = request.params[:hash]
     end
 
     private
