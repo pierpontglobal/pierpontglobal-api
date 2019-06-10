@@ -17,6 +17,9 @@ module WorkerHandler
         sleep 20
       end
     end
+
+  rescue
+    logger.info 'Sidekiq not ready'
   end
 
   def self.update_worker_number
@@ -38,8 +41,8 @@ module WorkerHandler
     if Sidekiq::Queue.all.size.zero?
       trim_workers
     end
-  rescue StandardError => e
-    logger.info e
+  rescue
+    logger.info 'Sidekiq not ready'
   end
 
   def self.trim_workers
