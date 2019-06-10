@@ -52,7 +52,7 @@ module WorkerHandler
     workers.each do |worker|
       if worker['busy'].zero?
         logger.info "Killing worker #{worker['hostname']}"
-        @worker_number -= 1
+        @worker_number -= 1 unless @worker_number <= 0
         worker.stop!
       end
     end
