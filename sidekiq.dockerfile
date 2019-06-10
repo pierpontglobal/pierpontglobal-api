@@ -13,4 +13,4 @@ COPY . /sidekiq_worker
 RUN gem install bundler
 RUN bundle check || bundle install
 
-CMD NOREINDEX=true bundle exec sidekiq -q car_pulling -c 10
+CMD bundle exec sidekiq -q $QUEUENAME -c 10

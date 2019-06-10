@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_27_024209) do
+ActiveRecord::Schema.define(version: 2019_06_04_215310) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -191,6 +191,24 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "issue_solutions", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "velocity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "issue_id"
+    t.index ["issue_id"], name: "index_issue_solutions_on_issue_id"
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "custom_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "mh_id"
@@ -217,6 +235,14 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
     t.boolean "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "read_at"
+    t.integer "receiver_id"
+    t.integer "actor_id"
+    t.string "notification_type"
+    t.bigint "issues_id"
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["issues_id"], name: "index_notifications_on_issues_id"
+    t.index ["receiver_id"], name: "index_notifications_on_receiver_id"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -362,7 +388,15 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "verified_on"
     t.index ["token"], name: "index_subscribed_users_on_token"
+  end
+
+  create_table "subscribers", id: false, force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "one_signal_uuid", null: false
+    t.index ["one_signal_uuid"], name: "index_subscribers_on_one_signal_uuid", unique: true
+    t.index ["user_id"], name: "index_subscribers_on_user_id"
   end
 
   create_table "subscriptions", force: :cascade do |t|
@@ -375,6 +409,13 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
+  end
+
+  create_table "user_saved_cars", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "car_id"
+    t.index ["car_id"], name: "index_user_saved_cars_on_car_id"
+    t.index ["user_id"], name: "index_user_saved_cars_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -416,6 +457,7 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
     t.integer "activation_code_valid_for"
     t.string "temp_id"
     t.string "stripe_customer"
+    t.boolean "starred", default: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -470,7 +512,9 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
   add_foreign_key "file_directions", "cars"
   add_foreign_key "funds", "payments"
   add_foreign_key "funds", "users"
+  add_foreign_key "issue_solutions", "issues"
   add_foreign_key "models", "makers"
+  add_foreign_key "notifications", "issues", column: "issues_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
@@ -483,7 +527,10 @@ ActiveRecord::Schema.define(version: 2019_03_27_024209) do
   add_foreign_key "sale_informations", "cars"
   add_foreign_key "step_logs", "adquisitions"
   add_foreign_key "step_logs", "step_groups"
+  add_foreign_key "subscribers", "users"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "user_saved_cars", "cars"
+  add_foreign_key "user_saved_cars", "users"
   add_foreign_key "users", "users", column: "verified_by_id"
   add_foreign_key "users_cars", "cars"
   add_foreign_key "users_cars", "users"

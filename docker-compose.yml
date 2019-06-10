@@ -17,22 +17,21 @@ services:
     environment:
       POSTGRES_PASSWORD: 'qusUt1i9obru4ISTUG2f'
     ports:
-    - "5432"
+      - "5432:5432"
     volumes:
-    - psql:/var/log/postgresql
+      - psql:/var/log/postgresql
     networks:
-    - elk
-    - api
+      - elk
+      - api
 
   elasticsearch:
     container_name: pierpontglobal-elasticsearch
     build:
       context: config/docker/elasticsearch/
     volumes:
-    - ./config/docker/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./config/docker/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
-    - "9200"
-    - "9300"
+    - "9200:9200"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     healthcheck:
@@ -41,20 +40,20 @@ services:
       timeout: 30s
       retries: 3
     networks:
-    - elk
+      - elk
 
-  kibana:
-    container_name: pierpontglobal-kibana
-    build:
-      context: config/docker/kibana/
-    volumes:
-    - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
-    ports:
-    - "5601"
-    networks:
-    - elk
-    depends_on:
-    - elasticsearch
+#  kibana:
+#    container_name: pierpontglobal-kibana
+#    build:
+#      context: config/docker/kibana/
+#    volumes:
+#    - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
+#    ports:
+#    - "5601:5601"
+#    networks:
+#    - elk
+#    depends_on:
+#    - elasticsearch
 
   redis:
     user: root
@@ -66,36 +65,82 @@ services:
     logging:
       driver: "json-file"
     volumes:
-    - redis:/var/log/redis
+      - redis:/var/log/redis
     ports:
-    - '6379'
+    - '6379:6379'
     networks:
     - api
+
+#  ppg-worker:
+#    restart: always
+#    user: root
+#    container_name: pierpontglobal-price-worker
+#    build:
+#      context: config/docker/ppg-price-worker
+#    environment:
+#      - IDENTITY_URL=http://rails:3000
+#      - USERNAME=admin
+#      - PASSWORD=WefrucaT7TAhl4weNUdr
+#      - WEB_SOCKET_URL=ws://rails:3000
+#      - TARGET_USER=pierpontllc
+#      - TARGET_PASSWORD=Kittie123!
+#    networks:
+#      - api
+#    depends_on:
+#      rails:
+#        condition: service_healthy
+
+  sidekiq:
+    user: root
+    build:
+      context: .
+      dockerfile: sidekiq.dockerfile
+    environment:
+      - DB_HOST=psql
+      - DB_PASSWORD=qusUt1i9obru4ISTUG2f
+      - DB_USER=postgres
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - JOB_WORKER_URL=redis://redis:6379/0
+      - QUEUENAME=car_pulling
+      - SLAVE=true
+    depends_on:
+      rails:
+        condition: service_healthy
+    networks:
+      - api
+      - elk
 
   rails:
     restart: always
     user: root
     container_name: pierpontglobal-api
     build: .
-    command: bin/start_rails_docker
     volumes:
-    - .:/pierpontglobal-api
+      - .:/pierpontglobal-api
     environment:
     - DB_HOST=psql
     - DB_PASSWORD=qusUt1i9obru4ISTUG2f
     - DB_USER=postgres
     - JOB_WORKER_URL=redis://redis:6379/0
-    - ELASTICSEARCH_URL=https://search-kibana-dunwccauo3hrpqnh2amsv3vofm.us-east-1.es.amazonaws.com
+    - ELASTICSEARCH_URL=http://elasticsearch:9200
     - STRIPE_KEY=sk_test_D1EcOcPXzM1XkpDUo7dQnQF0
     - PORT=3000
+    - AWS_REGION=us-east-1
+    - AWS_ACCESS_KEY_ID=AKIAI566CCS72L4YKO4A
+    - AWS_SECRET_ACCESS_KEY=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
     ports:
-    - "3000:3000"
+      - "3000:3000"
     depends_on:
       elasticsearch:
         condition: service_healthy
     networks:
-    - api
-    - elk
+      - api
+      - elk
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
 
 networks:
   elk:

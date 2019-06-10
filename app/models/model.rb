@@ -1,6 +1,4 @@
 class Model < ApplicationRecord
-  scope :search_import, -> { includes(:maker) }
-  searchkick word_middle: [:name]
 
   belongs_to :maker, optional: true
 
@@ -10,9 +8,11 @@ class Model < ApplicationRecord
       .merge(Maker.sanitized)
   }
 
-  def search_data
+  def sanitazed_info
     {
-      name: name
+        id: id,
+        maker: ::Maker.where(:id => maker_id).map(&:sanitazed_info)[0],
+        name: name
     }
   end
 

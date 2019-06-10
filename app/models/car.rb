@@ -24,7 +24,8 @@ class Car < ApplicationRecord
       car_search_identifiers: "#{exterior_color.try(:name)} #{year} #{model.try(:maker).try(:name)} #{model.try(:name)} #{vehicle_type.try(:type_code)} #{vin} #{trim}",
       timestamp: Time.now,
       sale_date: sale_date,
-      release: release
+      release: release,
+      fielddata: true
     }
   end
 
@@ -38,6 +39,9 @@ class Car < ApplicationRecord
   has_one :sale_information, dependent: :destroy
   has_many :file_attachments
   has_many :file_directions, dependent: :destroy
+
+  has_many :user_saved_cars
+  has_many :users, through: :user_saved_cars
 
   scope :sanitized, lambda {
     select(:id,
@@ -137,6 +141,24 @@ class Car < ApplicationRecord
         auction_end_date: auction_end_date,
         action_location: action_location
       }
+    }
+  end
+
+  def create_simple_structure
+    {
+        id: id,
+        year: year,
+        odometer: odometer,
+        odometer_unit: odometer_unit,
+        displacement: displacement,
+        transmission: transmission,
+        vin: vin,
+        doors: doors,
+        sale_date: sale_date,
+        condition: condition,
+        engine: engine,
+        trim: trim,
+        model: ::Model.where(:id => model_id).map(&:sanitazed_info)[0]
     }
   end
 end

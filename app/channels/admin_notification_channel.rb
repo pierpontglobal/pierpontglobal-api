@@ -2,8 +2,8 @@
 
 class AdminNotificationChannel < ApplicationCable::Channel
   def subscribed
-    stream_from 'admin_notification_to_admin'
     stream_from "admin_notification_single_#{current_user.id}"
+    stream_from 'admin_notification_to_admin'
   end
 
   def show_pending

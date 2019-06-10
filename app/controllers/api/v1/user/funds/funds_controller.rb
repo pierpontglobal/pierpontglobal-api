@@ -35,6 +35,9 @@ module Api
               )
             end
 
+            NotificationHandler.send_notification('New funds', "Amount: #{params[:amount]}, Last balance #{last_balance}, New balance: #{last_balance + params[:amount]}",
+                                                  charge, @user[:id])
+
             render json: charge, status: :ok
           rescue Stripe::CardError => e
             render json: e, status: :bad_request
@@ -57,8 +60,11 @@ module Api
 
           def stripe_user
             @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
+
+          rescue Stripe::APIConnectionError => e
+            render json: { message: 'Connection with stripe failed', error: e }, status: :service_unavailable
+
           rescue StandardError => e
-            @user.update(stripe_customer: nil)
             render json: { message: 'Not associated billable identity', error: e }, status: :not_found
             nil # Close request
           end

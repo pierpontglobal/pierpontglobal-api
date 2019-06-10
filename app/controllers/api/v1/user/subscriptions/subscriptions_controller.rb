@@ -78,11 +78,14 @@ module Api
                 data: payment
               }
             end
+
+            total_amount_due = 0
             pending_invoices = @user_stripe.invoices(paid: false).data.map do |pending_invoice|
               description = pending_invoice.billing_reason
               if description == 'subscription_create'
                 description = 'Subscription payment for "Pierpont Global USA Access"'
               end
+              total_amount_due += pending_invoice.amount_due
               {
                 id: pending_invoice.id,
                 amount_due: pending_invoice.amount_due,
@@ -91,6 +94,13 @@ module Api
                 status: "#{pending_invoice.status.capitalize} untill #{Time.at(pending_invoice.due_date).strftime('%d/%b/%Y')}"
               }
             end
+
+            if pending_invoices.present?
+              NotificationHandler.send_notification('Pending invoices',
+        "Total Amount due: #{total_amount_due}. Please pay your invoices as soon as possible.", pending_invoices,
+                  @user[:id], ::Notification::ALERT_NOTIFICATION)
+            end
+
             render json: {
               subscription_info: subscription_info,
               primary_payment_method: primary_payment_method,
@@ -145,9 +155,13 @@ module Api
           private
 
           def stripe_user
+
             @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
+
+          rescue Stripe::APIConnectionError => e
+            render json: { message: 'Connection with stripe failed', error: e }, status: :service_unavailable
+
           rescue StandardError => e
-            @user.update(stripe_customer: nil)
             render json: { message: 'Not associated billable identity', error: e }, status: :not_found
             nil # Close request
           end

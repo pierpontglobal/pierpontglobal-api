@@ -7,17 +7,7 @@ module Api
     module User
       # Handles the users related calls
       class UserController < Api::V1::BaseController
-        skip_before_action :active_user?,
-                           only: %i[default_card_source
-                                    change_password
-                                    modify_password
-                                    subscribe
-                                    verify_availability
-                                    return_subscribed_info
-                                    send_payment_status
-                                    log_out
-                                    resend_confirmation
-                                    info]
+        skip_before_action :active_user?
         skip_before_action :doorkeeper_authorize!,
                            only: %i[change_password
                                     modify_password
@@ -25,18 +15,65 @@ module Api
                                     verify_availability
                                     return_subscribed_info
                                     send_payment_statu
-                                    resend_confirmation]
+                                    resend_confirmation
+                                    send_contact_form
+                                    verify_user]
 
         Stripe.api_key = ENV['STRIPE_KEY']
 
-        ############################################################################################
-        # TODO: remove this method
-        def send_payment_status
-          user = ::User.find(params[:id])
-          user.send_payment_status
-          render json: user, status: :ok
+        def saved_cars
+
+          #cars = ::Car.includes(:users).where('users.id' => @user[:id]).map(&:sanitized)
+          cars = ::Car.sanitized.joins(:user_saved_cars).where('cars.id = user_saved_cars.car_id')
+          render json: { cars: cars }, :status => :ok
         end
-        ############################################################################################
+
+        def settings
+
+          if @user.stripe_customer.present?
+            customer = Stripe::Customer.retrieve(@user.stripe_customer)
+            sources = customer.sources.data
+            card_sources = []
+            sources.each do |source|
+              card_sources << source if source.object == 'card'
+            end
+
+
+            subscription = customer.subscriptions.data.first
+            product = Stripe::Product.retrieve(subscription.plan.product)
+            subscription_details =  {
+                id: subscription.id,
+                billing_type: subscription.billing,
+                cancelled_at: subscription.canceled_at,
+                last_billing: Time.at(subscription.billing_cycle_anchor),
+                days_until_due: Time.at(subscription.days_until_due || 0),
+                created_at: Time.at(subscription.created),
+                current_period_end: Time.at(subscription.current_period_end),
+                current_period_start: Time.at(subscription.current_period_start),
+                plan_name: product.name,
+                plan_id: subscription.plan.id,
+                amount: subscription.plan.amount,
+                interval: subscription.plan.interval,
+                active: subscription.plan.active,
+                paid: (customer.invoices(paid: false).data.size < 1)
+            }
+
+            render json: {
+                user: @user.sanitized,
+                dealer: @user.dealer,
+                card_sources: card_sources,
+                subcripcion_details: subscription_details
+            }, status: :ok
+          else
+            render json: {
+                user: @user.sanitized,
+                dealer: @user.dealer,
+                card_sources: nil,
+                subcripcion_details: nil
+            }, status: :ok
+          end
+
+        end
 
         # Shows the current use information
         def info
@@ -54,6 +91,17 @@ module Api
           render json: SubscribedUser.find_by_token(token), status: :ok
         end
 
+        def verify_user
+          user = SubscribedUser.where(token: params['token'], verified_on: nil).first
+          if user.present?
+            user.update!(verified_on: Time.now)
+            ActionCable.server.broadcast("verification_channel_#{user.email}", {verified: true})
+            render json: {verified: true}, status: :ok
+          else
+            render json: {verified: false}, status: :ok
+          end
+        end
+
         def subscribe
           user = SubscribedUser.create!(
             first_name: params[:first_name],
@@ -66,8 +114,26 @@ module Api
           render json: { status: 'Created' }, status: :created
         end
 
+        def deregister_notifier
+          Subscriber.find_by!(one_signal_uuid: params[:one_signal_uuid]).destroy! if params[:one_signal_uuid].present?
+        rescue StandardError
+          puts "Subscriber does not exist #{params[:one_signal_uuid]}"
+        end
+
+        def register_notifier
+          Subscriber.create!(
+            user: @user,
+            one_signal_uuid: params[:one_signal_uuid]
+          )
+          render json: {status: 'success', message: 'Added successfully'}, status: :ok
+        rescue StandardError
+          deregister_notifier
+          register_notifier
+        end
+
         def log_out
           @user.invalidate_session!
+          deregister_notifier
           render json: { status: 'Invalidated' }, status: :ok
         end
 
@@ -164,6 +230,18 @@ module Api
           else
             render json: { status: 'failed' }, status: :ok
           end
+        end
+
+        def send_contact_form
+          email = ::Mailers::MailerDevise.new.contact_message(
+              params[:email],
+              params[:phone],
+              params[:name],
+              params[:company],
+              params[:message]
+          )
+          email.inspect
+          render json: { status: 'sent', email: email }, status: :ok
         end
 
         def modify_password

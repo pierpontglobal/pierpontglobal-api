@@ -38,12 +38,22 @@ Rails.application.routes.draw do
 
       namespace :user do
 
+        # Attribute set
+
+        get '/settings', to: 'user#settings'
+
         post '/payment/status', to: 'user#send_payment_status'
 
         get '/', to: 'user#info'
+
+        post '/notifier', to: 'user#register_notifier'
+        delete '/notifier', to: 'user#deregister_notifier'
+
         patch '/', to: 'user#modify_user'
         patch '/address', to: 'user#modify_address'
         post '/resend-confirmation', to: 'user#resend_confirmation'
+
+        post '/send-contact-form', to: 'user#send_contact_form'
 
         post '/invalidate', to: 'user#log_out'
 
@@ -59,6 +69,9 @@ Rails.application.routes.draw do
         get '/availability', to: 'user#verify_availability'
         get '/subscription', to: 'user#return_subscribed_info'
         post '/subscription', to: 'user#subscribe'
+        post '/verify', to: 'user#verify_user'
+
+        get '/saved_cars', to: 'user#saved_cars'
 
         namespace :funds do
           get '/', to: 'funds#show_funds'
@@ -85,6 +98,7 @@ Rails.application.routes.draw do
           get '/default', to: 'cards#default_card_source'
           get '/coupon', to: 'cards#coupon'
           post '/', to: 'cards#card_registration'
+          post '/append', to: 'cards#append_card'
           patch '/default', to: 'cards#change_default_card_source'
           delete '/', to: 'cards#remove_card'
         end
@@ -111,6 +125,8 @@ Rails.application.routes.draw do
         get '/all', to: 'cars#all'
         get '/query', to: 'cars#query'
         patch '/price-request', to: 'cars#price_request'
+        post '/save', to: 'cars#save_vehicle'
+        delete '/delete', to: 'cars#remove_user_vehicle'
 
         get '/bid', to: 'bids#show'
         post '/bid', to: 'bids#increase_bid'
@@ -122,6 +138,13 @@ Rails.application.routes.draw do
         get '/filters', to: 'filter#show'
         post '/filters', to: 'filter#create'
         delete '/filters', to: 'filter#destroy'
+      end
+
+      namespace :notification do
+        get '/', to: 'notifications#show_by_current_user'
+        post '/read', to: 'notifications#read_notification'
+        post '/read_all', to: 'notifications#read_all'
+        post '/', to: 'notifications#add_notification_to_current_user'
       end
 
       namespace :admin do
@@ -175,6 +198,13 @@ Rails.application.routes.draw do
         scope :transactions do
           post '/', to: 'transactions#create_transaction'
           delete '/', to: 'transactions#remove_transaction'
+        end
+
+        namespace :user do
+          get '/', to: 'users#show_all'
+          get '/single', to: 'users#show'
+          post '/email', to: 'users#send_email'
+          post '/email/direct', to: 'users#send_direct_email'
         end
 
         resource :locations
