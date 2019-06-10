@@ -27,6 +27,9 @@ class User < ApplicationRecord
   has_many :notifications
   has_many :subscribers
 
+  has_many :user_saved_cars, dependent: :destroy
+  has_many :cars, through: :user_saved_cars
+
   def sanitized_for_admin
     {
       id: id,

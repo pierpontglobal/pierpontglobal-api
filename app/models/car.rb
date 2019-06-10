@@ -40,6 +40,9 @@ class Car < ApplicationRecord
   has_many :file_attachments
   has_many :file_directions, dependent: :destroy
 
+  has_many :user_saved_cars
+  has_many :users, through: :user_saved_cars
+
   scope :sanitized, lambda {
     select(:id,
            :year,
@@ -138,6 +141,24 @@ class Car < ApplicationRecord
         auction_end_date: auction_end_date,
         action_location: action_location
       }
+    }
+  end
+
+  def create_simple_structure
+    {
+        id: id,
+        year: year,
+        odometer: odometer,
+        odometer_unit: odometer_unit,
+        displacement: displacement,
+        transmission: transmission,
+        vin: vin,
+        doors: doors,
+        sale_date: sale_date,
+        condition: condition,
+        engine: engine,
+        trim: trim,
+        model: ::Model.where(:id => model_id).map(&:sanitazed_info)[0]
     }
   end
 end

@@ -14,20 +14,34 @@ module Api
 
         def add_notification_to_current_user
 
-          if !exists(params)
+          notifications = params[:notifications]
+          sent = []
 
-            issue = ::Issue.find_by(custom_id: params[:issue_id])
-            issue_id = issue.present? ? issue[:id] : nil
-            NotificationHandler.send_notification(params[:title], params[:message], params[:payload], @user[:id], params[:type], issue_id)
+          if notifications.present?
+            notifications.each do |n|
+              if !exists(n[:title], n[:message], n[:type])
+                issue = ::Issue.find_by(custom_id: n[:issue_id])
+                issue_id = issue.present? ? issue[:id] : nil
+                NotificationHandler.send_notification(n[:title], n[:message], n[:payload], @user[:id], n[:type], issue_id)
+                sent << n
+              end
+            end
 
-            render json: {
-              message: 'SENT'
-            }, status: :ok
+            if sent.any?
+              render json: {
+                  message: 'SENT',
+                  notifications_sent: sent
+              }, status: :ok
+            else
+              render json: {
+                  message: 'NOT SENT',
+              }, status: :ok
+            end
 
           else
             render json: {
-              message: 'NOT SENT'
-            }, status: :ok
+              message: 'Please provide an array of notifications.'
+            }, status: :bad_request
           end
         end
 
@@ -65,12 +79,12 @@ module Api
 
         private
 
-        def exists(params)
+        def exists(title, message, type)
           notifications = ::Notification.where(
             "data ->> 'title' = ? and data ->> 'message' = ? and notification_type = ? and receiver_id = ? and read_at is null",
-            params[:title],
-            params[:message],
-            params[:type],
+            title,
+            message,
+            type,
             @user[:id]
           )
 

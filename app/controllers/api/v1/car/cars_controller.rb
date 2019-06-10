@@ -7,7 +7,45 @@ module Api
       class CarsController < Api::V1::BaseController
         skip_before_action :active_user?
 
+        def save_vehicle
+          if params[:vin].present?
+            # TODO: Verify if the car is not saved already
+            vehicle = ::Car.sanitized.find_by_vin(params[:vin]).create_structure
+            if vehicle.present?
+              ::UserSavedCar.create!(user_id: @user.id, car_id: vehicle[:car_information][:id])
+              # ::User.cars.create(user_id: @user.id, car_id: vehicle[:id])
+              render json: { car: vehicle }, :status => :ok
+            else
+              render json: {
+                  message: "Car not found"
+              }, :status => :not_found
+            end
 
+          else
+            render json: { message: 'Please, provide a car vin' }, :status => :bad_request
+          end
+        end
+
+        def remove_user_vehicle
+          if params[:vin].present?
+            # TODO: Verify if the car is saved
+            vehicle = ::Car.find_by(:vin => params[:vin])
+            if vehicle
+              result = ::UserSavedCar.find_by(:user_id => @user[:id], :car_id => vehicle[:id]).destroy!
+              render json: {
+                  removed_car: vehicle,
+                  result: result,
+              }, :status => :ok
+            else
+              render json: {
+                  message: "Couldn't find a car with vin = #{params[:vin]}"
+              }, :status => :not_found
+            end
+
+          else
+            render json: { message: 'Please, provide a car vin' }, :status => :bad_request
+          end
+        end
 
         # QUERY SYSTEM
 

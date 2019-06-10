@@ -17,19 +17,19 @@ services:
     environment:
       POSTGRES_PASSWORD: 'qusUt1i9obru4ISTUG2f'
     ports:
-    - "5432:5432"
+      - "5432:5432"
     volumes:
-    - psql:/var/log/postgresql
+      - psql:/var/log/postgresql
     networks:
-    - elk
-    - api
+      - elk
+      - api
 
   elasticsearch:
     container_name: pierpontglobal-elasticsearch
     build:
       context: config/docker/elasticsearch/
     volumes:
-    - ./config/docker/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./config/docker/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
     - "9200:9200"
     environment:
@@ -40,7 +40,7 @@ services:
       timeout: 30s
       retries: 3
     networks:
-    - elk
+      - elk
 
 #  kibana:
 #    container_name: pierpontglobal-kibana
@@ -65,7 +65,7 @@ services:
     logging:
       driver: "json-file"
     volumes:
-    - redis:/var/log/redis
+      - redis:/var/log/redis
     ports:
     - '6379:6379'
     networks:
@@ -116,7 +116,7 @@ services:
     container_name: pierpontglobal-api
     build: .
     volumes:
-    - .:/pierpontglobal-api
+      - .:/pierpontglobal-api
     environment:
     - DB_HOST=psql
     - DB_PASSWORD=qusUt1i9obru4ISTUG2f
@@ -129,13 +129,13 @@ services:
     - AWS_ACCESS_KEY_ID=AKIAI566CCS72L4YKO4A
     - AWS_SECRET_ACCESS_KEY=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
     ports:
-    - "3000:3000"
+      - "3000:3000"
     depends_on:
       elasticsearch:
         condition: service_healthy
     networks:
-    - api
-    - elk
+      - api
+      - elk
     healthcheck:
       test: ["CMD-SHELL", "curl --silent --fail localhost:3000 || exit 1"]
       interval: 30s
