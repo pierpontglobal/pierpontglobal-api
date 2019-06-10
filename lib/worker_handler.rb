@@ -19,6 +19,7 @@ module WorkerHandler
     end
 
   rescue
+    logger = Logger.new(STDOUT)
     logger.info 'Sidekiq not ready'
   end
 
