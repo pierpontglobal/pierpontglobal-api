@@ -100,4 +100,8 @@ Rails.application.configure do
     },
     bucket: 'pierpontglobal-api'
   }
+
+  unless ENV['SLAVE'] === 'true'
+    ::WorkerHandler.activate
+  end
 end

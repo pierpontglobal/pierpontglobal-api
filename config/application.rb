@@ -53,8 +53,5 @@ module PierpontglobalApi
       c.user_id = ENV['MAX_MIND_USER']
     end
 
-    unless ENV['SLAVE'] === 'true'
-      ::WorkerHandler.activate
-    end
   end
 end
