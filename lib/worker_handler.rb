@@ -32,7 +32,7 @@ module WorkerHandler
       workers_size = (required_workers_size - @worker_number)
       if workers_size > 0
         logger.info "Deploying: #{workers_size} workers"
-        (0..workers_size).each do
+        (0...workers_size).each do
           deploy_worker(queue.name)
         end
       else
