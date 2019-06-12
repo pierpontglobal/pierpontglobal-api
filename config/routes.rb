@@ -39,6 +39,8 @@ Rails.application.routes.draw do
       namespace :user do
 
         # Attribute set
+        #
+        post '/photo', to: 'user#set_profile_photo'
 
         get '/settings', to: 'user#settings'
 
@@ -90,6 +92,7 @@ Rails.application.routes.draw do
           get '/', to: 'dealers#retrieve_dealer'
           post '/', to: 'dealers#create_dealer'
           patch '/', to: 'dealers#update_dealer'
+          post '/logo', to: 'dealers#set_photo'
         end
 
         namespace :cards do

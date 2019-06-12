@@ -105,6 +105,9 @@ services:
       - JOB_WORKER_URL=redis://redis:6379/0
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - STRIPE_KEY=sk_test_D1EcOcPXzM1XkpDUo7dQnQF0
+      - AWS_ACCESS_KEY_ID=AKIAU7XCXDKLVRZBEVWE
+      - AWS_BUCKET=test-rails-images
+      - AWS_SECRET_KEY=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
       - PORT=3000
     ports:
       - "3000:3000"

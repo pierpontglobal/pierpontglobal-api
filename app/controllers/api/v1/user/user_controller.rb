@@ -21,10 +21,22 @@ module Api
         Stripe.api_key = ENV['STRIPE_KEY']
 
         def saved_cars
-
           #cars = ::Car.includes(:users).where('users.id' => @user[:id]).map(&:sanitized)
           cars = ::Car.sanitized.joins(:user_saved_cars).where('cars.id = user_saved_cars.car_id')
           render json: { cars: cars }, :status => :ok
+        end
+
+        def set_profile_photo
+          photo = params[:photo]
+          if photo.present?
+            if @user.profile_picture.attached?
+              @user.profile_picture.purge
+            end
+            @user.profile_picture.attach(photo)
+            render json: @user.sanitized, status: :ok
+          else
+            render json: "Please, provide a photo to set.", status: :bad_request
+          end
         end
 
         def settings
