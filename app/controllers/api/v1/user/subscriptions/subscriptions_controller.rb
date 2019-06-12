@@ -7,8 +7,7 @@ module Api
     module User
       module Subscriptions
         # Handles the users related calls
-        class SubscriptionsController < Api::V1::BaseController
-          skip_before_action :active_user?
+        class SubscriptionsController < Api::V1::UserBaseController
           before_action :stripe_user
 
           Stripe.api_key = ENV['STRIPE_KEY']

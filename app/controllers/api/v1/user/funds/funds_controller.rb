@@ -7,8 +7,7 @@ module Api
     module User
       module Funds
         # Handles the users related calls
-        class FundsController < Api::V1::BaseController
-          skip_before_action :active_user?
+        class FundsController < Api::V1::UserBaseController
           before_action :stripe_user
 
           Stripe.api_key = ENV['STRIPE_KEY']

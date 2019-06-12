@@ -46,24 +46,6 @@ Rails.application.configure do
   # when problems arise.
   config.log_level = :info
 
-  Thread.new do
-    app_name = 'PierpontglobalApi'
-
-    config.semantic_logger.add_appender(
-      appender: ElasticsearchAWS.new(
-        url: 'https://search-kibana-dunwccauo3hrpqnh2amsv3vofm.us-east-1.es.amazonaws.com',
-        index: 'pierpontglobal-api',
-        access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-        secrete_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-        region: ENV['AWS_REGION']
-      )
-    )
-    config.log_tags = {
-      ip: :remote_ip
-    }
-    config.semantic_logger.application = app_name
-  end
-
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
 
@@ -90,18 +72,41 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.paperclip_defaults = {
-    storage: :s3,
-    preserve_files: true,
-    s3_credentials: {
-      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-      s3_region: ENV['AWS_REGION']
-    },
-    bucket: 'pierpontglobal-api'
-  }
-
   unless ENV['SLAVE'] === 'true'
+    Minfraud.configure do |c|
+      c.license_key = ENV['MAX_MIND_KEY']
+      c.user_id = ENV['MAX_MIND_USER']
+    end
+
+    Thread.new do
+      app_name = 'PierpontglobalApi'
+
+      config.semantic_logger.add_appender(
+          appender: ElasticsearchAWS.new(
+              url: 'https://search-kibana-dunwccauo3hrpqnh2amsv3vofm.us-east-1.es.amazonaws.com',
+              index: 'pierpontglobal-api',
+              access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+              secrete_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+              region: ENV['AWS_REGION']
+          )
+      )
+      config.log_tags = {
+          ip: :remote_ip
+      }
+      config.semantic_logger.application = app_name
+    end
+
     ::WorkerHandler.activate
+
+    config.paperclip_defaults = {
+        storage: :s3,
+        preserve_files: true,
+        s3_credentials: {
+            access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+            secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+            s3_region: ENV['AWS_REGION']
+        },
+        bucket: 'pierpontglobal-api'
+    }
   end
 end

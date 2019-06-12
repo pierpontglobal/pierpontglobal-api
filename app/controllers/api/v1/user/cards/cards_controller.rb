@@ -7,8 +7,7 @@ module Api
     module User
       module Cards
         # Handles the users related calls
-        class CardsController < Api::V1::BaseController
-          skip_before_action :active_user?
+        class CardsController < Api::V1::UserBaseController
           before_action :stripe_user, except: %i[card_registration coupon]
 
           Stripe.api_key = ENV['STRIPE_KEY']

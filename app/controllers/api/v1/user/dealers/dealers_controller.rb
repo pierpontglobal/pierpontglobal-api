@@ -7,8 +7,7 @@ module Api
     module User
       module Dealers
         # Handles the users related calls
-        class DealersController < Api::V1::BaseController
-          skip_before_action :active_user?
+        class DealersController < Api::V1::UserBaseController
 
           Stripe.api_key = ENV['STRIPE_KEY']
           def create_dealer

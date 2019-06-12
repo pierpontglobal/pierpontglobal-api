@@ -103,9 +103,6 @@ services:
       - JOB_WORKER_URL=redis://redis:6379/0
       - QUEUENAME=car_pulling
       - SLAVE=true
-    depends_on:
-      rails:
-        condition: service_healthy
     networks:
       - api
       - elk

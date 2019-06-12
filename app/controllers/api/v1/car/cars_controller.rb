@@ -4,8 +4,7 @@ module Api
   module V1
     module Car
       # Allow the caller to administer the cars on the database
-      class CarsController < Api::V1::BaseController
-        skip_before_action :active_user?
+      class CarsController < Api::V1::UserBaseController
 
         def save_vehicle
           if params[:vin].present?

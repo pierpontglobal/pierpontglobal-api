@@ -4,8 +4,7 @@ module Api
   module V1
     module Car
       # Control the bids
-      class BidsController < Api::V1::BaseController
-        skip_before_action :active_user?
+      class BidsController < Api::V1::UserBaseController
         before_action :set_car
         before_action :check_window_to_modify, except: :show
         before_action :check_amount_with_balance, except: :show

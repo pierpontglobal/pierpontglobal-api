@@ -47,11 +47,5 @@ module PierpontglobalApi
     config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 
     config.api_only = true
-
-    Minfraud.configure do |c|
-      c.license_key = ENV['MAX_MIND_KEY']
-      c.user_id = ENV['MAX_MIND_USER']
-    end
-
   end
 end

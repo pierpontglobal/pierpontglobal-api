@@ -5,7 +5,7 @@ module Api
     module User
       # Handles the email confirmations
       class ConfirmationsController < Devise::ConfirmationsController
-        skip_before_action :doorkeeper_authorize!
+        skip_before_action :authenticate_user!
 
         # GET /resource/confirmation?confirmation_token=XXX
         def show

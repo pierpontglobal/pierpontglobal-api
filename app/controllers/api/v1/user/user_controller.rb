@@ -6,9 +6,8 @@ module Api
   module V1
     module User
       # Handles the users related calls
-      class UserController < Api::V1::BaseController
-        skip_before_action :active_user?
-        skip_before_action :doorkeeper_authorize!,
+      class UserController < Api::V1::UserBaseController
+        skip_before_action :authenticate_user!,
                            only: %i[change_password
                                     modify_password
                                     subscribe

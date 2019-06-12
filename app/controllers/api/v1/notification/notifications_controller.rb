@@ -4,11 +4,10 @@ module Api
   module V1
     module Notification
       # Handles the in-site and push notifications
-      class NotificationsController < Api::V1::BaseController
-        skip_before_action :active_user?
+      class NotificationsController < Api::V1::UserBaseController
 
         def show_by_current_user
-          notifications = ::Notification.where(receiver_id: current_resource_owner[:id], read_at: nil).order('created_at DESC')
+          notifications = ::Notification.where(receiver_id: current_user[:id], read_at: nil).order('created_at DESC')
           render json: notifications, status: :ok
         end
 
@@ -69,7 +68,7 @@ module Api
               n[:read_at] = Time.now
               n.save!
             end
-            render json: ::Notification.where(receiver_id: current_resource_owner[:id], read_at: nil), status: :ok
+            render json: ::Notification.where(receiver_id: current_user[:id], read_at: nil), status: :ok
           else
             render json: {
               error: 'Please, provide the notifications ids'
