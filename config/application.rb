@@ -47,5 +47,8 @@ module PierpontglobalApi
     config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 
     config.api_only = true
+
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
   end
 end
