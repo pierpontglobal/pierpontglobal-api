@@ -51,6 +51,7 @@ class User < ApplicationRecord
   end
 
   def sanitized
+    dealer = ::Dealer.find_by(:user_id => id)
     {
       id: id,
       first_name: first_name,
@@ -72,7 +73,7 @@ class User < ApplicationRecord
       last_sign_in_at: current_sign_in_at,
       last_sign_in_ip: current_sign_in_ip.to_s,
       photo_url: profile_picture.attached? ? rails_blob_path(profile_picture, disposition: "attachment", only_path: true) : nil,
-      dealer: ::Dealer.find_by(:user_id => id).sanitized
+      dealer: dealer.present? ? dealer.sanitized : nil
     }
   end
 

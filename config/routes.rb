@@ -37,7 +37,6 @@ Rails.application.routes.draw do
       }, skip: %i[sessions password]
 
       namespace :user do
-
         # Attribute set
         #
         post '/photo', to: 'user#set_profile_photo'

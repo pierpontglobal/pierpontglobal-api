@@ -109,6 +109,9 @@ services:
       - AWS_BUCKET=test-rails-images
       - AWS_SECRET_KEY=QQPMmau4yPyZc4zyHwCk1k4txIrF9CVMPM+6kmFz
       - PORT=3000
+      - AWS_ACCESS_KEY_ID_IMAGES=AKIAZUF7ZOAYRSNIJ54S
+      - AWS_SECRET_KEY_IMAGES=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
+      - AWS_BUCKET_IMAGES=pierpontglobal-api-images
     ports:
       - "3000:3000"
     depends_on:
