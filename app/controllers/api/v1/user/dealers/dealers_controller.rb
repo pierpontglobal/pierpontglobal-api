@@ -45,6 +45,21 @@ module Api
             render json: current_user.dealer, status: :ok
           end
 
+          def set_photo
+            photo = params[:logo]
+            if photo.present?
+              dealer = ::Dealer.find_by(:user_id => @user[:id])
+              if dealer.present?
+                dealer.dealer_logo.attach(params[:logo])
+                render json: dealer.sanitized, status: :ok
+              else
+                render json: "No dealer found with ID: #{params[:dealer_id]}", status: :not_found
+              end
+            else
+              render json: "Please, provide a photo to set.", status: :bad_request
+            end
+          end
+
           def retrieve_dealer
             render json: Dealer.find_by(user: current_user), status: :ok
           end

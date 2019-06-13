@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  include Rails.application.routes.url_helpers
+
   validates :username, presence: true, on: :create
   validates :phone_number, presence: true, on: :create
   after_create :assign_default_role
@@ -22,6 +24,8 @@ class User < ApplicationRecord
   has_many :user_saved_cars, dependent: :destroy
   has_many :cars, through: :user_saved_cars
 
+  has_one_attached :profile_picture
+
   def sanitized_for_admin
     {
       id: id,
@@ -39,6 +43,7 @@ class User < ApplicationRecord
   end
 
   def sanitized
+    dealer = ::Dealer.find_by(:user_id => id)
     {
       id: id,
       first_name: first_name,
@@ -58,7 +63,9 @@ class User < ApplicationRecord
       require_2fa: require_2fa,
       phone_number_validated: phone_number_validated,
       last_sign_in_at: current_sign_in_at,
-      last_sign_in_ip: current_sign_in_ip.to_s
+      last_sign_in_ip: current_sign_in_ip.to_s,
+      photo_url: profile_picture.attached? ? rails_blob_path(profile_picture, disposition: "attachment", only_path: true) : nil,
+      dealer: dealer.present? ? dealer.sanitized : nil
     }
   end
 
