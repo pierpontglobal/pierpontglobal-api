@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class AdminNotificationChannel < ApplicationCable::Channel
+
   def subscribed
     stream_from "admin_notification_single_#{current_user.id}"
     stream_from 'admin_notification_to_admin'

@@ -2,18 +2,22 @@
 
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-    identified_by :current_user
+    identified_by :current_user, :device_identifier
 
     def connect
-      self.current_user = auth_user
+      self.current_user = find_verified_user
+      self.device_identifier = request.params[:hash]
     end
 
     private
 
-    def auth_user
-      token = request.params[:token]
-      access_token = Doorkeeper::AccessToken.find_by(token: token)
-      User.find(access_token.resource_owner_id) if access_token
+    def find_verified_user # this checks whether a user is authenticated with devise
+      verified_user = User.find_by(id: cookies.signed['user.id'])
+      if verified_user && cookies.signed['user.expires_at'] > Time.now
+        verified_user
+      else
+        reject_unauthorized_connection
+      end
     end
   end
 end

@@ -7,19 +7,11 @@ class User < ApplicationRecord
   validates :phone_number, presence: true, on: :create
   after_create :assign_default_role
   after_find :assign_default_role
-
-  rolify
+  rolify # Allow handling of user roles in the application
 
   devise :confirmable, :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :trackable
-
-  has_many :access_grants, class_name: 'Doorkeeper::AccessGrant',
-                           foreign_key: :resource_owner_id,
-                           dependent: :delete_all # or :destroy if you need callbacks
-
-  has_many :access_tokens, class_name: 'Doorkeeper::AccessToken',
-                           foreign_key: :resource_owner_id,
-                           dependent: :delete_all # or :destroy if you need callbacks
+         :recoverable, :rememberable, :validatable, :trackable,
+         :jwt_authenticatable, jwt_revocation_strategy: ::JwtBlacklist
 
   has_many :risk_notices, dependent: :destroy
   has_one :dealer, dependent: :destroy

@@ -3,33 +3,26 @@
 Rails.application.routes.draw do
   require 'sidekiq/web'
   mount Sidekiq::Web => "/sidekiq"
-
-  use_doorkeeper do
-    skip_controllers :applications, :authorized_applications
-    controllers tokens: 'logger'
-  end
-
-  scope '/oauth' do
-    get '/application', to: 'oauth#application_name'
-    post '/application', to: 'oauth#create_application'
-    post '/login', to: 'oauth#authenticate'
-    post '/user', to: 'oauth#authorized_user'
-  end
-
-  namespace :oauth do
-    namespace :cars do
-      get '/:vin', to: 'cars#show'
-    end
-  end
-
   mount ActionCable.server => '/cable'
+
+  devise_for :users,
+             path: '/api/v2/users',
+             path_names: {
+                 sign_in: 'login',
+                 sign_out: 'logout',
+                 registration: 'signup'
+             },
+             controllers: {
+                 sessions: 'api/v2/users/sessions',
+                 registrations: 'api/v2/users/registrations'
+             }
 
   # Relative to the routes that belongs to the API
   namespace :api do
     # Relative to the routes that belongs to the version 1 of the API
     namespace :v1 do
 
-      get '/aws-health', to: 'base#health'
+      get '/aws-health', to: 'user_base#health'
 
       devise_for :users, controllers: {
         registrations: 'api/v1/user/registrations',
@@ -37,8 +30,6 @@ Rails.application.routes.draw do
       }, skip: %i[sessions password]
 
       namespace :user do
-        # Attribute set
-        #
         post '/photo', to: 'user#set_profile_photo'
 
         get '/settings', to: 'user#settings'
@@ -70,6 +61,7 @@ Rails.application.routes.draw do
         get '/availability', to: 'user#verify_availability'
         get '/subscription', to: 'user#return_subscribed_info'
         post '/subscription', to: 'user#subscribe'
+        post '/verify', to: 'user#verify_user'
 
         get '/saved_cars', to: 'user#saved_cars'
 
@@ -210,6 +202,9 @@ Rails.application.routes.draw do
 
         resource :locations
       end
+    end
+
+    namespace :v2 do
     end
   end
 end

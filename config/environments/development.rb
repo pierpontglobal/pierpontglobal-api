@@ -52,26 +52,33 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   config.log_level = :info
 
-  Thread.new do
-    app_name = 'PierpontglobalApi'
+  unless ENV['SLAVE'] === 'true'
+    Minfraud.configure do |c|
+      c.license_key = ENV['MAX_MIND_KEY']
+      c.user_id = ENV['MAX_MIND_USER']
+    end
 
-    config.semantic_logger.add_appender(
-        index: 'pierpontglobal_api',
-        appender: :elasticsearch,
-        url: (ENV['ELASTICSEARCH_URL']).to_s
-    )
-    config.log_tags = {
-        ip: :remote_ip
+    Thread.new do
+      app_name = 'PierpontglobalApi'
+
+      config.semantic_logger.add_appender(
+          index: 'pierpontglobal_api',
+          appender: :elasticsearch,
+          url: (ENV['ELASTICSEARCH_URL']).to_s
+      )
+      config.log_tags = {
+          ip: :remote_ip
+      }
+      config.semantic_logger.application = app_name
+    end
+
+    ActionMailer::Base.smtp_settings = {
+      user_name: 'apikey',
+      password: ENV['SENDGRID_API_KEY_SMTP'],
+      address: 'smtp.sendgrid.net',
+      port: 587,
+      authentication: :plain,
+      enable_starttls_auto: true
     }
-    config.semantic_logger.application = app_name
   end
-
-  ActionMailer::Base.smtp_settings = {
-    user_name: 'apikey',
-    password: ENV['SENDGRID_API_KEY_SMTP'],
-    address: 'smtp.sendgrid.net',
-    port: 587,
-    authentication: :plain,
-    enable_starttls_auto: true
-  }
 end

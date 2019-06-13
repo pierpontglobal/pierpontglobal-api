@@ -7,8 +7,7 @@ module Api
     module User
       module Transactions
         # Handles the users related calls
-        class TransactionsController < Api::V1::BaseController
-          skip_before_action :active_user?
+        class TransactionsController < Api::V1::UserBaseController
 
           def show_manual_transactions
             # TODO: Allow the user to review the manual transactions performed by an administrator

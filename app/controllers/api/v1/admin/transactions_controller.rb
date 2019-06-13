@@ -12,7 +12,7 @@ module Api
             user: user,
             amount: params[:amount],
             payment_note: params[:note],
-            verified_by_id: @user.id
+            verified_by_id: current_user.id
           )
           render json: payment, status: :ok
         end
@@ -23,7 +23,7 @@ module Api
             user: charge.user,
             amount: (-1 * charge.amount),
             payment_note: params[:note],
-            verified_by_id: @user.id
+            verified_by_id: current_user.id
           )
           render json: counter_charge, status: :ok
         end

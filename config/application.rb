@@ -22,6 +22,7 @@ require 'aws-sdk-elasticsearchservice'
 require 'elasticsearch'
 require 'faraday_middleware/aws_sigv4'
 require './lib/notification_handler'
+require './lib/worker_handler'
 
 require_relative '../app/Appenders/elasticsearch_aws'
 
@@ -47,50 +48,7 @@ module PierpontglobalApi
 
     config.api_only = true
 
-    Minfraud.configure do |c|
-      c.license_key = ENV['MAX_MIND_KEY']
-      c.user_id = ENV['MAX_MIND_USER']
-    end
-
-    unless ENV['CONFIGURATION']
-      config.after_initialize do
-        # INITIATING BASIC CONFIGURATIONS
-        GeneralConfiguration.first_or_create!(key: 'pull_release', value: '1')
-
-        # DEFAULT ADMIN USER CREATION
-        unless User.find_by_username('admin')
-          admin_user = User.new(
-            email: 'support@pierpontglobal.com',
-            username: 'admin',
-            password: ENV['ADMIN_PASSWORD'],
-            phone_number: ENV['ADMIN_CONTACT']
-          )
-          admin_user.skip_confirmation_notification!
-          admin_user.save!
-          admin_user.add_role(:admin)
-          admin_user.add_role(:super_admin)
-        end
-
-        # DEFAULT WORKING LOCATIONS
-        locations = [
-          { "name": 'Manheim Fort Lauderdale', "mh_id": 162 },
-          { "name": 'Manheim Palm Beach', "mh_id": 205 },
-          { "name": 'Manheim Orlando', "mh_id": 139 },
-          { "name": 'Manheim Tampa', "mh_id": 151 },
-          { "name": 'Manheim St Pete', "mh_id": 197 },
-          { "name": 'Manheim Central Florida', "mh_id": 126 }
-        ]
-
-        locations.each do |location|
-          ::Location.where(location).first_or_create!
-        end
-
-        Thread.new do
-          release = GeneralConfiguration.find_by(key: 'pull_release').value.to_i
-          release_range = release - 2
-          ::Car.where("release >= #{release_range}").reindex unless ENV['NOREINDEX']
-        end
-      end
-    end
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
   end
 end

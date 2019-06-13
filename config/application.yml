@@ -8,6 +8,7 @@ SOURCE_EMAIL: support@pierpontglobal.com
 ADMIN_PASSWORD: WefrucaT7TAhl4weNUdr
 ADMIN_CONTACT: "5555555555"
 RAILS_LOG_TO_STDOUT: "true"
+DEVISE_JWT_SECRET_KEY: aea35e8c8ca01e2afc0056286d9606e28d0e0e853358bed75552487d839d5a110828ebf6ff039892c2eb8071ea7743f6e7ffad732d7b96204abb4361e2c3aae7
 #------------------------------------------#
 DB_HOST: 0.0.0.0
 DB_USER: postgres

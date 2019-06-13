@@ -7,8 +7,7 @@ module Api
     module User
       module Cards
         # Handles the users related calls
-        class CardsController < Api::V1::BaseController
-          skip_before_action :active_user?
+        class CardsController < Api::V1::UserBaseController
           before_action :stripe_user, except: %i[card_registration coupon]
 
           Stripe.api_key = ENV['STRIPE_KEY']
@@ -22,7 +21,7 @@ module Api
 
           def append_card
             card = @user_stripe.sources.create(source: params['card_token'])
-            NotificationHandler.send_notification('Appended card', "You have added a new card to your account: #{@user[:email]}. Brand: #{card[:brand]}. Card name: #{card[:name]}", card, @user[:id])
+            NotificationHandler.send_notification('Appended card', "You have added a new card to your account: #{current_user[:email]}. Brand: #{card[:brand]}. Card name: #{card[:name]}", card, current_user[:id])
             render json: { status: 'created' }, status: :created
           rescue StandardError => e
             render json: { status: 'error', message: e }, status: :bad_request
@@ -31,9 +30,9 @@ module Api
           def card_registration
             customer = Stripe::Customer.create(
               source: params['card_token'],
-              email: @user.email
+              email: current_user.email
             )
-            @user.update!(stripe_customer: customer.id)
+            current_user.update!(stripe_customer: customer.id)
 
             st = Stripe::Subscription.create(
               customer: customer.id,
@@ -46,14 +45,14 @@ module Api
             )
           ensure
             # Create notification for current_user
-            NotificationHandler.send_notification('New card', "You have added a new card to your account: #{customer[:email]}", st, @user[:id])
+            NotificationHandler.send_notification('New card', "You have added a new card to your account: #{customer[:email]}", st, current_user[:id])
 
             render json: { status: 'created' }, status: :created
           end
 
           def card_sources
-            if @user.stripe_customer
-              customer = Stripe::Customer.retrieve(@user.stripe_customer)
+            if current_user.stripe_customer
+              customer = Stripe::Customer.retrieve(current_user.stripe_customer)
               sources = customer.sources.data
               card_sources = []
               sources.each do |source|
@@ -66,8 +65,8 @@ module Api
           end
 
           def change_default_card_source
-            if @user.stripe_customer
-              customer = Stripe::Customer.retrieve(@user.stripe_customer)
+            if current_user.stripe_customer
+              customer = Stripe::Customer.retrieve(current_user.stripe_customer)
               customer.default_source = params['card_id']
               customer.save
               render json: customer.default_source, status: :ok
@@ -77,8 +76,8 @@ module Api
           end
 
           def default_card_source
-            if @user.stripe_customer
-              customer = Stripe::Customer.retrieve(@user.stripe_customer)
+            if current_user.stripe_customer
+              customer = Stripe::Customer.retrieve(current_user.stripe_customer)
               render json: customer.default_source, status: :ok
             else
               render json: { message: 'No cards registered' }, status: :ok
@@ -86,10 +85,10 @@ module Api
           end
 
           def remove_card
-            if @user.stripe_customer
-              customer = Stripe::Customer.retrieve(@user.stripe_customer)
+            if current_user.stripe_customer
+              customer = Stripe::Customer.retrieve(current_user.stripe_customer)
 
-              NotificationHandler.send_notification('Deleted card', "You have removed a card from your account: #{customer[:email]}", customer, @user[:id])
+              NotificationHandler.send_notification('Deleted card', "You have removed a card from your account: #{customer[:email]}", customer, current_user[:id])
 
               render json: customer.sources.retrieve(params['card_id']).delete, status: :ok
             else
@@ -100,7 +99,7 @@ module Api
           private
 
           def stripe_user
-            @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
+            @user_stripe = Stripe::Customer.retrieve(current_user.stripe_customer)
 
           rescue Stripe::APIConnectionError => e
             render json: { message: 'Connection with stripe failed', error: e }, status: :service_unavailable

@@ -1,8 +1,12 @@
 FROM ruby:2.5.1
 
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
-RUN curl -o /usr/local/bin/ecs-cli https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest
-RUN chmod +x /usr/local/bin/ecs-cli
+ENV AWS_REGION=us-east-1
+ENV AWS_ACCESS_KEY_ID=AKIAZUF7ZOAYRTTX75FQ
+ENV AWS_SECRET_ACCESS_KEY=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
+
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs python3 python3-pip
+RUN pip3 install awscli --upgrade
+RUN aws ecr get-login --region $AWS_REGION --no-include-email
 
 RUN mkdir /pierpontglobal-api
 WORKDIR /pierpontglobal-api
@@ -17,4 +21,4 @@ RUN bundle check || bundle install
 
 EXPOSE 3000
 
-CMD bundle exec rails server -b 0.0.0.0
+CMD bundle exec rails db:create; bundle exec rails db:migrate; bundle exec rails db:seed; bundle exec rails server -b 0.0.0.0

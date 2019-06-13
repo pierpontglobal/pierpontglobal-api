@@ -24,8 +24,9 @@ gem 'stripe'
 
 # Run task asynchronously
 gem 'rake'
-gem 'sidekiq'
+gem 'connection_pool'
 gem 'sinatra'
+gem 'sidekiq'
 
 # Database gems``
 gem 'pg'
@@ -49,7 +50,7 @@ gem 'aws-sdk-ecs'
 gem 'aws-sdk-elasticsearchservice'
 gem 'cancancan'
 gem 'devise'
-gem 'doorkeeper'
+gem 'devise-jwt'
 gem 'net-ping'
 gem 'rolify'
 
@@ -79,6 +80,8 @@ group :development, :test do
 
   # Test
   gem 'rspec-rails', '~> 3.8'
+  gem 'faker'
+  gem 'factory_bot_rails'
 end
 
 group :development do

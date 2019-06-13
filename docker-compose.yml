@@ -31,7 +31,7 @@ services:
     volumes:
       - ./config/docker/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
-      - "9200:9200"
+    - "9200:9200"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     healthcheck:
@@ -42,18 +42,18 @@ services:
     networks:
       - elk
 
-  kibana:
-    container_name: pierpontglobal-kibana
-    build:
-      context: config/docker/kibana/
-    volumes:
-      - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
-    ports:
-      - "5601:5601"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
+#  kibana:
+#    container_name: pierpontglobal-kibana
+#    build:
+#      context: config/docker/kibana/
+#    volumes:
+#    - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
+#    ports:
+#    - "5601:5601"
+#    networks:
+#    - elk
+#    depends_on:
+#    - elasticsearch
 
   redis:
     user: root
@@ -67,9 +67,9 @@ services:
     volumes:
       - redis:/var/log/redis
     ports:
-      - '6379:6379'
+    - '6379:6379'
     networks:
-      - api
+    - api
 
 #  ppg-worker:
 #    restart: always
@@ -90,12 +90,28 @@ services:
 #      rails:
 #        condition: service_healthy
 
+  sidekiq:
+    user: root
+    build:
+      context: .
+      dockerfile: sidekiq.dockerfile
+    environment:
+      - DB_HOST=psql
+      - DB_PASSWORD=qusUt1i9obru4ISTUG2f
+      - DB_USER=postgres
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - JOB_WORKER_URL=redis://redis:6379/0
+      - QUEUENAME=car_pulling
+      - SLAVE=true
+    networks:
+      - api
+      - elk
+
   rails:
     restart: always
     user: root
     container_name: pierpontglobal-api
     build: .
-    command: bin/start_rails_docker
     volumes:
       - .:/pierpontglobal-api
     environment:
@@ -105,13 +121,14 @@ services:
       - JOB_WORKER_URL=redis://redis:6379/0
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - STRIPE_KEY=sk_test_D1EcOcPXzM1XkpDUo7dQnQF0
-      - AWS_ACCESS_KEY_ID=AKIAU7XCXDKLVRZBEVWE
       - AWS_BUCKET=test-rails-images
-      - AWS_SECRET_KEY=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
+      - AWS_REGION=us-east-1
       - PORT=3000
-      - AWS_ACCESS_KEY_ID_IMAGES=AKIAZUF7ZOAYRSNIJ54S
-      - AWS_SECRET_KEY_IMAGES=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
+      - AWS_ACCESS_KEY_ID_IMAGES=AKIAI566CCS72L4YKO4A
+      - AWS_SECRET_KEY_IMAGES=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
       - AWS_BUCKET_IMAGES=pierpontglobal-api-images
+      - AWS_ACCESS_KEY_ID=AKIAI566CCS72L4YKO4A
+      - AWS_SECRET_ACCESS_KEY=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
     ports:
       - "3000:3000"
     depends_on:
