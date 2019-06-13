@@ -268,8 +268,6 @@ Devise.setup do |config|
   #   manager.default_strategies(scope: :user).unshift :some_external_strategy
   # end
   Warden::Manager.after_set_user do |user,auth,opts|
-    logger = Logger.new(STDOUT)
-    logger.info "Scouting workers necessities"
     scope = opts[:scope]
     auth.cookies.signed["#{scope}.id"] = user.id
     auth.cookies.signed["#{scope}.expires_at"] = 1.week.from_now

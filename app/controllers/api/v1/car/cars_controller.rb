@@ -11,8 +11,8 @@ module Api
             # TODO: Verify if the car is not saved already
             vehicle = ::Car.sanitized.find_by_vin(params[:vin]).create_structure
             if vehicle.present?
-              ::UserSavedCar.create!(user_id: @user.id, car_id: vehicle[:car_information][:id])
-              # ::User.cars.create(user_id: @user.id, car_id: vehicle[:id])
+              ::UserSavedCar.create!(user_id: current_user.id, car_id: vehicle[:car_information][:id])
+              # ::User.cars.create(user_id: current_user.id, car_id: vehicle[:id])
               render json: { car: vehicle }, :status => :ok
             else
               render json: {
@@ -30,7 +30,7 @@ module Api
             # TODO: Verify if the car is saved
             vehicle = ::Car.find_by(:vin => params[:vin])
             if vehicle
-              result = ::UserSavedCar.find_by(:user_id => @user[:id], :car_id => vehicle[:id]).destroy!
+              result = ::UserSavedCar.find_by(:user_id => current_user[:id], :car_id => vehicle[:id]).destroy!
               render json: {
                   removed_car: vehicle,
                   result: result,
@@ -65,7 +65,7 @@ module Api
 
         def price_request
           data = {
-              user_id: @user.id,
+              user_id: current_user.id,
               vin: params['vin'],
               action: 'query_mmr'
           }

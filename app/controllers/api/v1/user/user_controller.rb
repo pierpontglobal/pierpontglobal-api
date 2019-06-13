@@ -22,15 +22,15 @@ module Api
 
         def saved_cars
 
-          #cars = ::Car.includes(:users).where('users.id' => @user[:id]).map(&:sanitized)
+          #cars = ::Car.includes(:users).where('users.id' => current_user[:id]).map(&:sanitized)
           cars = ::Car.sanitized.joins(:user_saved_cars).where('cars.id = user_saved_cars.car_id')
           render json: { cars: cars }, :status => :ok
         end
 
         def settings
 
-          if @user.stripe_customer.present?
-            customer = Stripe::Customer.retrieve(@user.stripe_customer)
+          if current_user.stripe_customer.present?
+            customer = Stripe::Customer.retrieve(current_user.stripe_customer)
             sources = customer.sources.data
             card_sources = []
             sources.each do |source|
@@ -58,15 +58,15 @@ module Api
             }
 
             render json: {
-                user: @user.sanitized,
-                dealer: @user.dealer,
+                user: current_user.sanitized,
+                dealer: current_user.dealer,
                 card_sources: card_sources,
                 subcripcion_details: subscription_details
             }, status: :ok
           else
             render json: {
-                user: @user.sanitized,
-                dealer: @user.dealer,
+                user: current_user.sanitized,
+                dealer: current_user.dealer,
                 card_sources: nil,
                 subcripcion_details: nil
             }, status: :ok
@@ -76,7 +76,7 @@ module Api
 
         # Shows the current use information
         def info
-          render json: @user.sanitized, status: :ok
+          render json: current_user.sanitized, status: :ok
         end
 
         def resend_confirmation
@@ -121,7 +121,7 @@ module Api
 
         def register_notifier
           Subscriber.create!(
-            user: @user,
+            user: current_user,
             one_signal_uuid: params[:one_signal_uuid]
           )
           render json: {status: 'success', message: 'Added successfully'}, status: :ok
@@ -131,7 +131,7 @@ module Api
         end
 
         def log_out
-          @user.invalidate_session!
+          current_user.invalidate_session!
           deregister_notifier
           render json: { status: 'Invalidated' }, status: :ok
         end
@@ -141,7 +141,7 @@ module Api
         end
 
         def phone_verified?
-          phone_sections = @user.phone_number.split '-'
+          phone_sections = current_user.phone_number.split '-'
           country_code = phone_sections[0]
           phone_number = phone_sections[1]
           token = params[:token]
@@ -158,24 +158,24 @@ module Api
           )
 
           unless response.ok?
-            @user.phone_number_validated = false
+            current_user.phone_number_validated = false
             render(json: { err: 'Verify Token Error' },
                    status: :bad_request) && return
           end
 
-          @user.phone_number_validated = true
-          @user.save!
+          current_user.phone_number_validated = true
+          current_user.save!
           render json: response, status: :ok
         end
 
         def set_two_factor_authentication
-          @user.require_2fa = true
-          @user.save!
-          render json: @user, status: :ok
+          current_user.require_2fa = true
+          current_user.save!
+          render json: current_user, status: :ok
         end
 
         def send_phone_verification
-          phone_sections = @user.phone_number.split '-'
+          phone_sections = current_user.phone_number.split '-'
           country_code = phone_sections[0]
           phone_number = phone_sections[1]
           via = params[:via]
@@ -200,17 +200,17 @@ module Api
         end
 
         def modify_user
-          @user.update(permitted_user_params)
-          @user.verified = false
-          @user.save!
-          render json: @user.sanitized, status: :ok
+          current_user.update(permitted_user_params)
+          current_user.verified = false
+          current_user.save!
+          render json: current_user.sanitized, status: :ok
         end
 
         def modify_address
-          @user.update(permitted_address_params)
-          @user.verified = false
-          @user.save!
-          render json: @user.sanitized, status: :ok
+          current_user.update(permitted_address_params)
+          current_user.verified = false
+          current_user.save!
+          render json: current_user.sanitized, status: :ok
         end
 
         def change_password

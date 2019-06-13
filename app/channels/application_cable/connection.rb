@@ -13,10 +13,6 @@ module ApplicationCable
 
     def find_verified_user # this checks whether a user is authenticated with devise
       verified_user = User.find_by(id: cookies.signed['user.id'])
-      puts cookies.signed['user.id']
-      a = cookies.signed
-      p cookies
-      p a
       if verified_user && cookies.signed['user.expires_at'] > Time.now
         verified_user
       else

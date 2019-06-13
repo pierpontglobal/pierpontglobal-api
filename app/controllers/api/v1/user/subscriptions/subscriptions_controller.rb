@@ -97,7 +97,7 @@ module Api
             if pending_invoices.present?
               NotificationHandler.send_notification('Pending invoices',
         "Total Amount due: #{total_amount_due}. Please pay your invoices as soon as possible.", pending_invoices,
-                  @user[:id], ::Notification::ALERT_NOTIFICATION)
+                  current_user[:id], ::Notification::ALERT_NOTIFICATION)
             end
 
             render json: {
@@ -155,7 +155,7 @@ module Api
 
           def stripe_user
 
-            @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
+            @user_stripe = Stripe::Customer.retrieve(current_user.stripe_customer)
 
           rescue Stripe::APIConnectionError => e
             render json: { message: 'Connection with stripe failed', error: e }, status: :service_unavailable

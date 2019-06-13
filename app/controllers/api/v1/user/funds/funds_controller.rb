@@ -21,7 +21,7 @@ module Api
             )
 
             if charge.status == 'succeeded'
-              last_record = @user.funds.last
+              last_record = current_user.funds.last
               last_balance = last_record ? last_record.balance : 0
               Fund.create!(
                 payment: nil,
@@ -29,13 +29,13 @@ module Api
                 amount: params[:amount],
                 holding: last_record ? last_record.holding : 0,
                 credit: true,
-                user: @user,
+                user: current_user,
                 source_id: charge.id
               )
             end
 
             NotificationHandler.send_notification('New funds', "Amount: #{params[:amount]}, Last balance #{last_balance}, New balance: #{last_balance + params[:amount]}",
-                                                  charge, @user[:id])
+                                                  charge, current_user[:id])
 
             render json: charge, status: :ok
           rescue Stripe::CardError => e
@@ -43,12 +43,12 @@ module Api
           end
 
           def show_funds
-            last_record = @user.funds.try(:last) || { balance: 0 }
+            last_record = current_user.funds.try(:last) || { balance: 0 }
             render json: last_record, status: :ok
           end
 
           def funds_transactions
-            render json: @user.funds, status: :ok
+            render json: current_user.funds, status: :ok
           end
 
           def request_refund
@@ -58,7 +58,7 @@ module Api
           private
 
           def stripe_user
-            @user_stripe = Stripe::Customer.retrieve(@user.stripe_customer)
+            @user_stripe = Stripe::Customer.retrieve(current_user.stripe_customer)
 
           rescue Stripe::APIConnectionError => e
             render json: { message: 'Connection with stripe failed', error: e }, status: :service_unavailable

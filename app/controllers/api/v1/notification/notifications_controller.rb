@@ -21,7 +21,7 @@ module Api
               if !exists(n[:title], n[:message], n[:type])
                 issue = ::Issue.find_by(custom_id: n[:issue_id])
                 issue_id = issue.present? ? issue[:id] : nil
-                NotificationHandler.send_notification(n[:title], n[:message], n[:payload], @user[:id], n[:type], issue_id)
+                NotificationHandler.send_notification(n[:title], n[:message], n[:payload], current_user[:id], n[:type], issue_id)
                 sent << n
               end
             end
@@ -84,7 +84,7 @@ module Api
             title,
             message,
             type,
-            @user[:id]
+            current_user[:id]
           )
 
           if notifications.any?

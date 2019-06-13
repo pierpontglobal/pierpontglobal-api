@@ -12,7 +12,7 @@ module Api
 
         def show
           bids = @bid_collector.bids
-          user_bids = bids.find_by(user_id: @user.id)
+          user_bids = bids.find_by(user_id: current_user.id)
           throw StandardError if user_bids.blank?
           render json: user_bids, status: :ok
         rescue StandardError => _e
@@ -21,14 +21,14 @@ module Api
 
         def deactivate_bid
           bid_id = params[:bid_id]
-          user_bid = @user.bids.find(bid_id)
+          user_bid = current_user.bids.find(bid_id)
           remove_bid(user_bid)
         end
 
         def modify_bid
           bid_id = params[:bid_id]
           amount = params[:amount]
-          user_bid = @user.bids.find(bid_id)
+          user_bid = current_user.bids.find(bid_id)
 
           remove_bid(user_bid)
           add_bid(amount)
@@ -38,7 +38,7 @@ module Api
           amount = params[:amount]
           bid = add_bid(amount)
 
-          NotificationHandler.send_notification('Increase bid', 'Bid has been increased', bid, @user[:id])
+          NotificationHandler.send_notification('Increase bid', 'Bid has been increased', bid, current_user[:id])
 
           render json: { status: 'success',
                          message: bid,
@@ -61,7 +61,7 @@ module Api
         def check_amount_with_balance
           amount_to_bid = params[:amount]
           amount_fraction = amount_to_bid * 0.1 # 10% of the amount
-          user_fund = @user.fund
+          user_fund = current_user.fund
 
           fail_message = 'The amount submitted does not correlates with your balance'
           close_proposal_with(fail_message) if amount_fraction > user_fund.available
@@ -78,21 +78,21 @@ module Api
 
         def set_car
           @car = ::Car.find(params[:car_id]) if params[:car_id]
-          @car = @user.bids.find(params[:bid_id]).bid_collector.car if params[:bid_id]
+          @car = current_user.bids.find(params[:bid_id]).bid_collector.car if params[:bid_id]
         rescue StandardError => _e
           fail_message = 'Could not get the requested car or bid information'
           close_proposal_with(fail_message)
         end
 
         def remove_bid(bid)
-          user_fund = @user.fund
+          user_fund = current_user.fund
           user_fund.release_from_bid(bid)
         end
 
         def add_bid(amount)
           Bid.create!(
             amount: amount,
-            user: @user,
+            user: current_user,
             status: 'active',
             bid_collector: @bid_collector
           )
