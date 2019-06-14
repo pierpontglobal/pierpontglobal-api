@@ -16,7 +16,7 @@ module ApplicationCable
       if verified_user && cookies.signed['user.expires_at'] > Time.now
         verified_user
       else
-        reject_unauthorized_connection
+        nil
       end
     end
   end
