@@ -5,8 +5,8 @@ module ApplicationCable
     identified_by :current_user, :device_identifier
 
     def connect
-      self.current_user = find_verified_user
       self.device_identifier = request.params[:hash]
+      self.current_user = find_verified_user
     end
 
     private
@@ -14,10 +14,11 @@ module ApplicationCable
     def find_verified_user # this checks whether a user is authenticated with devise
       verified_user = User.find_by(id: cookies.signed['user.id'])
       if verified_user && cookies.signed['user.expires_at'] > Time.now
-        verified_user
+        return verified_user
       else
-        reject_unauthorized_connection
+        reject_unauthorized_connection unless self.device_identifier.present?
       end
+      nil
     end
   end
 end

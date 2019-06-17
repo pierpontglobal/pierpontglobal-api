@@ -48,7 +48,8 @@ module Api
           def set_photo
             photo = params[:logo]
             if photo.present?
-              dealer = ::Dealer.find_by(:user_id => @user[:id])
+              p '<<<<<<<<<<<<<<<<'
+              dealer = ::Dealer.find_by(:user_id => current_user[:id])
               if dealer.present?
                 dealer.dealer_logo.attach(params[:logo])
                 render json: dealer.sanitized, status: :ok

@@ -205,6 +205,9 @@ Rails.application.routes.draw do
     end
 
     namespace :v2 do
+      namespace :users do
+        post '/subscription', to: 'users#subscribe'
+      end
     end
   end
 end

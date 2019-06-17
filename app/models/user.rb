@@ -3,8 +3,11 @@
 class User < ApplicationRecord
   include Rails.application.routes.url_helpers
 
-  validates :username, presence: true, on: :create
+
+  validates :email, presence: true, on: :create
   validates :phone_number, presence: true, on: :create
+
+
   after_create :assign_default_role
   after_find :assign_default_role
   rolify # Allow handling of user roles in the application

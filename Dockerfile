@@ -1,8 +1,9 @@
 FROM ruby:2.5.1
 
 ENV AWS_REGION=us-east-1
-ENV AWS_ACCESS_KEY_ID=AKIAZUF7ZOAYRTTX75FQ
-ENV AWS_SECRET_ACCESS_KEY=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
+ENV AWS_BUCKET=pierpontglobal-api-images
+ENV AWS_ACCESS_KEY_ID=AKIAI566CCS72L4YKO4A
+ENV AWS_SECRET_ACCESS_KEY=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
 
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs python3 python3-pip
 RUN pip3 install awscli --upgrade

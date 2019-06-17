@@ -29,11 +29,11 @@ module Api
         def set_profile_photo
           photo = params[:photo]
           if photo.present?
-            if @user.profile_picture.attached?
-              @user.profile_picture.purge
+            if current_user.profile_picture.attached?
+              current_user.profile_picture.purge
             end
-            @user.profile_picture.attach(photo)
-            render json: @user.sanitized, status: :ok
+            current_user.profile_picture.attach(photo)
+            render json: current_user.sanitized, status: :ok
           else
             render json: "Please, provide a photo to set.", status: :bad_request
           end
@@ -122,7 +122,6 @@ module Api
             email: params[:email],
             phone_number: params[:phone_number]
           )
-          user.send_confirmation
 
           render json: { status: 'Created' }, status: :created
         end

@@ -1,4 +1,5 @@
 class SubscribedUser < ApplicationRecord
+  after_create :send_confirmation
 
   def send_confirmation
     token = generate_token
