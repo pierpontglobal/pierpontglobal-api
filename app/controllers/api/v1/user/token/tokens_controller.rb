@@ -3,7 +3,7 @@ module Api
     module User
       module Token
         # Controls the token activation and deactivation tied to 2FA
-        class TokensController < Api::V1::BaseController
+        class TokensController < Api::V1::UserBaseController
 
           def activate
             sendable_token = generate_secure_numeric_token

@@ -121,7 +121,7 @@ module Api
           def notify_success
             record_activity("Notifying (#{params[:success]}) bid with ID: #{@bid.id}")
 
-            NotificationHandler.send_notification('Bid status', 'Bid has been placed', @bid, @user[:id])
+            NotificationHandler.send_notification('Bid status', 'Bid has been placed', @bid, current_user[:id])
 
             render json: { success: @bid.update!(success: params[:success]) }, status: :ok
           rescue StandardError => e

@@ -3,33 +3,26 @@
 Rails.application.routes.draw do
   require 'sidekiq/web'
   mount Sidekiq::Web => "/sidekiq"
-
-  use_doorkeeper do
-    skip_controllers :applications, :authorized_applications
-    controllers tokens: 'logger'
-  end
-
-  scope '/oauth' do
-    get '/application', to: 'oauth#application_name'
-    post '/application', to: 'oauth#create_application'
-    post '/login', to: 'oauth#authenticate'
-    post '/user', to: 'oauth#authorized_user'
-  end
-
-  namespace :oauth do
-    namespace :cars do
-      get '/:vin', to: 'cars#show'
-    end
-  end
-
   mount ActionCable.server => '/cable'
+
+  devise_for :users,
+             path: '/api/v2/users',
+             path_names: {
+                 sign_in: 'login',
+                 sign_out: 'logout',
+                 registration: 'signup'
+             },
+             controllers: {
+                 sessions: 'api/v2/users/sessions',
+                 registrations: 'api/v2/users/registrations'
+             }
 
   # Relative to the routes that belongs to the API
   namespace :api do
     # Relative to the routes that belongs to the version 1 of the API
     namespace :v1 do
 
-      get '/aws-health', to: 'base#health'
+      get '/aws-health', to: 'user_base#health'
 
       devise_for :users, controllers: {
         registrations: 'api/v1/user/registrations',
@@ -37,8 +30,7 @@ Rails.application.routes.draw do
       }, skip: %i[sessions password]
 
       namespace :user do
-
-        # Attribute set
+        post '/photo', to: 'user#set_profile_photo'
 
         get '/settings', to: 'user#settings'
 
@@ -91,6 +83,7 @@ Rails.application.routes.draw do
           get '/', to: 'dealers#retrieve_dealer'
           post '/', to: 'dealers#create_dealer'
           patch '/', to: 'dealers#update_dealer'
+          post '/logo', to: 'dealers#set_photo'
         end
 
         namespace :cards do
@@ -208,6 +201,12 @@ Rails.application.routes.draw do
         end
 
         resource :locations
+      end
+    end
+
+    namespace :v2 do
+      namespace :users do
+        post '/subscription', to: 'users#subscribe'
       end
     end
   end

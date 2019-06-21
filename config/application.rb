@@ -48,10 +48,7 @@ module PierpontglobalApi
 
     config.api_only = true
 
-    Minfraud.configure do |c|
-      c.license_key = ENV['MAX_MIND_KEY']
-      c.user_id = ENV['MAX_MIND_USER']
-    end
-
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
   end
 end

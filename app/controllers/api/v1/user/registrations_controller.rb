@@ -8,7 +8,7 @@ module Api
     module User
       # Handles the registration process
       class RegistrationsController < Devise::RegistrationsController
-        skip_before_action :doorkeeper_authorize!, only: :create
+        skip_before_action :authenticate_user!, only: :create
 
         Stripe.api_key = ENV['STRIPE_KEY']
 

@@ -267,6 +267,17 @@ Devise.setup do |config|
   #   manager.intercept_401 = false
   #   manager.default_strategies(scope: :user).unshift :some_external_strategy
   # end
+  Warden::Manager.after_set_user do |user,auth,opts|
+    scope = opts[:scope]
+    auth.cookies.signed["#{scope}.id"] = user.id
+    auth.cookies.signed["#{scope}.expires_at"] = 1.week.from_now
+  end
+
+  Warden::Manager.before_logout do |user, auth, opts|
+    scope = opts[:scope]
+    auth.cookies["#{scope}.id"] = nil
+    auth.cookies["#{scope}.expires_at"] = nil
+  end
 
   # ==> Mountable engine configurations
   # When using Devise inside an engine, let's call it `MyEngine`, and this engine
@@ -288,4 +299,17 @@ Devise.setup do |config|
   # ActiveSupport.on_load(:devise_failure_app) do
   #   include Turbolinks::Controller
   # end
+
+  config.jwt do |jwt|
+    jwt.secret = ENV['DEVISE_JWT_SECRET_KEY']
+    jwt.dispatch_requests = [
+        ['POST', %r{^/login$}]
+    ]
+    jwt.revocation_requests = [
+        ['DELETE', %r{^/logout$}]
+    ]
+    jwt.expiration_time = 1.week.to_i
+  end
+
+  config.navigational_formats = [:json]
 end

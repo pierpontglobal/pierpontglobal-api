@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class AdminNotificationChannel < ApplicationCable::Channel
+class NotificationChannel < ApplicationCable::Channel
+
   def subscribed
-    stream_from "admin_notification_single_#{current_user.id}"
-    stream_from 'admin_notification_to_admin'
+    stream_from "notification_single_#{current_user.id}"
   end
 
   def show_pending
@@ -15,7 +15,7 @@ class AdminNotificationChannel < ApplicationCable::Channel
     end
 
     ActionCable.server.broadcast(
-      "admin_notification_single_#{current_user.id}",
+      "notification_single_#{current_user.id}",
       notifications
     )
   end

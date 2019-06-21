@@ -1,23 +1,20 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  validates :username, presence: true, on: :create
+  include Rails.application.routes.url_helpers
+
+
+  validates :email, presence: true, on: :create
   validates :phone_number, presence: true, on: :create
+
+
   after_create :assign_default_role
   after_find :assign_default_role
-
-  rolify
+  rolify # Allow handling of user roles in the application
 
   devise :confirmable, :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :trackable
-
-  has_many :access_grants, class_name: 'Doorkeeper::AccessGrant',
-                           foreign_key: :resource_owner_id,
-                           dependent: :delete_all # or :destroy if you need callbacks
-
-  has_many :access_tokens, class_name: 'Doorkeeper::AccessToken',
-                           foreign_key: :resource_owner_id,
-                           dependent: :delete_all # or :destroy if you need callbacks
+         :recoverable, :rememberable, :validatable, :trackable,
+         :jwt_authenticatable, jwt_revocation_strategy: ::JwtBlacklist
 
   has_many :risk_notices, dependent: :destroy
   has_one :dealer, dependent: :destroy
@@ -29,6 +26,8 @@ class User < ApplicationRecord
 
   has_many :user_saved_cars, dependent: :destroy
   has_many :cars, through: :user_saved_cars
+
+  has_one_attached :profile_picture
 
   def sanitized_for_admin
     {
@@ -47,6 +46,7 @@ class User < ApplicationRecord
   end
 
   def sanitized
+    dealer = ::Dealer.find_by(:user_id => id)
     {
       id: id,
       first_name: first_name,
@@ -66,7 +66,9 @@ class User < ApplicationRecord
       require_2fa: require_2fa,
       phone_number_validated: phone_number_validated,
       last_sign_in_at: current_sign_in_at,
-      last_sign_in_ip: current_sign_in_ip.to_s
+      last_sign_in_ip: current_sign_in_ip.to_s,
+      photo_url: profile_picture.attached? ? rails_blob_path(profile_picture, disposition: "attachment", only_path: true) : nil,
+      dealer: dealer.present? ? dealer.sanitized : nil
     }
   end
 

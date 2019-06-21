@@ -29,7 +29,7 @@ module NotificationHandler
     user = ::User.find(receiver_id)
     NotificationHandler.push_notification(user, message, title)
     ActionCable.server.broadcast(
-      receiver_id ? "admin_notification_single_#{receiver_id}" : 'admin_notification_to_admin',
+      "notification_single_#{receiver_id}",
       hash_data.merge!(notification_id: notification.id, notification_type: type)
     )
   end

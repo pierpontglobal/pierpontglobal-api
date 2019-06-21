@@ -14,7 +14,7 @@ module WorkerHandler
       while true do
         update_worker_number
         # ------------------- #
-        sleep 20
+        sleep 1.minute
       end
     end
 
