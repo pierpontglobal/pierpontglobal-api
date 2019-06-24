@@ -60,6 +60,7 @@ module WorkerHandler
   end
 
   def self.enqueue_jobs
+    logger = Logger.new(STDOUT)
     Sidekiq::ScheduledSet.new.each do |ss|
       if (ss.created_at - ss.at) > 0
         ss.add_to_queue
