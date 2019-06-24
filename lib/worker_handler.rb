@@ -12,6 +12,7 @@ module WorkerHandler
 
     Thread.new do
       while true do
+        enqueue_jobs
         update_worker_number
         # ------------------- #
         sleep 1.minute
@@ -56,6 +57,16 @@ module WorkerHandler
         worker.stop!
       end
     end
+  end
+
+  def self.enqueue_jobs
+    Sidekiq::ScheduledSet.new.each do |ss|
+      if (ss.created_at - ss.at) > 0
+        ss.add_to_queue
+      end
+    end
+
+    Sidekiq::RetrySet.new.retry_all
   end
 
   def self.deploy_worker(queue)
