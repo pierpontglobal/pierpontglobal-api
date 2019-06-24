@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'sendgrid-ruby'
 class User < ApplicationRecord
   include Rails.application.routes.url_helpers
 
@@ -56,6 +57,28 @@ class User < ApplicationRecord
       birthday: '',
       notes: ''
     }
+  end
+
+  def send_reset_email
+    token = generate_token
+    update!(reset_password_token: token, reset_password_sent_at: Time.now)
+    reset_template = load_reset_template(token)
+    data = JSON.parse(reset_template.to_json)
+    sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
+    sg.client.mail._('send').post(request_body: data)
+  end
+
+  def load_reset_template(token)
+    { personalizations: [
+        {
+            to: [email: email],
+            dynamic_template_data: {
+                "callback": Rails.env.production? ? "https://app.pirepontglobal.com/reset_password" : "http://0.0.0.0:4000/reset_password",
+                "token": token
+            }
+        }
+    ], from: { email: ENV['SOURCE_EMAIL'] },
+      template_id: 'd-16b03d18163947a7b7cb79a102024f2b' }
   end
 
   def sanitized
@@ -158,5 +181,15 @@ class User < ApplicationRecord
   def append_condition(status, reason)
     status[:status] = false
     status[:reason] << reason
+  end
+
+  protected
+
+  def generate_token
+    token = loop do
+      random_token = SecureRandom.urlsafe_base64(nil, false)
+      break random_token unless User.exists?(reset_password_token: random_token)
+    end
+    token
   end
 end

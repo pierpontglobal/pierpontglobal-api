@@ -207,6 +207,8 @@ Rails.application.routes.draw do
     namespace :v2 do
       namespace :users do
         post '/subscription', to: 'users#subscribe'
+        post '/recover', to: 'recover#send_recover_email'
+        post '/password_change', to: 'recover#reset_password'
       end
     end
   end

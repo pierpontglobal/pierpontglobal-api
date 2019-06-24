@@ -15,7 +15,7 @@ module Api
 
         def create
           user = User.create!(user_params)
-          render json: {user: user.sanitized}, status: :ok
+          render json: { user: user.sanitized }, status: :ok
         rescue StandardError => e
           render json: { status: 'error', cause: e }, status: :bad_request
         end
