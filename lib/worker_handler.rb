@@ -67,6 +67,8 @@ module WorkerHandler
     end
 
     Sidekiq::RetrySet.new.retry_all
+  rescue
+    logger.info 'Sidekiq not ready'
   end
 
   def self.deploy_worker(queue)
