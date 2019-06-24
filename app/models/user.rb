@@ -73,7 +73,7 @@ class User < ApplicationRecord
         {
             to: [email: email],
             dynamic_template_data: {
-                "callback": Rails.env.production? ? "https://app.pirepontglobal.com/reset_password" : "http://0.0.0.0:4000/reset_password",
+                "callback": Rails.env.production? ? "https://app.pierpontglobal.com/reset_password" : "http://0.0.0.0:4000/reset_password",
                 "token": token
             }
         }
