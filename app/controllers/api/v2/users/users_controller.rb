@@ -6,9 +6,13 @@ module Api
 
         # Create a subscription instance for the given user
         def subscribe
-          subscribed_user = SubscribedUser.create!(user_params)
-          render json: { status: 'Created' }, status: :created if subscribed_user
-          render json: { status: 'Something wrong happened' }, status: :bad_request unless subscribed_user
+          if User.exists?(email: params[:user][:email])
+            render json: { status: 'The email is already taken' }, status: :bad_request
+          else
+            subscribed_user = SubscribedUser.create!(user_params)
+            render json: { status: 'Created' }, status: :created if subscribed_user
+            render json: { status: 'Something wrong happened' }, status: :bad_request unless subscribed_user
+          end
         rescue
           render json: { status: 'Something wrong happened' }, status: :bad_request
         end

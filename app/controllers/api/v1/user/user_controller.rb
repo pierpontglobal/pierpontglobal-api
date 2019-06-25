@@ -88,7 +88,6 @@ module Api
 
         # Shows the current use information
         def info
-          puts '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
           puts @user.inspect
           render json: current_user.sanitized, status: :ok
         end
