@@ -3,6 +3,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
+gem 'selenium-webdriver'
+
 # Requirement compliant gems
 gem 'rb-readline'
 gem 'minfraud'
