@@ -10,6 +10,7 @@ phases:
       - echo Starting database update/create
       - CONFIGURATION=true bundle exec rails db:create
       - CONFIGURATION=true bundle exec rails db:migrate
+      - CONFIGURATION=true bundle exec rails db:seed
   post_build:
     commands:
       - echo Finished migrations
