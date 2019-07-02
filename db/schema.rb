@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_17_171008) do
+ActiveRecord::Schema.define(version: 2019_07_02_155855) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -210,6 +210,40 @@ ActiveRecord::Schema.define(version: 2019_06_17_171008) do
     t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "heavy_vehicle_categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "type_id"
+  end
+
+  create_table "heavy_vehicle_subcategories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "category_id"
+  end
+
+  create_table "heavy_vehicle_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "heavy_vehicles", force: :cascade do |t|
+    t.string "main_image"
+    t.string "title"
+    t.string "location"
+    t.decimal "price", precision: 4, scale: 2
+    t.string "equipment_id"
+    t.string "description"
+    t.string "serial"
+    t.string "condition"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "type_id"
   end
 
   create_table "issue_solutions", force: :cascade do |t|

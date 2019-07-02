@@ -29,6 +29,7 @@ gem 'rake'
 gem 'connection_pool'
 gem 'sinatra'
 gem 'sidekiq'
+gem 'sidekiq-scheduler'
 
 # Database gems``
 gem 'pg'

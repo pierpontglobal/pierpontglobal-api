@@ -1,14 +1,19 @@
 require 'selenium-webdriver'
 
-# TODO: Store @vehicles result value into a Database table
-#
-
 class HeavyVehiclesWorker
+  #
+  # def perform
+  #   pageNumber = 1
+  #   initialize
+  #   while pageNumber < @total_pages
+  #     get_for_page(pageNumber)
+  #     pageNumber = pageNumber + 1
+  #   end
+  # end
 
-  def initialize(page)
+  def initialize
     @webpage_loaded = false
     @vehicles = []
-    @pageNumber = page
 
     chromedriver_path = File.join(File.absolute_path('', File.dirname('./lib/Drivers')),'Drivers','chromedriver')
     Selenium::WebDriver::Chrome::Service.driver_path = chromedriver_path
@@ -20,21 +25,43 @@ class HeavyVehiclesWorker
     )
 
     @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
-    @driver.navigate.to "https://ur.rousesales.com/EquipmentListing/Classification/Compaction?page=#{@pageNumber}"
+    @driver.navigate.to "https://ur.rousesales.com/used-equipment-results"
 
-    try_get_result_list
     while !@webpage_loaded
-      sleep 1.second
+      sleep(1)
+      try_get_result_list
     end
+    @webpage_loaded = false
+    @results_list = nil
 
+    page_title =  @driver.find_element(:class, "results-title")
+    total_cars_text = page_title.find_element(:tag_name, "span").text
+    total_cars = total_cars_text[1, total_cars_text.length - 2].gsub(/[\s,]/ ,"")
+    @total_vehicles = total_cars.to_i
+    @total_pages = (@total_vehicles / 25).ceil
+  end
+
+  def get_for_page(page)
+    @driver.get("https://ur.rousesales.com/used-equipment-results?page=#{page}")
+    while !@webpage_loaded
+      sleep(1)
+      try_get_result_list
+    end
     @vehicles_lis = @results_list.find_elements(:tag_name, "li")
     get_info
-    puts '>>>> VEHICLES'
-    puts @vehicles.inspect
+    @webpage_loaded = false
+  end
+
+  def get_total_pages
+    @total_pages
   end
 
   def get_vehicles
     @vehicles
+  end
+
+  def set_vehicles(value)
+    @vehicles = value
   end
 
   def try_get_result_list
