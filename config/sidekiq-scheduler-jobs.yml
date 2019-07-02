@@ -1,0 +1,5 @@
+:schedule:
+  ScrabHeavyVehicles:
+    every: ['60m', first_in: '60s']
+    class: ScrabHeavyVehicles
+    description: "Get heavy vehicles from another source"

@@ -1,0 +1,2 @@
+class HeavyVehicleCategory < ApplicationRecord
+end
