@@ -26,6 +26,8 @@ class HeavyVehicles
 
     @vehicles_lis = @results_list.find_elements(:tag_name, "li")
     get_info
+    puts '>>>> VEHICLES'
+    puts @vehicles.inspect
   end
 
   def try_get_result_list
