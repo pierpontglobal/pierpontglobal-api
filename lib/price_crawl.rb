@@ -19,46 +19,67 @@ class PriceCrawl
     @driver.navigate.to "https://www.manheim.com/"
   end
 
-  def look_for_vin(vin)
-    while @busy
-      sleep 2.second
-    end
+  def look_for_vin(vin, target_id)
+    if @busy
+      @queue << {vin: vin, id: target_id}
+    else
+      @busy = true
 
-    @busy = true
-
-    5.times do
-      if not logged_in?
-        login
-      else
-        break
+      5.times do
+        if not logged_in?
+          login
+        else
+          break
+        end
       end
+
+      wait = Selenium::WebDriver::Wait.new(:timeout => 3)
+
+      search_input = wait.until {
+        field = @driver.find_element(:name, 'searchTerms')
+        field if field.displayed?
+      }
+
+      search_button = wait.until {
+        field = @driver.find_element(:class_name, 'uhf-icon-search')
+        field if field.displayed?
+      }
+
+      search_input.send_keys(vin)
+      search_button.click()
+
+      mmr = wait.until {
+        field = @driver.find_element(:class_name, 'mmr-valuation')
+        field if field.displayed?
+      }
+
+      response = mmr.find_element(:tag_name, 'a').text
+      broadcast_result(vin, response, target_id)
+      @busy = false
+      job = @queue.shift
+      look_for_vin(job[:vin], job[:id]) if job
     end
-
-    wait = Selenium::WebDriver::Wait.new(:timeout => 3)
-
-    search_input = wait.until {
-      field = @driver.find_element(:name, 'searchTerms')
-      field if field.displayed?
-    }
-
-    search_button = wait.until {
-      field = @driver.find_element(:class_name, 'uhf-icon-search')
-      field if field.displayed?
-    }
-
-    search_input.send_keys(vin)
-    search_button.click()
-
-    mmr = wait.until {
-      field = @driver.find_element(:class_name, 'mmr-valuation')
-      field if field.displayed?
-    }
-
-    @busy = false
-    mmr.find_element(:tag_name, 'a').text
   rescue
+    response = "Not available"
+    broadcast_result(vin, response, target_id)
     @busy = false
-    "Not available"
+    job = @queue.shift
+    look_for_vin(job[:vin], job[:id]) if job
+  end
+
+  def broadcast_result(vin, result, id)
+    mmr = result.sub!('$', '').sub(',', '').to_i
+    ::Car.find_by_vin(vin)
+        .update!(
+            whole_price: mmr
+        )
+  rescue StandardError
+    mmr = 'null'
+  ensure
+    params = {:mmr => mmr, vin: vin}
+    p params
+    ActionCable.server.broadcast("price_query_channel_#{id}",
+                                 params.to_json)
   end
 
   def logged_in?

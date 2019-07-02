@@ -66,18 +66,7 @@ module Api
         def price_request
           render json: { status: 'sent' }, status: :ok
           driver = ::PriceWorker::Instance::Driver
-          mmr = driver.look_for_vin(params['vin']).sub!('$', '').sub(',', '').to_i
-          ::Car.find_by_vin(params['vin'])
-              .update!(
-                  whole_price: mmr
-              )
-        rescue => e
-          puts e
-          mmr = 'null'
-        ensure
-          params['mmr'] = mmr
-          ActionCable.server.broadcast("price_query_channel_#{current_user.id}",
-                                       params.to_json)
+          driver.look_for_vin(params['vin'], current_user.id)
         end
 
         def query
