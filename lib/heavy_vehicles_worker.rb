@@ -1,6 +1,9 @@
 require 'selenium-webdriver'
 
-class HeavyVehicles
+# TODO: Store @vehicles result value into a Database table
+#
+
+class HeavyVehiclesWorker
 
   def initialize(page)
     @webpage_loaded = false
@@ -28,6 +31,10 @@ class HeavyVehicles
     get_info
     puts '>>>> VEHICLES'
     puts @vehicles.inspect
+  end
+
+  def get_vehicles
+    @vehicles
   end
 
   def try_get_result_list

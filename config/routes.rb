@@ -210,6 +210,9 @@ Rails.application.routes.draw do
         post '/recover', to: 'recover#send_recover_email'
         post '/password_change', to: 'recover#reset_password'
       end
+      namespace :heavy_vehicles do
+        get '/', to: 'heavy_vehicles#show'
+      end
     end
   end
 end
