@@ -3,6 +3,7 @@ require 'sidekiq-scheduler'
 
 class ScrabHeavyVehicles
   include Sidekiq::Worker
+  sidekiq_options queue: 'scrap_heavy_vehicles'
 
   def perform(*_args)
     worker = ::HeavyVehiclesWorker.new

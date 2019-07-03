@@ -4,6 +4,7 @@ require 'net/http'
 require 'uri'
 require 'json'
 require 'set'
+require 'sidekiq-scheduler'
 
 class PullCarsJob
   include Sidekiq::Worker
@@ -43,7 +44,6 @@ class PullCarsJob
 
     CarReindexJob.perform_at((bigger + 5).minutes, release_number)
     GeneralConfiguration.find('pull_release').update!(value: release_number.to_i + 1)
-    PullCarsJob.perform_at(1.hour.from_now)
   end
 
   def pull_amount(year, location, limit_amount, release_number)

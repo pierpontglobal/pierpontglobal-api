@@ -29,7 +29,6 @@ RUN mkdir /pierpontglobal-api
 WORKDIR /pierpontglobal-api
 
 COPY Gemfile /pierpontglobal-api/Gemfile
-COPY Gemfile.lock /pierpontglobal-api/Gemfile.lock
 
 COPY . /pierpontglobal-api
 

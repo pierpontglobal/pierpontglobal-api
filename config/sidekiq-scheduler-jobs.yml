@@ -1,5 +1,10 @@
-:schedule:
-  ScrabHeavyVehicles:
-    every: ['60m', first_in: '60s']
-    class: ScrabHeavyVehicles
-    description: "Get heavy vehicles from another source"
+ScrabHeavyVehicles:
+  every: ['60m', first_in: '60s']
+  queue: scrap_heavy_vehicles
+  class: ScrabHeavyVehicles
+  description: "Get heavy vehicles from another source"
+CarPulling:
+  every: ['60m', first_in: '60s']
+  queue: car_pulling
+  class: PullCarsJob
+  description: "Pull Cars from sources"
