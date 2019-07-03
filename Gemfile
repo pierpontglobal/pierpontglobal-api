@@ -78,9 +78,6 @@ gem 'rack-cors'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-core'
 
-
-gem 'redis-namespace'
-
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
 

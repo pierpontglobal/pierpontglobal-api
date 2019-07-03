@@ -6,7 +6,7 @@ class PriceCrawl
     @busy = false
     @queue = []
 
-    chromedriver_path = File.join(File.absolute_path('', File.dirname('./lib/Drivers')),'Drivers','chromedriver_mac')
+    chromedriver_path = File.join(File.absolute_path('', File.dirname('./lib/Drivers')),'Drivers','chromedriver')
     Selenium::WebDriver::Chrome::Service.driver_path = chromedriver_path
 
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(

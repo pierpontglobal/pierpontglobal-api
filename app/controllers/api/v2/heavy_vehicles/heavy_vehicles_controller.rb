@@ -5,7 +5,7 @@ module Api
       class HeavyVehiclesController < ApplicationController
 
         def show
-          ScrabHeavyVehicles.perform_at(1.hour.from_now)
+          ScrapHeavyVehicles.perform_at(1.hour.from_now)
           render json: {
               message: "Worker started!"
           }, :status => :ok
