@@ -13,7 +13,6 @@ class HeavyVehiclesWorker
     Selenium::WebDriver::Chrome::Service.driver_path = chromedriver_path
 
     puts Selenium::WebDriver::Chrome::Service.driver_path
-    puts Selenium::WebDriver::Chrome::Service.host
     puts Selenium::WebDriver::Chrome::Service.default_port
 
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(
