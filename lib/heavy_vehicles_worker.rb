@@ -1,17 +1,11 @@
 require 'selenium-webdriver'
 
 class HeavyVehiclesWorker
-  #
-  # def perform
-  #   pageNumber = 1
-  #   initialize
-  #   while pageNumber < @total_pages
-  #     get_for_page(pageNumber)
-  #     pageNumber = pageNumber + 1
-  #   end
-  # end
 
   def initialize
+
+    puts '>>>>>>>>>>>>>>> Heavy vehicles worker start.....'
+
     @webpage_loaded = false
     @vehicles = []
 

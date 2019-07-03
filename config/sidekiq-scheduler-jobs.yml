@@ -3,6 +3,7 @@ default: &default
     every: ['60m', first_in: '60s']
     class: ScrabHeavyVehicles
     description: "Get heavy vehicles from another source"
+    queue: scrab_heavy_vehicles
 
 development:
   <<: *default

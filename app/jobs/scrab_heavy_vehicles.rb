@@ -3,10 +3,13 @@ require 'sidekiq-scheduler'
 
 class ScrabHeavyVehicles
   include Sidekiq::Worker
+  sidekiq_options queue: 'scrab_heavy_vehicles'
 
   def perform(*_args)
     worker = ::HeavyVehiclesWorker.new
     total_pages = worker.get_total_pages
+
+    puts '>>>>> Scrab vehicles start.... >>>>'
 
     total_pages = 3
     @page = 1
