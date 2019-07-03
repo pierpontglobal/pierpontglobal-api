@@ -12,6 +12,10 @@ class HeavyVehiclesWorker
     chromedriver_path = File.join(File.absolute_path('', File.dirname('./lib/Drivers')),'Drivers','chromedriver')
     Selenium::WebDriver::Chrome::Service.driver_path = chromedriver_path
 
+    puts Selenium::WebDriver::Chrome::Service.driver_path
+    puts Selenium::WebDriver::Chrome::Service.host
+    puts Selenium::WebDriver::Chrome::Service.default_port
+
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(
         'chromeOptions' => {
             'args' => %w(--window-size=1920,1080 --headless --no-sandbox --disable-dev-shm-usage --disable-gpu --remote-debugin-port=9222)
