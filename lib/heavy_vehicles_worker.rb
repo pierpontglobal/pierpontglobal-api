@@ -1,22 +1,19 @@
 require 'selenium-webdriver'
 
 class HeavyVehiclesWorker
-  #
-  # def perform
-  #   pageNumber = 1
-  #   initialize
-  #   while pageNumber < @total_pages
-  #     get_for_page(pageNumber)
-  #     pageNumber = pageNumber + 1
-  #   end
-  # end
 
   def initialize
+
+    puts '>>>>>>>>>>>>>>> Heavy vehicles worker start.....'
+
     @webpage_loaded = false
     @vehicles = []
 
     chromedriver_path = File.join(File.absolute_path('', File.dirname('./lib/Drivers')),'Drivers','chromedriver')
     Selenium::WebDriver::Chrome::Service.driver_path = chromedriver_path
+
+    puts Selenium::WebDriver::Chrome::Service.driver_path
+    puts Selenium::WebDriver::Chrome::Service.default_port
 
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(
         'chromeOptions' => {
