@@ -103,6 +103,7 @@ services:
       - JOB_WORKER_URL=redis://redis:6379/0
       - QUEUENAME=car_pulling
       - SLAVE=true
+      - MACHINE=linux
     networks:
       - api
       - elk
@@ -126,11 +127,9 @@ services:
       - AWS_BUCKET=pierpontglobal-api-images
       - AWS_ACCESS_KEY_ID=AKIAI566CCS72L4YKO4A
       - AWS_SECRET_ACCESS_KEY=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
+      - MACHINE=linux
     ports:
       - "3000:3000"
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
     networks:
       - api
       - elk
