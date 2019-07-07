@@ -23,4 +23,4 @@ COPY . /sidekiq_worker
 RUN gem install bundler
 RUN bundle check || bundle install
 
-CMD bundle exec sidekiq -q $QUEUENAME,2 -q scrap_heavy_vehicles -c 1
+CMD bundle exec sidekiq -q $QUEUENAME -c 10
