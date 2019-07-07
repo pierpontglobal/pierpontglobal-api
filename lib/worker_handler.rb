@@ -14,7 +14,7 @@ module WorkerHandler
 
     Thread.new do
       while true do
-        enqueue_jobs
+        # enqueue_jobs
         update_worker_number
         # ------------------- #
         sleep 1.minute
@@ -30,7 +30,7 @@ module WorkerHandler
     logger = Logger.new(STDOUT)
     logger.info "Scouting workers necessities"
 
-    queue_size = Sidekiq::Queue.all.map(&:size).sum + waiting_jobs
+    queue_size = Sidekiq::Queue.all.map(&:size).sum - 1
     required_workers_size = (queue_size/10.0).ceil
     remaining_workers = (required_workers_size - @worker_number)
 
@@ -59,18 +59,6 @@ module WorkerHandler
         worker.stop!
       end
     end
-  end
-
-  def self.waiting_jobs
-    amount = 0
-    Sidekiq.schedule.keys.each do |queue_name|
-      exec_time = Time.parse(SidekiqScheduler::RedisManager.get_job_next_time(queue_name))
-      current_time = Time.now
-      if (current_time - exec_time) > 0
-        amount += 1
-      end
-    end
-    amount
   end
 
   def self.enqueue_jobs
