@@ -10,6 +10,9 @@ module Api
       # Manages the cars on our database and all processes associated to them
       class CarsController < Api::V1::AdminBaseController
 
+        skip_before_action :authenticate_user!, only: :change_pulling
+        skip_before_action :admin_oauth, only: :change_pulling
+
         # Controls the pulling process
         def change_pulling
           state = params[:state]

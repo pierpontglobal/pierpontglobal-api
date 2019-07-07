@@ -3,6 +3,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
+gem 'selenium-webdriver'
+
 # Requirement compliant gems
 gem 'rb-readline'
 gem 'minfraud'
@@ -24,9 +26,10 @@ gem 'stripe'
 
 # Run task asynchronously
 gem 'rake'
-gem 'sidekiq'
 gem 'connection_pool'
 gem 'sinatra'
+gem 'sidekiq'
+gem 'sidekiq-scheduler'
 
 # Database gems``
 gem 'pg'
@@ -50,7 +53,7 @@ gem 'aws-sdk-ecs'
 gem 'aws-sdk-elasticsearchservice'
 gem 'cancancan'
 gem 'devise'
-gem 'doorkeeper'
+gem 'devise-jwt'
 gem 'net-ping'
 gem 'rolify'
 
@@ -70,6 +73,10 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
+
+# AWS S3
+gem 'aws-sdk-s3'
+gem 'aws-sdk-core'
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]

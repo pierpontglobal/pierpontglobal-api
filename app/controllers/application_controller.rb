@@ -1,14 +1,35 @@
 class ApplicationController < ActionController::API
-
-  before_action :doorkeeper_authorize!
-  before_action :current_resource_owner
+  before_action :authenticate_user!
+  before_action :configure_permitted_parameters, if: :devise_controller?
   respond_to :json
 
-  private
+  def render_resource(resource)
+    if resource.errors.empty?
+      render json: resource
+    else
+      validation_error(resource)
+    end
+  end
 
-  # Doorkeeper methods
-  def current_resource_owner
-    @user = User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
+  def validation_error(resource)
+    render json: {
+        errors: [
+            {
+                status: '400',
+                title: 'Bad Request',
+                detail: resource.errors,
+                code: '100'
+            }
+        ]
+    }, status: :bad_request
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    added_attrs = [:username, :email, :password, :password_confirmation, :remember_me]
+    devise_parameter_sanitizer.permit :sign_up, keys: added_attrs
+    devise_parameter_sanitizer.permit :account_update, keys: added_attrs
   end
 
 end

@@ -5,15 +5,15 @@ class UserMailer < ApplicationMailer
 
   def send_confirmation(subscribed_user, token)
     set_client
-    @user = subscribed_user
-    template = load_confirmation_template(token, @user)
+    current_user = subscribed_user
+    template = load_confirmation_template(token, current_user)
     data = JSON.parse(template.to_json)
     @sg.client.mail._('send').post(request_body: data)
   end
 
   def send_payment_status(user)
     set_client
-    @user = user
+    current_user = user
     template = load_payment_success_template(user)
     data = JSON.parse(template.to_json)
     @sg.client.mail._('send').post(request_body: data)
@@ -42,7 +42,7 @@ class UserMailer < ApplicationMailer
         to: [email: user.email],
         dynamic_template_data: {
           user_name: "#{user.first_name} #{user.last_name}",
-          host: Rails.env.production? ? 'https://pierpontglobal.com' : 'http://localhost:4000',
+          host: Rails.env.production? ? 'https://app.pierpontglobal.com' : 'http://localhost:4000',
           token: token
         }
       }

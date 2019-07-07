@@ -1,0 +1,5 @@
+CarPulling:
+  every: ['60m', first_in: '60s']
+  queue: car_pulling
+  class: PullCarsJob
+  description: "Pull Cars from sources"

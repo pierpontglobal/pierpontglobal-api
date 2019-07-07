@@ -8,7 +8,7 @@ module Api
 
       def record_activity(note)
         @activity = ActivityLog.new
-        @activity.user = @user
+        @activity.user = current_user
         @activity.note = note
         @activity.browser = request.env['HTTP_USER_AGENT']
         @activity.ip_address = request.env['REMOTE_ADDR']
@@ -21,7 +21,7 @@ module Api
       private
 
       def admin_oauth
-        unless (@user.has_role? :admin) && (@user.has_role? :super_admin)
+        unless (current_user.has_role? :admin) && (current_user.has_role? :super_admin)
           render json: { status: 'failed', reason: 'You are not an admin user' }, status: :unauthorized
           nil
         end
