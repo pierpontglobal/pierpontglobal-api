@@ -8,7 +8,7 @@ module WorkerHandler
     @cluster_name = 'PierpontGlobal'
     @subnets = "'subnet-0e16fcd46d77039d5','subnet-28d7464f','subnet-0d6d14001b88f60d4'"
     @security_group = "'sg-0903654f2c06b4b19'"
-    @task_definition = 'SidekiqWorker:50'
+    @task_definition = 'SidekiqWorker:52'
 
     @worker_number = 0
 
