@@ -53,7 +53,7 @@ module WorkerHandler
     logger = Logger.new(STDOUT)
     workers = Sidekiq::ProcessSet.new
     workers.each do |worker|
-      if worker['busy'].zero?
+      if worker['busy'].zero? and !worker['queues'].include?('default')
         logger.info "Killing worker #{worker['hostname']}"
         @worker_number -= 1 unless @worker_number <= 0
         worker.stop!
