@@ -30,8 +30,8 @@ module WorkerHandler
     logger = Logger.new(STDOUT)
     logger.info "Scouting workers necessities"
 
-    queue_size = Sidekiq::Queue.all.map(&:size).sum - 1
-    required_workers_size = (queue_size/10.0).ceil
+    queue_size = Sidekiq::Queue.all.map(&:size).sum
+    required_workers_size = (queue_size/10.0).ceil - 1
     remaining_workers = (required_workers_size - @worker_number)
 
     if remaining_workers > 0
