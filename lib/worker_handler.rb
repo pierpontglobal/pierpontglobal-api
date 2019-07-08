@@ -79,7 +79,7 @@ module WorkerHandler
 
   def self.deploy_worker(queue)
     @worker_number += 1
-    result = `aws ecs run-task --cluster #{@cluster_name} --network-configuration "awsvpcConfiguration={subnets=[#{@subnets}],securityGroups=[#{@security_group}],assignPublicIp='ENABLED'}" --launch-type FARGATE --started-by PPGWorkerHandler --task-definition #{@task_definition} --region $AWS_REGION --overrides "containerOverrides={name='SidekiqWorker',environment=[{name='QUEUENAME',value='#{queue}'}]}"`
+    result = `aws ecs run-task --cluster #{@cluster_name} --network-configuration "awsvpcConfiguration={subnets=[#{@subnets}],securityGroups=[#{@security_group}],assignPublicIp='ENABLED'}" --launch-type FARGATE --started-by PPGWorkerHandler --task-definition #{@task_definition} --region $AWS_REGION --overrides "containerOverrides={name='SidekiqWorker',environment=[{name='QUEUENAME',value='car_pulling'}]}"`
     JSON.parse(result)
   end
 end
