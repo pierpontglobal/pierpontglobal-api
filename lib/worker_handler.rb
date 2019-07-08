@@ -8,13 +8,13 @@ module WorkerHandler
     @cluster_name = 'PierpontGlobal'
     @subnets = "'subnet-0e16fcd46d77039d5','subnet-28d7464f','subnet-0d6d14001b88f60d4'"
     @security_group = "'sg-0903654f2c06b4b19'"
-    @task_definition = 'SidekiqWorker:50'
+    @task_definition = 'SidekiqWorker:52'
 
     @worker_number = 0
 
     Thread.new do
       while true do
-        enqueue_jobs
+        # enqueue_jobs
         update_worker_number
         # ------------------- #
         sleep 1.minute
@@ -30,8 +30,8 @@ module WorkerHandler
     logger = Logger.new(STDOUT)
     logger.info "Scouting workers necessities"
 
-    queue_size = Sidekiq::Queue.all.map(&:size).sum + waiting_jobs
-    required_workers_size = (queue_size/10.0).ceil
+    queue_size = Sidekiq::Queue.all.map(&:size).sum
+    required_workers_size = (queue_size/10.0).ceil + 1
     remaining_workers = (required_workers_size - @worker_number)
 
     if remaining_workers > 0
@@ -53,24 +53,12 @@ module WorkerHandler
     logger = Logger.new(STDOUT)
     workers = Sidekiq::ProcessSet.new
     workers.each do |worker|
-      if worker['busy'].zero?
+      if worker['busy'].zero? and !worker['queues'].include?('default')
         logger.info "Killing worker #{worker['hostname']}"
         @worker_number -= 1 unless @worker_number <= 0
         worker.stop!
       end
     end
-  end
-
-  def self.waiting_jobs
-    amount = 0
-    Sidekiq.schedule.keys.each do |queue_name|
-      exec_time = Time.parse(SidekiqScheduler::RedisManager.get_job_next_time(queue_name))
-      current_time = Time.now
-      if (current_time - exec_time) > 0
-        amount += 1
-      end
-    end
-    amount
   end
 
   def self.enqueue_jobs

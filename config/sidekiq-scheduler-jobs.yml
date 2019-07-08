@@ -1,3 +1,8 @@
+ScrapHeavyVehicles:
+  every: ['60m', first_in: '60s']
+  queue: car_pulling
+  class: ScrapHeavyVehicles
+  description: "Pull Cars from sources"
 CarPulling:
   every: ['60m', first_in: '60s']
   queue: car_pulling

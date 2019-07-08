@@ -3,15 +3,14 @@ require 'sidekiq-scheduler'
 
 class ScrapHeavyVehicles
   include Sidekiq::Worker
-  sidekiq_options queue: 'scrap_heavy_vehicles'
+  sidekiq_options queue: 'car_pulling'
 
   def perform(*_args)
-    worker = ::HeavyVehiclesWorker.new
-    total_pages = worker.get_total_pages
+    total_pages = ::HeavyVehiclesWorker.get_total_pages
 
 
-    (1..total_pages).each do |page|
-      PullEquipmentFromPage.perform_async({start: page, end: page + 1})
+    (1..total_pages).step(10) do |page|
+      PullEquipmentFromPage.perform_async({start: page, end: page + 9})
     end
   end
 
