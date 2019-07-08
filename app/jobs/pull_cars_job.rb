@@ -8,7 +8,7 @@ require 'sidekiq-scheduler'
 
 class PullCarsJob
   include Sidekiq::Worker
-  sidekiq_options queue: 'car_pulling'
+  sidekiq_options queue: 'default'
 
   def perform(*_args)
     # register_worker(obtain_token)
