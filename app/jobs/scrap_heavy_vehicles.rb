@@ -6,7 +6,7 @@ class ScrapHeavyVehicles
   sidekiq_options queue: 'default'
 
   def perform(*_args)
-    total_pages = ::HeavyVehiclesWorker.get_total_pages
+    total_pages = HeavyVehiclesWorker.get_total_pages
 
 
     (1..total_pages).step(10) do |page|
