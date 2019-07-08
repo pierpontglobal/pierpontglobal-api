@@ -36,7 +36,7 @@ end
 card_issue.issue_solutions = to_add_solutions
 
 # 2. Release handler seed
-GeneralConfiguration.first_or_create!(key: 'pull_release', value: '1')
+GeneralConfiguration.first_or_create!([{key: 'pull_release', value: '1'},{key: 'heavy_vehicle_price_percentage', value: '0.2'}])
 
 # 3. Create Admin user
 unless User.find_by_username('admin')
