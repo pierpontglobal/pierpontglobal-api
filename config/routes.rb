@@ -212,7 +212,9 @@ Rails.application.routes.draw do
         post '/password_change', to: 'recover#reset_password'
       end
       namespace :heavy_vehicles do
-        get '/', to: 'heavy_vehicles#show'
+        get '/start', to: 'heavy_vehicles#show'
+        get '/', to: 'heavy_vehicles#query'
+        post '/reindex', to: 'heavy_vehicles#reindex'
       end
     end
   end

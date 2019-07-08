@@ -4,10 +4,22 @@ class HeavyVehicle < ApplicationRecord
 
   def search_data
     {
-        heavy_vehicle_identifier: "",
-        release: release,
+        heavy_vehicle_identifier: "#{title} #{location} #{equipment_id}",
         fielddata: true
     }
   end
+
+  scope :sanitized, lambda {
+    select(:id,
+           :main_image,
+           :title,
+           :location,
+           :equipment_id,
+           :description,
+           :serial,
+           :type_id,
+           :price)
+        .left_joins(:heavy_vehicle_types).merge(Model.sanitized)
+  }
 
 end
