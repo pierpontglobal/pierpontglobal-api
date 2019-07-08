@@ -215,6 +215,7 @@ Rails.application.routes.draw do
         get '/start', to: 'heavy_vehicles#show'
         get '/', to: 'heavy_vehicles#query'
         post '/reindex', to: 'heavy_vehicles#reindex'
+        get 'single', to: 'heavy_vehicles#show_by'
       end
     end
   end

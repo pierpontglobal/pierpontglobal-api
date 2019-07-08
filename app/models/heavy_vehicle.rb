@@ -22,4 +22,21 @@ class HeavyVehicle < ApplicationRecord
         .left_joins(:heavy_vehicle_types).merge(Model.sanitized)
   }
 
+  def sanitized
+    price_percentage_config = ::GeneralConfiguration.find_by(:key => 'heavy_vehicle_price_percentage')
+    increase_price_percentage = price_percentage_config[:value].to_f
+    {
+        id: id,
+        title: title,
+        main_image: main_image,
+        location: location,
+        price: price * (1 + increase_price_percentage),
+        equipment_id: equipment_id,
+        description: description,
+        serial: serial,
+        condition: condition,
+        type: type_id.present? ? ::HeavyVehicleType.find(type_id) : nil
+    }
+  end
+
 end
