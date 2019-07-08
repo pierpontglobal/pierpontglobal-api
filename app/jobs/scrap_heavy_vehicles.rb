@@ -3,7 +3,7 @@ require 'sidekiq-scheduler'
 
 class ScrapHeavyVehicles
   include Sidekiq::Worker
-  sidekiq_options queue: 'car_pulling'
+  sidekiq_options queue: 'default'
 
   def perform(*_args)
     total_pages = ::HeavyVehiclesWorker.get_total_pages
