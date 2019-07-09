@@ -38,7 +38,7 @@ module Api
             vehicles_sanitized.push(v.sanitized_with_user(current_user))
           end
           render json: {
-              total_vehicles: vehicles_sanitized.length,
+              total_vehicles: vehicles.total_count,
               vehicles: vehicles_sanitized
           }, :status => :ok
         end
