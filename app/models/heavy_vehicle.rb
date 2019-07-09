@@ -22,6 +22,9 @@ class HeavyVehicle < ApplicationRecord
         .left_joins(:heavy_vehicle_types).merge(Model.sanitized)
   }
 
+  has_many :user_heavy_vehicles
+  has_many :users, through: :user_heavy_vehicles
+
   def sanitized
     price_percentage_config = ::GeneralConfiguration.find_by(:key => 'heavy_vehicle_price_percentage')
     increase_price_percentage = price_percentage_config[:value].to_f
@@ -35,7 +38,8 @@ class HeavyVehicle < ApplicationRecord
         description: description,
         serial: serial,
         condition: condition,
-        type: type_id.present? ? ::HeavyVehicleType.find(type_id) : nil
+        type: type_id.present? ? ::HeavyVehicleType.find(type_id) : nil,
+        requested: HeavyVehicleRequest.find_by(user_id: id, status: "open")
     }
   end
 

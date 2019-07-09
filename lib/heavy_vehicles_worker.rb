@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'open-uri'
 require 'openssl'
+require 'mechanize'
 
 class HeavyVehiclesWorker
 
@@ -17,6 +18,7 @@ class HeavyVehiclesWorker
     vehicles = []
     doc = Nokogiri::HTML(open("https://ur.rousesales.com/used-equipment-results?page=#{page}", ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE))
     vehicles_raw = doc.xpath("//ul[@id='results-list']/li")
+
     vehicles_raw.each do |vehicle_raw|
       vehicles << process_vehicle(vehicle_raw.inner_html)
     end
@@ -25,7 +27,6 @@ class HeavyVehiclesWorker
 
   def self.process_vehicle(vehicle_raw)
     vehicle_element = Nokogiri::HTML(vehicle_raw)
-
     {
       title: vehicle_element.xpath('//h4').first.content,
       source_id: vehicle_element.xpath('//a').first.attributes['href'].value.gsub(/.*\//, ''),

@@ -65,6 +65,7 @@ Rails.application.routes.draw do
         post '/verify', to: 'user#verify_user'
 
         get '/saved_cars', to: 'user#saved_cars'
+        get '/heavy_vehicles', to: 'user#heavy_vehicles'
 
         namespace :funds do
           get '/', to: 'funds#show_funds'
@@ -214,8 +215,12 @@ Rails.application.routes.draw do
       namespace :heavy_vehicles do
         get '/start', to: 'heavy_vehicles#show'
         get '/', to: 'heavy_vehicles#query'
+        get '/single', to: 'heavy_vehicles#show_by'
         post '/reindex', to: 'heavy_vehicles#reindex'
-        get 'single', to: 'heavy_vehicles#show_by'
+        post '/add', to: 'heavy_vehicles#add_to_user'
+        post '/remove', to: 'heavy_vehicles#remove_from_user'
+        post '/remove-all', to: 'heavy_vehicles#remove_all_from_user'
+        post '/request', to: 'heavy_vehicles#make_request'
       end
     end
   end
