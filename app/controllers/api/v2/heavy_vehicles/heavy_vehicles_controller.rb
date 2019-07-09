@@ -16,7 +16,7 @@ module Api
             vehicle = ::HeavyVehicle.find(params[:vehicle_id])
             if vehicle.present?
               render json: {
-                  vehicle: vehicle.sanitized
+                  vehicle: vehicle.sanitized_with_user(current_user)
               }, :status => :ok
             else
               render json: {
@@ -33,9 +33,13 @@ module Api
         def query
           search_text = query_params[:search_text].present? ? query_params[:search_text] : "*"
           vehicles = ::HeavyVehicle.search search_text, page: query_params[:page], per_page: query_params[:page_size]
+          vehicles_sanitized = []
+          vehicles.each do |v|
+            vehicles_sanitized.push(v.sanitized_with_user(current_user))
+          end
           render json: {
-              total_vehicles: vehicles.total_count,
-              vehicles: vehicles.map(&:sanitized)
+              total_vehicles: vehicles_sanitized.length,
+              vehicles: vehicles_sanitized
           }, :status => :ok
         end
 
