@@ -1,5 +1,5 @@
 ScrapHeavyVehicles:
-  every: ['60m', first_in: '60s']
+  every: ['1d', first_in: '60s']
   queue: default
   class: ScrapHeavyVehicles
   description: "Pull Cars from sources"
