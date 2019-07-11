@@ -1,0 +1,2 @@
+class HeavyVehicleManufacturer < ApplicationRecord
+end

@@ -33,7 +33,11 @@ class User < ApplicationRecord
   has_many :subscribers
 
   has_many :user_saved_cars, dependent: :destroy
+  has_many :user_heavy_vehicles, dependent: :destroy
   has_many :cars, through: :user_saved_cars
+  has_many :heavy_vehicles, through: :user_heavy_vehicles
+
+  has_many :heavy_vehicle_requests
 
   has_one_attached :profile_picture
 
