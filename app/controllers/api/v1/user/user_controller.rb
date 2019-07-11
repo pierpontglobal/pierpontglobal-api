@@ -26,6 +26,12 @@ module Api
           render json: { cars: cars }, :status => :ok
         end
 
+        def heavy_vehicles
+          #cars = ::Car.includes(:users).where('users.id' => current_user[:id]).map(&:sanitized)
+          heavy_vehicles = current_user.heavy_vehicles
+          render json: { heavy_vehicles: heavy_vehicles }, :status => :ok
+        end
+
         def set_profile_photo
           photo = params[:photo]
           if photo.present?

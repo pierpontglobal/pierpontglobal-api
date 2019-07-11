@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_08_031010) do
+ActiveRecord::Schema.define(version: 2019_07_11_183818) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -219,6 +219,23 @@ ActiveRecord::Schema.define(version: 2019_07_08_031010) do
     t.integer "type_id"
   end
 
+  create_table "heavy_vehicle_manufacturers", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "heavy_vehicle_requests", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "heavy_vehicle_id"
+    t.integer "quantity"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["heavy_vehicle_id"], name: "index_heavy_vehicle_requests_on_heavy_vehicle_id"
+    t.index ["user_id"], name: "index_heavy_vehicle_requests_on_user_id"
+  end
+
   create_table "heavy_vehicle_subcategories", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -244,6 +261,11 @@ ActiveRecord::Schema.define(version: 2019_07_08_031010) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "type_id"
+    t.integer "manufacturer_id"
+    t.string "class_code"
+    t.string "year"
+    t.string "meter"
+    t.integer "category_id"
   end
 
   create_table "issue_solutions", force: :cascade do |t|
@@ -472,6 +494,16 @@ ActiveRecord::Schema.define(version: 2019_07_08_031010) do
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
 
+  create_table "user_heavy_vehicles", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "heavy_vehicle_id"
+    t.integer "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["heavy_vehicle_id"], name: "index_user_heavy_vehicles_on_heavy_vehicle_id"
+    t.index ["user_id"], name: "index_user_heavy_vehicles_on_user_id"
+  end
+
   create_table "user_saved_cars", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "car_id"
@@ -573,6 +605,8 @@ ActiveRecord::Schema.define(version: 2019_07_08_031010) do
   add_foreign_key "file_directions", "cars"
   add_foreign_key "funds", "payments"
   add_foreign_key "funds", "users"
+  add_foreign_key "heavy_vehicle_requests", "heavy_vehicles"
+  add_foreign_key "heavy_vehicle_requests", "users"
   add_foreign_key "issue_solutions", "issues"
   add_foreign_key "models", "makers"
   add_foreign_key "notifications", "issues", column: "issues_id"
@@ -590,6 +624,8 @@ ActiveRecord::Schema.define(version: 2019_07_08_031010) do
   add_foreign_key "step_logs", "step_groups"
   add_foreign_key "subscribers", "users"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "user_heavy_vehicles", "heavy_vehicles"
+  add_foreign_key "user_heavy_vehicles", "users"
   add_foreign_key "user_saved_cars", "cars"
   add_foreign_key "user_saved_cars", "users"
   add_foreign_key "users", "users", column: "verified_by_id"
