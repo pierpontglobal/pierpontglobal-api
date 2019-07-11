@@ -14,7 +14,7 @@ class PullEquipmentFromPage
     end
 
     vehicles.each do |vehicle|
-      heavy_vehicle = ::HeavyVehicle.find_by(equipment_id: vehicle[:source_id])
+      heavy_vehicle = ::HeavyVehicle.find_by(equipment_id: vehicle[:equipment_id])
       if !heavy_vehicle.present?
         vehicle = ::HeavyVehicle.create!(
             main_image: vehicle[:main_image],
@@ -23,13 +23,13 @@ class PullEquipmentFromPage
             price: vehicle[:price],
             equipment_id: vehicle[:source_id]
         )
-        equipment_type = HeavyVehicleType.where("TRIM(lower(name)) = ?", vehicle[:equipment_type].downcase.gsub(" ", ""))
+        equipment_type = HeavyVehicleType.where("TRIM(lower(name)) = ?", vehicle[:equipment_type].downcase.gsub(" ", ""))[0]
         if !equipment_type.present?
           equipment_type = HeavyVehicleType.create!(name: vehicle[:equipment_type])
         end
         vehicle.type_id = equipment_type[:id]
 
-        manufacturer = HeavyVehicleManufacturer.where("TRIM(lower(name)) = ?", vehicle[:manufacturer].downcase.gsub(" ", ""))
+        manufacturer = HeavyVehicleManufacturer.where("TRIM(lower(name)) = ?", vehicle[:manufacturer].downcase.gsub(" ", ""))[0]
         if !manufacturer.present?
           manufacturer = HeavyVehicleManufacturer.create!(name: vehicle[:manufacturer])
         end
