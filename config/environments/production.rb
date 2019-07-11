@@ -96,6 +96,6 @@ Rails.application.configure do
       config.semantic_logger.application = app_name
     end
 
-    ::WorkerHandler.activate
+    # ::WorkerHandler.activate
   end
 end
