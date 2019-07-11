@@ -38,7 +38,8 @@ class HeavyVehiclesWorker
         source_id: vehicle_element.xpath('//a').first.attributes['href'].value.gsub(/.*\//, ''),
         price: vehicle_element.xpath("//h3[@class='font-weight-300 cost-size']").first.content.gsub(/\$|,| .*|\\n/, '').to_i,
         location: vehicle_element.xpath("//a[@class='detail-location']").first.content,
-        main_image: vehicle_element.xpath("//img[@class='img-border']").first.attributes['src'].value
+        main_image: vehicle_element.xpath("//img[@class='img-border']").first.attributes['src'].value,
+        ur_id: ur_id
     }
     # vehicle = append_specs(basic_element, vehicle_element.css("ul.spec-list li"))
     vehicle = append_images(append_specs(basic_element, vehicle_element.css("ul.spec-list li")), vehicle_element.css("img.slider-tile"))
