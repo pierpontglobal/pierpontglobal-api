@@ -14,8 +14,6 @@ class PullEquipmentFromPage
     end
 
     vehicles.each do |vehicle|
-      puts 'Vehicle to save >>>>>>>>>>>>>>>>  >>>>>>>>>>>>>>>>>>>>>>>'
-      puts vehicle.inspect
       heavy_vehicle = ::HeavyVehicle.find_by(equipment_id: vehicle[:ur_id])
       if !heavy_vehicle.present?
         created_vehicle = ::HeavyVehicle.create!(
@@ -27,19 +25,7 @@ class PullEquipmentFromPage
             description: vehicle["description"],
             serial: vehicle["serial"]
         )
-        equipment_type = HeavyVehicleType.where("lower(name) = ?", vehicle["equipment_type"].to_s.downcase)[0]
-        if !equipment_type.present?
-          equipment_type = HeavyVehicleType.create!(name: vehicle["equipment_type"])
-        end
-        created_vehicle.type_id = equipment_type[:id]
-
-        manufacturer = HeavyVehicleManufacturer.where("lower(name) = ?", vehicle["manufacturer"].to_s.downcase)[0]
-        if !manufacturer.present?
-          manufacturer = HeavyVehicleManufacturer.create!(name: vehicle["manufacturer"])
-        end
-        created_vehicle.manufacturer_id = manufacturer[:id]
-
-        created_vehicle.save!
+        add_relations(created_vehicle, vehicle)
 
       else
         heavy_vehicle.update!(
@@ -51,8 +37,25 @@ class PullEquipmentFromPage
             description: vehicle["description"],
             serial: vehicle["serial"]
         )
+        add_relations(heavy_vehicle, vehicle)
       end
     end
+  end
+
+  def add_relations(vehicle, info)
+    equipment_type = HeavyVehicleType.where("lower(name) = ?", info["equipment_type"].to_s.downcase)[0]
+    if !equipment_type.present?
+      equipment_type = HeavyVehicleType.create!(name: info["equipment_type"])
+    end
+    vehicle.type_id = equipment_type[:id]
+
+    manufacturer = HeavyVehicleManufacturer.where("lower(name) = ?", info["manufacturer"].to_s.downcase)[0]
+    if !manufacturer.present?
+      manufacturer = HeavyVehicleManufacturer.create!(name: info["manufacturer"])
+    end
+    vehicle.manufacturer_id = manufacturer[:id]
+
+    vehicle.save!
   end
 
 end
