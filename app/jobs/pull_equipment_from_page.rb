@@ -23,7 +23,10 @@ class PullEquipmentFromPage
             price: vehicle[:price],
             equipment_id: vehicle[:ur_id],
             description: vehicle["description"],
-            serial: vehicle["serial"]
+            serial: vehicle["serial"],
+            class_code: vehicle["class_code"],
+            year: vehicle[:year],
+            meter: vehicle[:meter]
         )
         add_relations(created_vehicle, vehicle)
 
@@ -35,7 +38,10 @@ class PullEquipmentFromPage
             price: vehicle[:price],
             equipment_id: vehicle[:ur_id],
             description: vehicle["description"],
-            serial: vehicle["serial"]
+            serial: vehicle["serial"],
+            class_code: vehicle["class_code"],
+            year: vehicle[:year],
+            meter: vehicle[:meter]
         )
         add_relations(heavy_vehicle, vehicle)
       end
