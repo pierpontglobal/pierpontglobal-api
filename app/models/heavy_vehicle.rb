@@ -60,7 +60,8 @@ class HeavyVehicle < ApplicationRecord
         condition: condition,
         type: type_id.present? ? ::HeavyVehicleType.find(type_id) : nil,
         requested: HeavyVehicleRequest.find_by(id: id, status: "open"),
-        added_to_cart: UserHeavyVehicle.find_by(user_id: user[:id], heavy_vehicle_id: id)
+        added_to_cart: UserHeavyVehicle.find_by(user_id: user[:id], heavy_vehicle_id: id),
+        manufacturer: manufacturer_id.present? ? ::HeavyVehicleManufacturer.find(manufacturer_id) : nil,
     }
   end
 

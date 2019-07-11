@@ -1,7 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
 require 'openssl'
-require 'mechanize'
 
 class HeavyVehiclesWorker
 
