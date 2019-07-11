@@ -217,6 +217,7 @@ Rails.application.routes.draw do
         get '/', to: 'heavy_vehicles#query'
         get '/single', to: 'heavy_vehicles#show_by'
         get '/types', to: 'heavy_vehicles_types#show'
+        get '/categories', to: 'heavy_vehicles_categories#show'
         post '/reindex', to: 'heavy_vehicles#reindex'
         post '/add', to: 'heavy_vehicles#add_to_user'
         post '/remove', to: 'heavy_vehicles#remove_from_user'

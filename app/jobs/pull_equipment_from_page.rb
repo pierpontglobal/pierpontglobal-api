@@ -68,6 +68,7 @@ class PullEquipmentFromPage
     category[:type_id] = equipment_type[:id]
 
     category.save!
+    vehicle[:category_id] = category[:id]
     vehicle.save!
   end
 

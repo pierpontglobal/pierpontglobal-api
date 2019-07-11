@@ -32,7 +32,15 @@ module Api
 
         def query
           search_text = query_params[:search_text].present? ? query_params[:search_text] : "*"
-          vehicles = ::HeavyVehicle.search search_text, page: query_params[:page], per_page: query_params[:page_size]
+          type_id = params[:type_id]
+          category_id = params[:category_id]
+          puts '>>>>>>>  params >>>>'
+          puts type_id
+          puts category_id
+          vehicles = ::HeavyVehicle.search search_text, page: query_params[:page], per_page: query_params[:page_size], where: {
+              type_id: type_id,
+              category_id: category_id
+          }
           vehicles_sanitized = []
           vehicles.each do |v|
             vehicles_sanitized.push(v.sanitized_with_user(current_user))
