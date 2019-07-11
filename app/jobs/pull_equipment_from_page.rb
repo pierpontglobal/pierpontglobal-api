@@ -61,6 +61,13 @@ class PullEquipmentFromPage
     end
     vehicle.manufacturer_id = manufacturer[:id]
 
+    category = ::HeavyVehicleCategory.where("lower(name) = ?", info["category"].to_s.downcase)[0]
+    if !category.present?
+      category = ::HeavyVehicleCategory.create!(name: info["category"])
+    end
+    category[:type_id] = equipment_type[:id]
+
+    category.save!
     vehicle.save!
   end
 

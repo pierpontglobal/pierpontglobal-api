@@ -6,7 +6,8 @@ module Api
 
         def show
           limit = params[:limit] ||= 20
-          types = ::HeavyVehicleType.limit(limit)
+          page = params[:page] ||= 1
+          types = ::HeavyVehicleType.limit(limit).offset(page)
           render json: {
               requested_types: types.map(&:sanitized),
               total_types: ::HeavyVehicleType.count
