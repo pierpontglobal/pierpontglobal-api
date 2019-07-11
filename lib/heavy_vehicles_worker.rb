@@ -44,8 +44,6 @@ class HeavyVehiclesWorker
     # vehicle = append_specs(basic_element, vehicle_element.css("ul.spec-list li"))
     vehicle = append_images(append_specs(basic_element, vehicle_element.css("ul.spec-list li")), vehicle_element.css("img.slider-tile"))
     vehicle
-    puts vehicle.inspect
-    sleep(10)
   end
 
   def self.append_images(obj, sliders)
