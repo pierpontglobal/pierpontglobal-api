@@ -33,7 +33,8 @@ class HeavyVehicle < ApplicationRecord
         manufacturer: manufacturer_id.present? ? ::HeavyVehicleManufacturer.find(manufacturer_id) : nil,
         class_code: class_code,
         year: year,
-        meter: meter
+        meter: meter,
+        category: category_id.present? ? ::HeavyVehicleCategory.find(category_id) : nil,
     }
   end
 
@@ -56,7 +57,8 @@ class HeavyVehicle < ApplicationRecord
         manufacturer: manufacturer_id.present? ? ::HeavyVehicleManufacturer.find(manufacturer_id) : nil,
         class_code: class_code,
         year: year,
-        meter: meter
+        meter: meter,
+        category: category_id.present? ? ::HeavyVehicleCategory.find(category_id) : nil,
     }
   end
 

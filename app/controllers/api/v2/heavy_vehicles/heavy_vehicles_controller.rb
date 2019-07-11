@@ -39,10 +39,10 @@ module Api
           where_query[:type_id] = type_id if type_id != -1
           where_query[:category_id] = category_id if category_id != -1
 
-          puts '>>>>> hwere >>>>>'
-          puts where_query
-
-          vehicles = ::HeavyVehicle.search(search_text, where: where_query, limit: query_params[:page_size], offset: query_params[:page])
+          vehicles = ::HeavyVehicle.search(search_text,
+                                           where: where_query,
+                                           page: query_params[:page].to_i,
+                                           per_page: query_params[:page_size].to_i)
 
           render json: {
               total_vehicles: vehicles.total_count,

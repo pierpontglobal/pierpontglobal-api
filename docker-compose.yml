@@ -42,18 +42,18 @@ services:
     networks:
       - elk
 
-#  kibana:
-#    container_name: pierpontglobal-kibana
-#    build:
-#      context: config/docker/kibana/
-#    volumes:
-#    - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
-#    ports:
-#    - "5601:5601"
-#    networks:
-#    - elk
-#    depends_on:
-#    - elasticsearch
+  kibana:
+    container_name: pierpontglobal-kibana
+    build:
+      context: config/docker/kibana/
+    volumes:
+    - ./config/docker/kibana/config/:/usr/share/kibana/config:ro
+    ports:
+    - "5601:5601"
+    networks:
+    - elk
+    depends_on:
+    - elasticsearch
 
   redis:
     user: root

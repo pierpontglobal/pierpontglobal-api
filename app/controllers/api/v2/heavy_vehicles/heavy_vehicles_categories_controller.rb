@@ -8,7 +8,7 @@ module Api
           limit = params[:limit] ||= 20
           page = params[:page] ||= 1
           filter_id = params[:filter_id]
-          categories = ::HeavyVehicleCategory.where(:type_id => filter_id.to_i).limit(limit).offset(page)
+          categories = ::HeavyVehicleCategory.where(:type_id => filter_id.to_i).limit(limit.to_i).offset(page.to_i)
           render json: {
               requested_categories: categories.map(&:sanitized),
               total_categories: ::HeavyVehicleCategory.count
