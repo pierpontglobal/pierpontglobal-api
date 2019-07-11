@@ -32,22 +32,21 @@ module Api
 
         def query
           search_text = query_params[:search_text].present? ? query_params[:search_text] : "*"
-          type_id = params[:type_id]
-          category_id = params[:category_id]
-          puts '>>>>>>>  params >>>>'
-          puts type_id
-          puts category_id
-          vehicles = ::HeavyVehicle.search search_text, page: query_params[:page], per_page: query_params[:page_size], where: {
-              type_id: type_id,
-              category_id: category_id
-          }
-          vehicles_sanitized = []
-          vehicles.each do |v|
-            vehicles_sanitized.push(v.sanitized_with_user(current_user))
-          end
+          type_id = params[:type_id].to_i ||= -1
+          category_id = params[:category_id].to_i ||= -1
+
+          where_query = {}
+          where_query[:type_id] = type_id if type_id != -1
+          where_query[:category_id] = category_id if category_id != -1
+
+          puts '>>>>> hwere >>>>>'
+          puts where_query
+
+          vehicles = ::HeavyVehicle.search(search_text, where: where_query, limit: query_params[:page_size], offset: query_params[:page])
+
           render json: {
               total_vehicles: vehicles.total_count,
-              vehicles: vehicles_sanitized
+              vehicles: vehicles.map { |v| v.sanitized_with_user(current_user) }
           }, :status => :ok
         end
 
