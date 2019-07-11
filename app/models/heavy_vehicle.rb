@@ -42,6 +42,9 @@ class HeavyVehicle < ApplicationRecord
         requested: HeavyVehicleRequest.find_by(user_id: id, status: "open"),
         added_to_cart: UserHeavyVehicle.find_by(user_id: current_user[:id], heavy_vehicle_id: id),
         manufacturer: manufacturer_id.present? ? ::HeavyVehicleManufacturer.find(manufacturer_id) : nil,
+        class_code: class_code,
+        year: year,
+        meter: meter
     }
   end
 
@@ -62,6 +65,9 @@ class HeavyVehicle < ApplicationRecord
         requested: HeavyVehicleRequest.find_by(id: id, status: "open"),
         added_to_cart: UserHeavyVehicle.find_by(user_id: user[:id], heavy_vehicle_id: id),
         manufacturer: manufacturer_id.present? ? ::HeavyVehicleManufacturer.find(manufacturer_id) : nil,
+        class_code: class_code,
+        year: year,
+        meter: meter
     }
   end
 
