@@ -1,0 +1,2 @@
+class HeavyVehicleImage < ApplicationRecord
+end

@@ -67,6 +67,11 @@ class PullEquipmentFromPage
     end
     category[:type_id] = equipment_type[:id]
 
+    images = info["tile-images"]
+    images.each do |img|
+      ::HeavyVehicleImage.create!(heavy_vehicle_id: vehicle[:id], image: img)
+    end
+
     category.save!
     vehicle[:category_id] = category[:id]
     vehicle.save!

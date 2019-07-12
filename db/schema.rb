@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_11_183818) do
+ActiveRecord::Schema.define(version: 2019_07_12_014411) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -219,6 +219,13 @@ ActiveRecord::Schema.define(version: 2019_07_11_183818) do
     t.integer "type_id"
   end
 
+  create_table "heavy_vehicle_images", force: :cascade do |t|
+    t.string "image"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "heavy_vehicle_id"
+  end
+
   create_table "heavy_vehicle_manufacturers", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -261,6 +268,8 @@ ActiveRecord::Schema.define(version: 2019_07_11_183818) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "type_id"
+    t.string "category"
+    t.string "sub_category"
     t.integer "manufacturer_id"
     t.string "class_code"
     t.string "year"
