@@ -161,6 +161,24 @@ module Api
           end
         end
 
+        def user_cart
+          user_vehicles = ::UserHeavyVehicle.where(:user_id => current_user[:id])
+          render json: {
+              vehicles: user_vehicles.map { |obj| obj.sanitized_with_user(current_user) }
+          }, :status => :ok
+        end
+
+        def request_cart
+          user_vehicles = ::UserHeavyVehicle.where(:user_id => current_user[:id])
+          user_vehicles.each do |obj|
+            ::HeavyVehicleRequest.create!(user_id: obj[:user_id], heavy_vehicle_id: obj[:heavy_vehicle_id], status: "new", quantity: obj[:quantity])
+          end
+          user_vehicles.destroy_all
+          render json: {
+              vehicles: ::UserHeavyVehicle.where(user_id: current_user[:id])
+          }, :status => :ok
+        end
+
 
         private
 
