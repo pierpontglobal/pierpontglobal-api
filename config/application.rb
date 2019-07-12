@@ -23,6 +23,7 @@ require 'elasticsearch'
 require 'faraday_middleware/aws_sigv4'
 require './lib/notification_handler'
 require './lib/worker_handler'
+require './lib/heavy_vehicles_worker'
 
 require_relative '../app/Appenders/elasticsearch_aws'
 
