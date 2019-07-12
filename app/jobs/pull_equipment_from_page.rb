@@ -69,7 +69,7 @@ class PullEquipmentFromPage
 
     images = info["tile-images"]
     images.each do |img|
-      ::HeavyVehicleImage.create!(heavy_vehicle_id: vehicle[:id], image: img)
+      ::HeavyVehicleImage.create!(heavy_vehicle_id: vehicle[:id], image: img.gsub("FeaturedThumb", "ItemDetailLarge"))
     end
 
     category.save!
