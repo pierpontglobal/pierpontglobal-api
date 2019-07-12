@@ -5,25 +5,25 @@ require 'sidekiq-scheduler'
 
 module WorkerHandler
   def self.activate
-    @cluster_name = 'PierpontGlobal'
-    @subnets = "'subnet-0e16fcd46d77039d5','subnet-28d7464f','subnet-0d6d14001b88f60d4'"
-    @security_group = "'sg-0903654f2c06b4b19'"
-    @task_definition = 'SidekiqWorker:55'
-
-    @worker_number = 0
-
-    Thread.new do
-      while true do
-        # enqueue_jobs
-        update_worker_number
-        # ------------------- #
-        sleep 1.minute
-      end
-    end
-
-  rescue
-    logger = Logger.new(STDOUT)
-    logger.info 'Sidekiq not ready'
+  #   @cluster_name = 'PierpontGlobal'
+  #   @subnets = "'subnet-0e16fcd46d77039d5','subnet-28d7464f','subnet-0d6d14001b88f60d4'"
+  #   @security_group = "'sg-0903654f2c06b4b19'"
+  #   @task_definition = 'SidekiqWorker:55'
+  #
+  #   @worker_number = 0
+  #
+  #   Thread.new do
+  #     while true do
+  #       # enqueue_jobs
+  #       update_worker_number
+  #       # ------------------- #
+  #       sleep 1.minute
+  #     end
+  #   end
+  #
+  # rescue
+  #   logger = Logger.new(STDOUT)
+  #   logger.info 'Sidekiq not ready'
   end
 
   def self.update_worker_number
