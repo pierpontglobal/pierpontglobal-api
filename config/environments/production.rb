@@ -88,7 +88,8 @@ Rails.application.configure do
               access_key_id: ENV['AWS_ACCESS_KEY_ID'],
               secrete_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
               region: ENV['AWS_REGION']
-          )
+          ),
+          filter: -> log { log.payload.path == '/api/v1/aws-health' }
       )
       config.log_tags = {
           ip: :remote_ip
