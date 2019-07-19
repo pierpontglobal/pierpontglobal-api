@@ -47,7 +47,12 @@ class ElasticsearchAWS < SemanticLogger::Subscriber
   end
 
   def log(log)
+    filter = [
+        "Api::V1::UserBaseController"
+    ]
+
     return false if (level_index > (log.level_index || 0))
+    return false if (filter.include? log.name)
 
     formatted_log = formatter.call(log, self)
     route = "#{url}/#{index}/#{type}/#{SecureRandom.hex(10)}"

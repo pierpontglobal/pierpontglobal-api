@@ -64,8 +64,7 @@ Rails.application.configure do
       config.semantic_logger.add_appender(
           index: 'pierpontglobal_api',
           appender: :elasticsearch,
-          url: (ENV['ELASTICSEARCH_URL']).to_s,
-          filter: -> log { log.name != 'Api::V1::UserBaseController' }
+          url: (ENV['ELASTICSEARCH_URL']).to_s
       )
       config.log_tags = {
           ip: :remote_ip
