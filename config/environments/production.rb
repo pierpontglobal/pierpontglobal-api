@@ -89,7 +89,7 @@ Rails.application.configure do
               secrete_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
               region: ENV['AWS_REGION']
           ),
-          filter: /Api::V1::UserBaseController/
+          filter: -> log { log.name != 'Api::V1::UserBaseController' }
       )
       config.log_tags = {
           ip: :remote_ip

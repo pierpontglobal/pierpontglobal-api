@@ -65,7 +65,7 @@ Rails.application.configure do
           index: 'pierpontglobal_api',
           appender: :elasticsearch,
           url: (ENV['ELASTICSEARCH_URL']).to_s,
-          filter: /Api::V1::UserBaseController/
+          filter: -> log { log.name != 'Api::V1::UserBaseController' }
       )
       config.log_tags = {
           ip: :remote_ip
