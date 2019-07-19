@@ -90,23 +90,23 @@ services:
 #      rails:
 #        condition: service_healthy
 
-  sidekiq:
-    user: root
-    build:
-      context: .
-      dockerfile: sidekiq.dockerfile
-    environment:
-      - DB_HOST=psql
-      - DB_PASSWORD=qusUt1i9obru4ISTUG2f
-      - DB_USER=postgres
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-      - JOB_WORKER_URL=redis://redis:6379/0
-      - QUEUENAME=car_pulling
-      - SLAVE=true
-      - MACHINE=linuxdock
-    networks:
-      - api
-      - elk
+#  sidekiq:
+#    user: root
+#    build:
+#      context: .
+#      dockerfile: sidekiq.dockerfile
+#    environment:
+#      - DB_HOST=psql
+#      - DB_PASSWORD=qusUt1i9obru4ISTUG2f
+#      - DB_USER=postgres
+#      - ELASTICSEARCH_URL=http://elasticsearch:9200
+#      - JOB_WORKER_URL=redis://redis:6379/0
+#      - QUEUENAME=car_pulling
+#      - SLAVE=true
+#      - MACHINE=linuxdock
+#    networks:
+#      - api
+#      - elk
 
   rails:
     restart: always
@@ -138,6 +138,10 @@ services:
       interval: 30s
       timeout: 30s
       retries: 5
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
 
 networks:
   elk:
