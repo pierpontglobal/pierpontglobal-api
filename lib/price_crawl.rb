@@ -11,7 +11,7 @@ class PriceCrawl
 
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(
         'chromeOptions' => {
-            'args' => %w(--window-size=1920,1080 --no-sandbox --disable-dev-shm-usage --disable-gpu --remote-debugin-port=9222)
+            'args' => %w(--window-size=1920,1080 --headless --no-sandbox --disable-dev-shm-usage --disable-gpu --remote-debugin-port=9222)
         }
     )
 
