@@ -12,7 +12,8 @@ class Bid < ApplicationRecord
   after_create :update_funds
 
   scope :attach_vehicle_info, lambda {
-    select('amount', 'id', 'bid_collectors.car_id', 'vin', 'year', 'trim', 'bid_collectors.id AS bid_collector_id')
+    select('amount', 'id', 'status', 'success', 'bid_collectors.car_id', 'vin', 'year', 'trim', 'step', 'bid_collectors.id AS bid_collector_id',
+           '(select array_agg(file_directions.route) as routes from file_directions where file_directions.car_id = bid_collectors.car_id) AS car_images')
       .joins('INNER JOIN bid_collectors ON bid_collectors.id = bid_collector_id')
       .joins('INNER JOIN cars ON cars.id = bid_collectors.car_id')
       .joins('INNER JOIN models ON models.id = model_id').merge(Model.sanitized)

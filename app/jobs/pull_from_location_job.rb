@@ -22,37 +22,6 @@ class PullFromLocationJob
     create_or_update(JSON.parse(res.body), params['release_number'])
   end
 
-  private
-
-  def register_worker(token)
-    # url = URI.parse('https://api.pierpontglobal.com/api/v1/admin/configuration/register_ip')
-    # req = Net::HTTP::Get.new(url.to_s)
-    # req['Authorization'] = "Bearer #{token}"
-    #
-    # res = Net::HTTP.start(url.host, url.port,
-    #                       use_ssl: url.scheme == 'https') do |http|
-    #   http.request(req)
-    # end
-    # res.body
-  end
-
-  def obtain_token
-    # url = URI.parse('https://api.pierpontglobal.com/oauth/token')
-    # req = Net::HTTP::Post.new(url.to_s)
-    # req['Content-Type'] = 'application/json'
-    # req.body = {
-    #   username: 'admin',
-    #   password: 'WefrucaT7TAhl4weNUdr',
-    #   grant_type: 'password'
-    # }.to_json
-    #
-    # res = Net::HTTP.start(url.host, url.port,
-    #                       use_ssl: url.scheme == 'https') do |http|
-    #   http.request(req)
-    # end
-    # JSON.parse(res.body)['access_token']
-  end
-
   # Creates or updates cars
   def create_or_update(sales_cars, release_number)
     return if sales_cars['listings'].nil?

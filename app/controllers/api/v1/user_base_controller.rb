@@ -14,7 +14,6 @@ module Api
                status: :ok
       end
 
-      private
     end
   end
 end

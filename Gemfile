@@ -20,6 +20,7 @@ gem 'jbuilder'
 gem 'puma'
 gem 'rails'
 gem 'redis'
+gem 'json'
 
 # Payment services
 gem 'stripe'
