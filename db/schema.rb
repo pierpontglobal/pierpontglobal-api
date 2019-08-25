@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_12_014411) do
+ActiveRecord::Schema.define(version: 2019_08_20_162852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 2019_07_12_014411) do
     t.string "status"
     t.boolean "success"
     t.boolean "submitted"
+    t.integer "step", default: 0
     t.index ["bid_collector_id"], name: "index_bids_on_bid_collector_id"
     t.index ["user_id"], name: "index_bids_on_user_id"
   end

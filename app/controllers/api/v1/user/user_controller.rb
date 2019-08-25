@@ -145,7 +145,6 @@ module Api
           render json: {status: 'success', message: 'Added successfully'}, status: :ok
         rescue StandardError
           deregister_notifier
-          register_notifier
         end
 
         def log_out
